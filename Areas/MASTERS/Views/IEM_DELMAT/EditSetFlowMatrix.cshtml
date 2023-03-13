@@ -1,0 +1,805 @@
+﻿@using IEM.Areas.MASTERS.Models
+@using System.Dynamic
+@using System.IO
+@model IEM.Areas.MASTERS.Models.iem_mst_delmat
+@{
+    // Layout = "~/Views/Shared/_Layout.cshtml";
+    var branch = Model.delmattype_branch_visible;
+    var baranchtype = Model.delmattype_branchtype_visible;
+    var cliamtype = Model.delmattype_claim_visible;
+    var dsa = Model.delmattype_dsa_visible;
+    var ppit = Model.delmattype_pipit_visible;
+    var it = Model.delmattype_it_visible;
+    var exp = Model.delmattype_exp_visible;
+    var budget = Model.delmattype_budget_visible;
+    var jump = Model.delmattype_jump_visible;
+    var active = Model.delmattype_active_visible;
+    var dis = ViewBag.viewfor;
+    // ewBag.viewfor=dis
+}
+@using System.Data
+
+@{
+    if (Session["SlabGid"] != null)
+    {
+        //edit delmatflowinformation from
+        IEM_MST_DELMAT Delmat = new IEM_MST_DELMAT();
+        DataTable d = new DataTable();
+        // var test = ViewBag.viewfor;
+        var count = ViewBag.count;
+        d = Delmat.Getrows(Convert.ToString(Session["SlabGid"]));
+        d = Delmat.Getrows(Convert.ToString(Session["EditSlabgid"]));
+        d.Columns.Add("Action");
+        
+        d.Rows.Add("No Record");
+
+        var result = new List<dynamic>();
+        foreach (DataRow row in d.Rows)
+        {
+            var obj = (IDictionary<string, object>)new ExpandoObject();
+            foreach (DataColumn col in d.Columns)
+            {
+                obj.Add(col.ColumnName, row[col.ColumnName]);
+            }
+
+            result.Add(obj);
+        }
+
+        var ugrid = new WebGrid(result,canSort:false,canPage:false);
+        
+    <div class="well" style="padding:10px;">
+
+        <table class="myTableStyleTabNew" style="width:100%;">
+            <tr>
+                <td style="width:50%; padding:0px 10px 0px 3px;">
+                    <b>
+                        <span style="color: rgb(52, 108, 196); font-weight:bold ;">Delmat Flow</span>
+                        <input type="hidden" id="hdrole" value="@ViewBag.IsDelmatRole" />
+                    </b>
+                </td>
+@if (ViewBag.IsDelmatRole == "M")
+{
+                <td style="width:50%; padding:0px 10px 0px 3px;text-align:right;">
+                    <input type="hidden" id="Vieworedit" value=@ViewBag.viewfor />
+                    @if (dis != "disabled")
+                    {
+                           <button type="button" value="Add New" onclick="NewTypeflowedit()" @ViewBag.viewfor class="btn btn-primary"><span style="color:white; font-size:12px;" class="glyphicon glyphicon-plus"></span> Add Flow</button>
+                        }
+                     
+                    @*<input type="button" id="addNew" class="btn btn-primary" value="Add New" onclick="NewType()" @ViewBag.viewfor />*@
+                    <input type="hidden" id="countvalue" />
+                    <input type="hidden" id="SlabGid" />
+                    <input type="hidden" id="SNo" />
+                    <input type="hidden" id="delmatgid">
+                    <input type="hidden" id="GID" />
+                    <input type="hidden" id="hdValidateDelmat" />
+                </td>
+}
+            </tr>
+
+        </table>
+
+        @*<div id="grid"></div>
+    <div class="table-responsive" style="margin-top:10px;">
+        @ugrid.GetHtml(
+                    htmlAttributes: new { id = "uwebgrid" },
+                tableStyle: "tableSmall table-bordered table-hover",
+                       headerStyle: "head", alternatingRowStyle: "alt")
+    </div>*@
+
+        <div style="margin-top:5px;" id="grid" class="table-responsive">
+            <div style="max-height: 320px;">
+                @if (@Model != null)
+                {
+
+                    @*@functions {
+                        public static string Sorter(string columnName, string columnHeader, WebGrid ugrid)
+                        {
+                            return string.Format("{0} {1}", columnHeader, ugrid.SortColumn == columnName ?
+                                ugrid.SortDirection == SortDirection.Ascending ? "▲" :
+                                "▼" : string.Empty);
+                        }
+                    }*@
+
+                    @ugrid.GetHtml(
+                          tableStyle: "tableSmall table-bordered table-hover table-responsive overflowx",
+                       htmlAttributes: new { id = "uwebgrid" },
+                       headerStyle: "head", alternatingRowStyle: "alt");
+
+                }
+            </div>
+        </div>
+
+@if (ViewBag.IsDelmatRole == "M")
+{
+    <table class="myTableStyleTabNew">
+        <tr>
+            <td>
+                @if (dis != "disabled")
+                {
+                    <div style="padding-left:496px">
+                        <button type="button" class="btn btn-primary" style="margin-top:20px;" id="_Submit" value="Submit" @ViewBag.viewfor>
+                            <span class="glyphicon glyphicon-floppy-disk" style="color:white;font-size:12px;"></span> Submit
+                        </button>
+
+                        <button type="button" class="btn btn-warning" style="margin-top:20px;" value="Cancel" id="_Cancel" onclick="cancel()">
+                            <span style="color:white;font-size:12px;" class="glyphicon glyphicon-remove-sign"></span> Cancel
+                        </button>
+                    </div>
+                }
+                @if (dis == "disabled")
+                {
+                    <div style="padding-left:496px">
+                        <button type="button" class="btn btn-warning" style="margin-top:20px;" value="Cancel" id="_Cancel" onclick="cancel()">
+                            <span style="color:white;font-size:12px; " class="glyphicon glyphicon-remove-sign"></span> Cancel
+                        </button>
+                    </div>
+                }
+            </td>
+
+        </tr>
+    </table>
+}
+</div>
+
+
+    }
+}
+
+
+<div id="ForPartialViewfordelmatflow"></div>
+<div id="ForPartialViewforexceptionID"></div>
+
+<script type="text/javascript">
+    var objDialogfordelmatflow;
+    $(document).ready(function () {
+        if ($("#hdrole").val()=="C") {
+            debugger;
+            //console.log("flowmatrix");
+            $("input[type='radio']").prop("disabled", true);
+            $("input[type='checkbox']").prop("disabled", true);
+        }
+        objDialogfordelmatflow = $("[id$='ForPartialViewfordelmatflow']");
+        objDialogfordelmatflow.dialog({
+            autoOpen: false,
+            modal: true,
+            width: 350,
+            height: 380
+        });
+    });
+
+    //$('#uwebgrid').ready(function () {
+    //    $('#uwebgrid').dataTable({
+    //        "bFilter": false,
+    //        "bLengthChange": false,
+    //        "bSort": false,
+    //        "bPaginate": false,
+    //        "bInfo": false,
+    //        "order": [[3, "asc"]],
+    //        //"aoColumnDefs": [{
+    //        //    "bSortable": false,
+    //        //    "aTargets": ["nosort"],
+    //        //}]
+    //    }).css("width", "99%");
+    //});
+
+    function NewTypeflowedit() {
+
+        objDialogfordelmatflow.load('../AddDelmatflowById?' + new Date().getTime());
+        objDialogfordelmatflow.dialog({ title: 'Add New Delmat Flow' });
+        objDialogfordelmatflow.dialog("open");
+        return false;
+    }
+
+
+    function cancel() {
+
+        window.location = '../Main';
+    }
+
+</script>
+
+
+<script type="text/javascript">
+   
+
+  
+    function GotoIndex() {
+        //ForPartialViewforexceptionID.remove();
+        window.parent.jQuery('#ForPartialViewforexceptionID').dialog('close');
+    }
+
+</script>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#_Submit').click(function () {
+            debugger;
+            
+            var msg = "";
+            var delmatname = $("#_Delmatname").val();
+
+            var docgid = $("#docutype_gid").val();
+            var slabgid = $("#depat_gid").val();
+            var branchvalue = $('input[name=rbbranch]:checked').val();
+            var branchtypevalue = $('input[name=rbbranchtype]:checked').val();
+            var claim = $('input[name=rbclaim]:checked').val();
+            var dsa = $('input[name=rbdsa]:checked').val();
+            var ppit = $('input[name=rbreq]:checked').val();
+            var it = $('input[name=rbit]:checked').val();
+            var exp = $('input[name=rbexp]:checked').val();
+            var bud = $('input[name=rbbud]:checked').val();
+            var jump = $('input[name=rbjump]:checked').val();
+            var active = $('input[name=rbactive]:checked').val();
+
+            //add delmat change
+            var parpr = $('input[name=rbpar]:checked').val();
+            var wwopwrpr = $('input[name=rbreq1]:checked').val();
+
+            var ecftype = $('input[name=rbE]:checked').val();
+
+
+            if (active == null) {
+
+                active = "N";
+
+            }
+
+            if (branchvalue == null) {
+
+                branchvalue = "N";
+
+            }
+            else if (branchvalue == "O") {
+                branchvalue = "N";
+            }
+            if (branchtypevalue == null) {
+                branchtypevalue = "N";
+            }
+            if (claim == null) {
+                claim = "N";
+            }
+            if (dsa == null) {
+                dsa = "N";
+            }
+            if (ppit == null) {
+                ppit = "N";
+            }
+            if (it == null) {
+                it = "N";
+            }
+            if (exp == null) {
+                exp = "N";
+            }
+            if (bud == null) {
+                bud = "N";
+            }
+            if (jump == null) {
+                jump = "N";
+            }
+            //add delmat change
+            if (parpr == null) {
+                parpr = "N"
+            }
+            if (wwopwrpr == null) {
+                wwopwrpr = "N"
+            }
+
+            if (ecftype == null) {
+                ecftype = "N"
+            }
+            if (docgid != 1) {
+                ecftype = "N"
+            }
+            if (docgid != 2) {
+                parpr = "N"
+            }
+            if (docgid != 7) {
+                wwopwrpr = "N"
+            }
+            //end
+            var departListVal = null;
+            departListVal = [];
+            $('input:checkbox:checked').each(function () {
+                if ($(this).attr('value') != 'on') {
+                    departListVal.push($(this).attr('value'));
+                }
+            });
+
+
+            if (delmatname == "") {
+                alert("Please Enter Delmat Name.");
+                return false;
+            }
+            if (docgid == 0) {
+                alert("Please select Delmat Type.");
+                return false;
+            }
+            if (slabgid == 0) {
+                alert("Please select Slab Name.");
+                return false;
+            }
+            showProgress();
+            var DelmatModel = {
+                "delmat_name": delmatname, "delmat_slab_gid": slabgid, "delmat_type_ID": docgid, "delmat_branch_flag": branchvalue,
+
+                "delmat_branchtype_flag": branchtypevalue, "delmat_claim_flag": claim, "delmat_dsa_flag": dsa, "delmat_pipit_flag": ppit,
+
+                "delmat_it_flag": it, "delmat_exp_flag": exp, "delmat_budget_flag": bud, "delmat_jump_flag": jump,
+
+                "delmat_active": active, "lstSelecteddepartmentGid": departListVal,
+
+                "delmat_ecftype": ecftype, "delmat_parpr_flag": parpr, "delmat_wwoparpr": wwopwrpr //add delmat change
+            };
+            var validationmsg = "";
+
+            $.ajax({
+                url: '../Validatedelmat/',
+                data: JSON.stringify(DelmatModel),
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                success: function (result) {
+                    validationmsg = result;
+                     
+                    if (result == "success") {
+                        var title, titlevalue, flow, sno, addapproval, checkaddapproval, chkforslabrange, slabrange, check;
+                        var addapp = "addapp";
+                        var countvalue = $("#countvalue").val();
+                        var salbrangegid = $("#SlabGid").val();
+                        var delmatgid = $('#delmatgid').val();
+                        var count = $('#SNo').val();
+                        var GID = $('#GID').val();
+                        var isSuccess = "";
+                        var v_delmatgid = "";
+                        console.log(delmatgid);
+                        var maxgrid = $("#uwebgrid tr").length - 1;
+                        $('#uwebgrid tr').each(function (i, row) {
+                            //console.log(i);
+                            //console.log(row);
+                            var crow = $(this).closest('tr').find('td:eq(1)').text();
+                            if (crow != "") {
+                                GID = $(this).closest('tr').find('td:eq(0)').text();
+
+                                var Sno = $(this).closest('tr').find('td:eq(1)').text();
+
+                                title = $(this).closest('tr').find('td:eq(2)').text();
+
+                                titlevalue = $(this).closest('tr').find('td:eq(3)').text();
+                                
+                                var addapp = "#addapp" + GID + ":checked";
+
+                                addapproval = $(addapp).val() ? true : false;
+                                checkaddapproval = addapproval;
+
+                                flow = $(this).closest('tr').find('td:eq(4)').text();
+
+                                var DelmatModel = {
+                                    "lsselectedSlabrange": slabrange,
+                                    "GID": GID
+                                };
+
+                                var slabrange = null;
+                                slabrange = [];
+                                $.ajax({
+                                    url: '../Getdelmatcount/',
+                                    data: JSON.stringify(DelmatModel),
+                                    type: 'POST',
+                                    async: false,
+                                    cache: false,
+                                    contentType: 'application/json; charset=utf-8',
+
+                                    success: function (result) {
+                                        for (var sl = 0; sl < result; sl++) {
+                                            check = "#Slabrangechk" + sl + GID + ":checked";
+                                            slabrange.push($(check).val() ? true : false);
+                                        }
+                                    }
+                                });
+                                var DelmatModel = {
+                                    "lsselectedSlabrange": slabrange,
+                                    "GID": GID
+                                };
+
+                                $.ajax({
+                                    url: '@Url.Action("UpdateDelmatFlow", "IEM_DELMAT")',
+                                    data: JSON.stringify(DelmatModel),
+                                    type: 'POST',
+                                    contentType: 'application/json; charset=utf-8',
+                                    success: function (result) {
+                                        //console.log(result);
+                                        debugger;
+                                        //console.log(v_delmatgid);
+                                        //isSuccess = result;
+
+                                        if(maxgrid==i)
+                                        {
+                                            v_delmatgid = result.delmat_gid;
+                                            $.ajax({
+                                                url: '@Url.Action("UpdateDelmatAuditTrial", "IEM_DELMAT")?delmat_gid=' + v_delmatgid,
+                                                data: {},
+                                                type: 'POST',
+                                                contentType: 'application/json; charset=utf-8',
+                                                success: function (result) {
+                                                    isSuccess = result;
+                                                    hideProgress();
+                                                    jAlert('Delmat Maker Successfully Submitted!!', "Information", function (r) {
+                                                        if (r == true) {
+                                                            window.location = '@Url.Action("Main", "IEM_DELMAT")';
+                                                        }
+                                                    });
+                                                },
+                                                error: function (result) {
+                                                    isSuccess = result;
+                                                    hideProgress();
+                                                }
+                                            });
+                                        }
+                                    },
+                                    error: function (result) {
+                                        isSuccess = result;
+                                        hideProgress();
+                                    }
+                                });
+                            }
+
+                        });
+                        //debugger;
+                        //console.log(v_delmatgid);
+                        //if (v_delmatgid != "") {
+                            
+                        //}
+                    }
+                    else {
+                        jAlert(validationmsg, "Error");
+                        hideProgress();
+                        //return false;
+                    }
+                    debugger;
+                },
+                error: function (result) { 
+                    jAlert('Delmat Validation error!!', "Error");
+                    hideProgress();
+                }
+
+            });
+             
+        });
+        
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        jQuery("#uwebgrid tbody tr").each(function () {
+            var id = $(this).find('td:first').text();
+            if (id == "No Record") {
+                $(this).closest('tr').remove();
+            }
+        });
+
+        var Emp = "Employee";
+
+        var id = "";
+        var EmpPaymentmodel = { "Invoicegid": id }
+        $.post('../Getdelmatdata', EmpPaymentmodel,
+      function (data) {
+          var num = 0;
+          var Snumber = 0;
+          var addappr = "addappr";
+          var slabrangeinfo = "Slabrangechk"
+          var newrow;
+          var nmm = 0;
+        
+          if (data == 0 || data == "") { return false; } else {
+              if (data.length > 0) {
+                setTimeout(function () {
+                  for (var gh = 0; gh < data.length ; gh++) {
+                      ++Snumber;
+                      
+                      newrow = "<tr id='trDelmat" + data[gh].Flowvalue + "'><td style='display:none;'>" + data[gh].Flowvalue + "</td>";
+
+                      newrow += " <td style='text-align:center;'>" + Snumber + "</td>";
+
+                      newrow += " <td><label id='" + data[gh].Flowvalue + "'>" + data[gh].lsTitlename + "</label></td>";
+
+                      newrow += " <td><label id='" + data[gh].Flowvalue + "'>" + data[gh].lsdelmatflowtitlevalue + "</label></td>";
+                      if (data[gh].lsdelmatflowaddapprovalvalue == "Y") {
+                          newrow += " <td  style='text-align:center;'><input type='checkbox' id='" + addappr + data[gh].Flowvalue + "' checked disabled='disabled'/></td>";
+                      }
+                      else {
+                          newrow += " <td  style='text-align:center;'><input type='checkbox' id='" + addappr + data[gh].Flowvalue + "'  disabled='disabled'/></td>";
+                      }
+
+                      newrow += " <td  style='text-align:center;'><label>" + data[gh].InFlowCount + "</label></td>";                      
+                      var DelmatModel = { "delmatsetflowgid": data[gh].Flowvalue, "s_no": data.length };
+                      
+                      $.ajax({
+                          //url: '../GetdelmatMatrix/',
+                          url: '@Url.Action("GetdelmatMatrix", "IEM_DELMAT")',
+                          data: JSON.stringify(DelmatModel),
+                          type: 'POST',
+                          async: false,
+                          cache:false,
+                          contentType: 'application/json; charset=utf-8',
+
+                          success: function (result) {      
+                           
+                              if (result.length > 0) {
+                                  num = result.length;
+                                 
+                                  for (var mat = 0; mat < result.length; mat++) {
+                                      nmm++;
+                                      //DataView["Count"] = result.length;  
+                                     
+                                      if (result[mat].lsMatrixAccess == "Y") {
+
+                                          newrow += " <td  style='text-align:center;'><input type='checkbox' id='" + slabrangeinfo + mat + data[gh].Flowvalue + "'  checked @ViewBag.viewfor /></td>";
+
+                                      }
+                                      else {
+
+                                          newrow += " <td  style='text-align:center;'><input type='checkbox' id='" + slabrangeinfo + mat + data[gh].Flowvalue + "' @ViewBag.viewfor /></td>";
+
+                                      }
+
+                                  }
+                              }
+                              else {
+                                      $.ajax({
+                                          //url: '../Getdelmatcount/',
+                                          url: '@Url.Action("Getdelmatcount", "IEM_DELMAT")',
+                                          data: JSON.stringify(DelmatModel),
+                                          type: 'POST',
+                                          async: false,
+                                          cache: false,
+                                          contentType: 'application/json; charset=utf-8',
+
+                                          success: function (result) {
+                                              if (result.length > 0) {
+                                                  for (var mat = 0; mat < result; mat++) {
+                                                      nmm++;
+                                                      newrow += " <td  style='text-align:center;'><input type='checkbox' id='" + slabrangeinfo + mat + data[gh].Flowvalue + "' @ViewBag.viewfor /></td>";
+                                                  }
+                                              }
+                                          }
+                                      });                                
+
+                              }
+                          },
+                          error: function (result) {
+                              isSuccess = result;
+                          }
+
+                      });
+                      if (nmm != 0) {
+                          var vieworedit = $("#Vieworedit").val();
+
+                          if (vieworedit != "disabled" && $("#hdrole").val()=="M") {
+                              console.log( $("#hdrole").val());
+                                    newrow += "<td  style='text-align:center;'> </a> </a> <a style='text-decoration:none;' title='Edit'  onclick='Edit(" + data[gh].Flowvalue + ")'> <span class='glyphicon glyphicon-edit'> </span> </a><a title='Delete' style='text-decoration:none;'  onclick='Delete(" + data[gh].Flowvalue + ")'> <span class='glyphicon glyphicon-trash'> </span> </a> </td></tr>";
+
+                          } else {
+                              newrow += "<td  style='text-align:center;'> </td></tr>";
+                          }
+                          $('#uwebgrid tbody:last').append(newrow);
+                      }
+                      else {
+                          $('#uwebgrid tbody:last').empty();
+                      }
+                  }                            
+                   
+                  }, 50);
+              }
+          }
+      }, 'json');
+     
+    });
+ 
+</script>
+
+<script type="text/javascript">
+    function Edit(id) {
+        objDialogfordelmatflow.load('../EditDelmatflowById?id=' + id +'&viewfor=edit&' + new Date().getTime());
+        objDialogfordelmatflow.dialog({ title: 'Edit Delmat Flow' });
+        objDialogfordelmatflow.dialog("open");
+    }
+    function Delete(id) {
+
+        jConfirm("Do you want to delete this Matrix?", "Delete Category", function (callback) {
+            if (callback == true) {
+                var controlToBeRemoved = "#trDelmat" + id;
+                var DelmatModel = { "delmatmatrixgid": id, "delmatsetflowgid": id };
+                $.ajax({
+                    //url: '../DeleteDelmatsetflow/',
+                    url: '@Url.Action("DeleteDelmatsetflow", "IEM_DELMAT")',
+                    data: JSON.stringify(DelmatModel),
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (result) {
+                        isSuccess = result;
+
+                        if (result == "Record deleted successfully !") {
+                            jAlert(result, "MessageBox");
+                            $(controlToBeRemoved).remove();
+
+                            var id = "";
+                            var EmpPaymentmodel = { "Invoicegid": id }
+                            $.post('../Getdelmatdata', EmpPaymentmodel,
+                          function (data) {
+
+                              var Snumber = 0;
+                              var addappr = "addappr";
+                              var slabrangeinfo = "Slabrangechk"
+                              var newrow;
+                              if (data == 0 || data == "") { location = location.href; } else {
+                                  if (data.length > 0) {
+                                      var id = data[0].delmat_gid;
+                                      window.location = '../EditDelmat/' + id;
+                                  }
+                              }
+                          }, 'json');
+                        }
+                    },
+                    error: function (result) {
+                        isSuccess = result;
+                    }
+
+                })
+            } else {
+                return false;
+            }
+        });
+
+    }
+    function GotoIndex() {
+        //objDialogfordelmatflow.remove();
+        //window.parent.jQuery('#ForPartialView').dialog('close');
+        window.parent.jQuery('#ForPartialViewforexceptionID').dialog('close');
+    }
+
+
+</script>
+
+<script>
+    function ValidateDelmat() {
+
+        var delmatname = $("#_Delmatname").val();
+
+        var docgid = $("#docutype_gid").val();
+        var slabgid = $("#depat_gid").val();
+        var branchvalue = $('input[name=rbbranch]:checked').val();
+        var branchtypevalue = $('input[name=rbbranchtype]:checked').val();
+        var claim = $('input[name=rbclaim]:checked').val();
+        var dsa = $('input[name=rbdsa]:checked').val();
+        var ppit = $('input[name=rbreq]:checked').val();
+        var it = $('input[name=rbit]:checked').val();
+        var exp = $('input[name=rbexp]:checked').val();
+        var bud = $('input[name=rbbud]:checked').val();
+        var jump = $('input[name=rbjump]:checked').val();
+        var active = $('input[name=rbactive]:checked').val();
+
+        //add delmat change
+        var parpr = $('input[name=rbpar]:checked').val();
+        var wwopwrpr = $('input[name=rbreq1]:checked').val();
+
+        var ecftype = $('input[name=rbE]:checked').val();
+
+
+        if (active == null) {
+
+            active = "N";
+
+        }
+
+        if (branchvalue == null) {
+
+            branchvalue = "N";
+
+        }
+        else if (branchvalue == "O") {
+            branchvalue = "N";
+        }
+        if (branchtypevalue == null) {
+            branchtypevalue = "N";
+        }
+        if (claim == null) {
+            claim = "N";
+        }
+        if (dsa == null) {
+            dsa = "N";
+        }
+        if (ppit == null) {
+            ppit = "N";
+        }
+        if (it == null) {
+            it = "N";
+        }
+        if (exp == null) {
+            exp = "N";
+        }
+        if (bud == null) {
+            bud = "N";
+        }
+        if (jump == null) {
+            jump = "N";
+        }
+        //add delmat change
+        if (parpr == null) {
+            parpr = "N"
+        }
+        if (wwopwrpr == null) {
+            wwopwrpr = "N"
+        }
+
+        if (ecftype == null) {
+            ecftype = "N"
+        }
+        if (docgid != 1) {
+            ecftype = "N"
+        }
+        if (docgid != 2) {
+            parpr = "N"
+        }
+        if (docgid != 7) {
+            wwopwrpr = "N"
+        }
+        //end
+        var departListVal = null;
+        departListVal = [];
+        $('input:checkbox:checked').each(function () {
+            if ($(this).attr('value') != 'on') {
+                departListVal.push($(this).attr('value'));
+            }
+        });
+
+
+        if (delmatname == "") {
+            alert("Please Enter Delmat Name.");
+            return false;
+        }
+        if (docgid == 0) {
+            alert("Please select Delmat Type.");
+            return false;
+        }
+        if (slabgid == 0) {
+            alert("Please select Slab Name.");
+            return false;
+        }
+        var DelmatModel = {
+            "delmat_name": delmatname, "delmat_slab_gid": slabgid, "delmat_type_ID": docgid, "delmat_branch_flag": branchvalue,
+
+            "delmat_branchtype_flag": branchtypevalue, "delmat_claim_flag": claim, "delmat_dsa_flag": dsa, "delmat_pipit_flag": ppit,
+
+            "delmat_it_flag": it, "delmat_exp_flag": exp, "delmat_budget_flag": bud, "delmat_jump_flag": jump,
+
+            "delmat_active": active, "lstSelecteddepartmentGid": departListVal,
+
+            "delmat_ecftype": ecftype, "delmat_parpr_flag": parpr, "delmat_wwoparpr": wwopwrpr //add delmat change
+        };
+
+
+        $.ajax({
+            url: '../Validatedelmat/',
+            data: JSON.stringify(DelmatModel),
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            success: function (result) {
+                //isSuccess = result;
+                //console.log("res");
+                //console.log(result);
+                //return result;
+                $("#hdValidateDelmat").val(result);
+                debugger;
+            },
+            error: function (result) {
+                //isSuccess = result;
+                //return "Delmat Validation error!!";
+                $("#hdValidateDelmat").val("Delmat Validation error!!");
+
+            }
+
+        });
+    }
+</script>

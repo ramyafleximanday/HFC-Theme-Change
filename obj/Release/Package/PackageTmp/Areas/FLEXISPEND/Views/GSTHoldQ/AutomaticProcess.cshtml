@@ -1,0 +1,160 @@
+﻿
+<div class="well">
+    <table class="myTableStyleTabNew" style="width:100%;"></table>
+    <div style="width:100%; overflow:auto; height:100%; margin-top: 15px;">
+        <span>ECF No : ECF0110208001</span>
+        <table id="gvChecker" class="tableSmall table-bordered table-hover table-responsive" data-bind="visible: GSTHoldqRunArray().length > 0">
+            <thead>
+                <tr>
+                    @*<th style="width:8%; min-width:60px;" class="nosort">
+                        Select
+                        <input type="checkbox" id="chkHSelete">
+                    </th>*@
+
+                    <th style="width:5%; min-width:50px;">
+                        SLNo
+                    </th>
+                    <th style="width:5%; min-width:50px;">
+                        GST Status
+                    </th>
+                    <th style="width:12%; min-width:80px;" class="colDate">
+                        Supplier Name
+                    </th>
+
+
+                    <th style="width:12%; min-width:80px;" class="colDate">
+                        Invoice No
+                    </th>
+
+                    <th style="width:10%; min-width:100px;">
+                        Invoice Date
+                    </th>
+                    <th style="width:15%; min-width:80px;">
+                        Invoice Amount
+                    </th>
+                    <th style="width:12%; min-width:80px;" class="colDate">
+                        Provider Location
+                    </th>
+
+                    <th style="width:12%; min-width:80px;" class="colDate">
+                        Receiver Location
+                    </th>
+
+                    <th style="width:12%; min-width:100px;">
+                        Taxable Amount
+                    </th>
+                    <th style="width:12%; min-width:100px;">
+                        CGST Amount
+                    </th>
+                    <th style="width:12%; min-width:100px;">
+                        SGST Amount
+                    </th>
+                    <th style="width:10%; min-width:100px;">
+                        IGST Amount
+                    </th>
+
+                </tr>
+            </thead>
+            <tbody id="ContentPaymentRun" data-bind="foreach:{ data: GSTHoldqRunArray, afterRender: DatatableCall }, visible: GSTHoldqRunArray().length > 0">
+                <tr>
+                    @*<td style="width:8%; min-width:60px; text-align: center;" class="nosort">
+                        <input type="checkbox" data-bind="attr: { name: 'chk_'+ ecfId, id: 'chk_'+ ecfId }, event:{ change:$root.checkChange }" />
+                    </td>*@
+
+                    <td style="width:5%; min-width:50px;">
+                        <span> 1 </span>
+                    </td>
+
+                    <td style="width:5%; min-width:50px;">
+                        <span> Matched </span>
+                    </td>
+
+                    <td style="width:12%; min-width:80px;">
+                        Code Tech
+                    </td>
+                    <td style="width:12%; min-width:80px;">
+                        217488619
+                    </td>
+                    <td style="width:10%; min-width:100px;">
+                        11/10/2020
+                    </td>
+                    <td style="width:15%; min-width:80px;">
+                        17700.00
+                    </td>
+
+                    <td style="width:15%; min-width:80px;">
+                        Delhi
+                    </td>
+                    <td style="width:15%; min-width:80px;">
+                        Punjab
+                    </td>
+
+                    <td style="width:12%; min-width:100px; text-align:right;">
+                        885.00
+                    </td>
+                    <td style="width:12%; min-width:100px; text-align:right;">
+                        442.50
+                    </td>
+                    <td style="width:12%; min-width:100px; text-align:right;">
+                        442.50
+                    </td>
+
+                    <td style="width:12%; min-width:100px; text-align:right;">
+                        0.00
+                    </td>
+                </tr>
+
+                <tr>
+                    @*<td style="width:8%; min-width:60px; text-align: center;" class="nosort">
+                        <input type="checkbox" data-bind="attr: { name: 'chk_'+ ecfId, id: 'chk_'+ ecfId }, event:{ change:$root.checkChange }" />
+                    </td>*@
+
+                    <td style="width:5%; min-width:50px;">
+                        <span> 2 </span>
+                    </td>
+
+                    <td style="width:5%; min-width:50px;">
+                        <span> Pending </span>
+                    </td>
+
+                    <td style="width:12%; min-width:80px;">
+                        SOHI ENGINEERS
+                    </td>
+
+                    <td style="width:12%; min-width:80px;">
+                        HDTI00000054270
+                    </td>
+                    <td style="width:10%; min-width:100px;">
+                        10/10/2020
+                    </td>
+                    <td style="width:15%; min-width:80px;">
+                        42,000.00
+                    </td>
+                    <td style="width:15%; min-width:80px;">
+                        Gujarat
+                    </td>
+                    <td style="width:15%; min-width:80px;">
+                        Delhi
+                    </td>
+                    <td style="width:12%; min-width:100px; text-align:right;">
+                        2,100.00
+                    </td>
+                    <td style="width:12%; min-width:100px; text-align:right;">
+                        1,050.00
+                    </td>
+                    <td style="width:12%; min-width:100px; text-align:right;">
+                        1,050.00
+                    </td>
+
+                    <td style="width:12%; min-width:100px; text-align:right;">
+                        0.00
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+
+</div>
+

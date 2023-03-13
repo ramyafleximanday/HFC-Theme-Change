@@ -1,0 +1,274 @@
+﻿@model  IEM.Areas.FLEXISPEND.Models.EmployeeMaster_Model
+@using IEM.Areas.FLEXISPEND.Models
+  
+
+<link href="@Url.Content("~/Content/themes/base/jquery-ui.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/Rmax_Site.css")" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/Scripts/jquery-ui-1.8.24.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Areas/FLEXISPEND/FS_UserScript/jsCommon.js")" type="text/javascript"></script>
+<style>
+    table, th, td {
+        white-space: nowrap;
+    }
+</style>
+ 
+<div style="height:89%" class="well">
+    <table class="myTableStyleTabNew" align="center" style="margin:0px;">
+        <tr>
+            <td style="display :none ;">
+                <input name="Employeegid" id="Employee_gid" class="fstextbox" type="text" data-val="true" value="@Model.Employee_gid" />
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <span>Code </span>
+                <br />
+
+                <input type="text @ViewBag.Employee_Code" 
+                       name="txtEmpCodeEdit"
+                       id="txtEmpCodeEdit"
+                       value="@Model.Employee_Code"
+                       class="fstextbox"
+                       disabled="disabled" 
+                       />
+            </td>
+            <td>
+                <span >Name </span>
+                <br />
+                <input type="text @ViewBag.Employee_Name" 
+                       name="txtEmpNameEdit"
+                       id="txtEmpNameEdit"
+                       value="@Model.Employee_Name"
+                       class="fstextbox"
+                       disabled="disabled" 
+                       />
+            </td>
+            <td >
+                <span >DOB</span>
+                <br />
+                <input type="text @ViewBag.Employee_dob" 
+                       id="txtEmpDobEdit"
+                       name="txtEmpDobEdit"
+                       value="@Model.Employee_dob"
+                       class="fstextbox"
+                       disabled="disabled" />
+            </td>
+            @*<td>
+                <span style="margin-left: 40%;">DOJ </span>
+                <br />
+                <input type="text @ViewBag.Employee_doj" style="    margin-left: 33%;
+    width: 81%;"
+                       name="txtEmpDojEdit"
+                       id="txtEmpDojEdit"
+                       value="@Model.Employee_doj"
+                       disabled="disabled"
+                       class="fstextbox" />
+            </td>*@
+            <td>
+                <span >Office Email</span>
+                <br />
+                <input type="text @ViewBag.Employee_office_email"  
+                       name="txtEmpOfficialmailEdit"
+                       id="txtEmpOfficialmailEdit"
+                       value="@Model.Employee_office_email"
+                       disabled="disabled"
+                       class="fstextbox" />
+            </td>
+
+           
+        </tr>
+        <tr>
+            <td>
+                <span >IEM Designation </span>
+                <br />
+                <input type="text @ViewBag.Employee_designation"  
+                       name="txtEmpDesignationEdit"
+                       id="txtEmpDesignationEdit"
+                       value="@Model.Employee_designation"
+                       disabled="disabled"
+                       class="fstextbox" />
+            </td>
+            <td>
+                <span >HRIS Designation</span>
+                <br />
+                <input type="text @ViewBag.Employee_hris_designation"    
+                       name="txtEmphrisDesignationEdit"
+                       id="txtEmphrisDesignationEdit"
+                       value="@Model.Employee_hris_designation"
+                       disabled="disabled"
+                       class="fstextbox fsDatePicker" />
+            </td>
+            <td>
+                <span >Supervisor</span>
+                <br />
+                <input type="text @ViewBag.Employee_supervisor"   
+                       name="txtEMPSupEdit"
+                       id="txtEmpSupEdit"
+                       value="@Model.Employee_supervisor"
+                       disabled="disabled"
+                       class="fstextbox" />
+            </td>
+            <td>
+                <span>Mobile No</span>
+                <br />
+                <input type="text @ViewBag.Employee_mobile_no"  
+                       name="txtEmpMobileNoEdit"
+                       id="txtEmpMobNoEdit"
+                       value="@Model.Employee_mobile_no"
+                       class="fstextbox"
+                       disabled="disabled" />
+            </td>
+        </tr>
+        <tr>
+           
+           
+
+            <td>
+                <span >Account No</span>
+                <br />
+                <input type="text @ViewBag.Employee_account_no"  
+                       name="txtEmpAccnoEdit"
+                       id="txtEmpAccnoEdit"
+                       value="@Model.Employee_account_no"
+                       class="fstextbox"
+                       disabled="disabled" />
+            </td>
+            <td>
+                <span >IFSC Code</span>
+                <br />
+                <input type="text @ViewBag.Employee_ifsc_code"  
+                       name="txtEmpIFSCEdit"
+                       id="txtEmpIFSCEdit"
+                       value="@Model.Employee_ifsc_code"
+                       disabled="disabled"
+                       class="fstextbox" />
+            </td>
+            <td>
+                <span >Status</span>
+                <br />
+                <input type="text @ViewBag.Employee_status"  
+                       name="txtEmpStatusEdit"
+                       id="txtEmpStatusEdit"
+                       value="@Model.Employee_status"
+                       class="fstextbox"
+                       disabled="disabled" />
+            </td>
+
+            <td>
+                <span >Grade </span>
+                <br />
+                <input type="text @ViewBag.Employee_grade_code"  
+                       name="txtEmpgradeCodeEdit"
+                       id="txtEmpgradeCodeEdit"
+                       value="@Model.Employee_grade_code"
+                       maxlength="10"
+                       class="fstextbox" />
+            </td>
+            <td id="divStudentlist">
+                <span >IsWorkLineUpdatedreq </span>
+                <br/>
+                <input type="checkbox" id="checkBoxId" class="chkclass" name="checkboxselct" value="@Model.Employee_iswrlupdreq"   />
+
+            </td>
+        </tr>
+        <tr>
+            <td style="width:0%; padding:0px ; text-align :center;">
+                <button type="button" id="_save" class="btn btn-primary" value="Save" onclick="SAVE()" style="margin-top:15px;margin-left: 92%;  color:white;">
+                    <span class="glyphicon glyphicon-floppy-disk" style="color:white;" font-size:12px;></span> Save
+                </button>
+            </td>
+        </tr>
+    </table>
+    </div>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            debugger
+            var chkbox = $("#checkBoxId").val();
+            
+            if (chkbox == 'Y') {
+                $('#checkBoxId').attr('checked', true);
+            }
+            else {
+                $('#checkBoxId').attr('checked', false);
+            }
+       
+       
+
+            var status = $("#txtEmpStatusEdit").val();
+            if(status !='Active')
+        {
+                $("#_save").hide();
+        } 
+
+        
+    });
+
+
+
+    function SAVE() {
+        debugger;
+        var employeegid = $("#Employee_gid").val();
+        var employeecode = $("#txtEmpCodeEdit").val();
+        var employeegrade = $("#txtEmpgradeCodeEdit").val();
+        var iswrklupdreq = $("#checkBoxId").is(":checked");
+        var gradecode = $("#txtEmpgradeCodeEdit").val();
+        if (iswrklupdreq == true) {
+            iswrklupdreq = 'Y';
+        }
+        else {
+            iswrklupdreq = 'N';
+        }
+
+        if (gradecode == " " || gradecode == null || gradecode == "undefined") {
+            jAlert("Please Enter Grade Name.", "Information")
+            
+            return false;
+        }
+
+
+
+        var DocNameModel = { "employeegid": employeegid, "employeegrade": employeegrade, "iswrklupdreq": iswrklupdreq };
+
+
+
+        $.ajax({
+            url: '../EmployeeMaster/Employee_Grade_Edit/',
+            data: JSON.stringify(DocNameModel),
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            success: function (Emp_Msg) {
+                debugger;
+                if (Emp_Msg == "Success") {
+                    jAlert("Employee Grade updated Successfully", "Message");
+                  //  return false;
+                    
+                }
+                else {
+
+                    jAlert("Employee Grade Not updated", "Message");
+                    return false;
+                }
+                @*$("#wgridEmployeeDetails").load('@Url.Action("Index", "EmployeeMaster")');*@
+                refresh();
+            },
+          
+       
+        })
+
+        //window.location = '../EmployeeMaster/Index/';
+        
+    }
+
+
+    function GotoIndex() {
+        $("#ForEmployeeDetails").load("../EmployeeMaster/GetEmployeeList?" + new Date().getTime());
+
+    }
+
+    function refresh() {
+        debugger;
+        location = '../EmployeeMaster/Index';
+    }
+    </script>

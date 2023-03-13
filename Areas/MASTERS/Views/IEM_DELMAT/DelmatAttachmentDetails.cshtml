@@ -1,0 +1,224 @@
+﻿ @using IEM.Common
+@using IEM.Areas.MASTERS.Models
+ 
+ @{
+     var dis = ViewBag.viewfor;
+} 
+ 
+@{
+    IEM_MST_DELMAT dm = new IEM_MST_DELMAT();
+    List<AttachFile> lst = new List<AttachFile>();
+    AttachFile lst1 = new AttachFile();
+    string IsChecker = "";
+    if (lst == null || lst.Count == 0 || dis != "disabled")
+    {
+        lst = dm.GetDelmatAttachment((Session["delmatgid"]).ToString()).ToList();
+    }
+    else if(dis =="disabled" || dis==" ")
+   {
+       lst = dm.GetDelmatAttachment((Session["Update_delmat_gid"]).ToString()).ToList();
+   }
+    
+
+
+}
+<style type="text/css">
+    .hide {
+        display: none;
+    }
+</style>
+
+@*<div class="pageHeadingLayout">
+    <span class="pageHeading">Attachment </span>
+</div>*@
+ 
+<div id="wgridAttachDetails" class="well">
+    @{
+        CmnFunctions objCmnFunctions = new CmnFunctions();
+        var gridAttachment = new WebGrid(lst, canSort: true, canPage: true, rowsPerPage: 10, ajaxUpdateContainerId: "ForEmployeeDetails", ajaxUpdateCallback: "DummyFunction9()");
+        
+        int rowVal = 0;
+    }
+    <div class="table-responsive" style="margin-top:10px; width:100%">
+
+
+        @*@if (dis != "disabled")
+        {*@
+            <div class="table-responsive" style="padding-right: 10px;">
+@if (ViewBag.IsDelmatRole == "M")
+{
+                <div align="right" style="padding-bottom:5px;">
+                    <button type="button" id="btnempNewExpensddet" value="New Attachment" onclick="NewAttachment1()" class="btn btn-primary">
+                        <span style="color:white;font-size: 12px;" class="glyphicon glyphicon-plus"></span> New Attachment
+                    </button>
+
+
+                  
+                </div>
+}
+            </div>
+            <br />
+<div id="ForDelmatAttachment"></div>
+
+        @*}*@
+     
+        @if (dis != "disabled")
+        {
+            @gridAttachment.GetHtml(
+        htmlAttributes: new { id = "wgridAttachDetails" },
+                    tableStyle: "tableSmall table-bordered table-hover",
+        mode: WebGridPagerModes.All,
+        columns:
+                     gridAttachment.Columns(
+                     gridAttachment.Column("S.No", style: "slno", format: item => rowVal = rowVal + 1, canSort: false),
+                     //gridAttachment.Column("AttachmentFilenameId", objCmnFunctions.Sorter("AttachmentFilenameId", "Attachment", gridAttachment), canSort: false, style: "dattach"), 
+                    gridAttachment.Column("AttachmentFilename", objCmnFunctions.Sorter("AttachmentFilename", "Attachment", gridAttachment), canSort: false, style: "dattach"),
+                // gridAttachment.Column("AttachmentTypeName", objCmnFunctions.Sorter("AttachmentTypeName", "Attachment Type", gridAttachment), canSort: false, style: "cattach"),
+                                      gridAttachment.Column("AttachmentDescription", objCmnFunctions.Sorter("AttachmentDescription", "Description", gridAttachment), canSort: false, style: "dattach"),
+                                      gridAttachment.Column("AttachmentDate", objCmnFunctions.Sorter("AttachmentDate", "Attached Date", gridAttachment), canSort: false, style: "aattach"),
+                                      gridAttachment.Column("AttachmentBy", objCmnFunctions.Sorter("AttachmentBy", "Attached By", gridAttachment), canSort: false, style: "aattach"),
+                             gridAttachment.Column(header: "Action", canSort: false, style: "action",
+
+                     format: @<text>
+                                @Html.Raw("<a data-modal='' style='text-decoration:none;' href='/IEM_DELMAT/Download/" + item.AttachmentFilenameId + "' id='" + item.AttachmentFilenameId + "' title='Detail'><span id='" + item.AttachmentFilenameId + "' class='glyphicon glyphicon-eye-open'></span> </a>")
+                                @*@if (item.attachment_by == objCmnFunctions.GetLoginUserGid())
+                                    {*@
+                                @Html.Raw("<a title='Delete' style='text-decoration:none;' onclick='DeleteAttachment(" + item.AttachmentFilenameId + ")' ><span id='id' class='glyphicon glyphicon-trash'></span></a>")
+                                @*}*@
+                    </text>)))
+        }
+        else
+        {
+
+            @gridAttachment.GetHtml(
+        htmlAttributes: new { id = "wgridEmployeeDetails" },
+                    tableStyle: "tableSmall table-bordered table-hover",
+                //  mode: WebGridPagerModes.All,
+        columns:
+                     gridAttachment.Columns(
+                     gridAttachment.Column("S.No", style: "slno", format: item => rowVal = rowVal + 1, canSort: false),
+                                                 gridAttachment.Column("AttachmentFilenameId", objCmnFunctions.Sorter("AttachmentFilenameId", "Attachment", gridAttachment), canSort: false, style: "dattach"),
+
+          gridAttachment.Column("AttachmentFilename", objCmnFunctions.Sorter("AttachmentFilename", "Attachment", gridAttachment), canSort: false, style: "dattach"),
+                // gridAttachment.Column("AttachmentTypeName", objCmnFunctions.Sorter("AttachmentTypeName", "Attachment Type", gridAttachment), canSort: false, style: "cattach"),
+                                      gridAttachment.Column("AttachmentDescription", objCmnFunctions.Sorter("AttachmentDescription", "Description", gridAttachment), canSort: false, style: "dattach"),
+                                      gridAttachment.Column("AttachmentDate", objCmnFunctions.Sorter("AttachmentDate", "Attached Date", gridAttachment), canSort: false, style: "aattach"),
+                                      gridAttachment.Column("AttachmentBy", objCmnFunctions.Sorter("AttachmentBy", "Attached By", gridAttachment), canSort: false, style: "aattach")
+                   ))
+        }
+
+    </div>
+
+    @*@if (@ViewBag.NoRecordsFound != null && @ViewBag.NoRecordsFound != "")
+    {
+        <div class="gridMessage">
+            @ViewBag.NoRecordsFound
+        </div>
+    }
+    else
+    {
+         <div>
+            <table style="width:100%">
+                <tr>
+                    <td align="left"></td>
+                    <td align="right">
+                        Total No Of Records: <b> <label id="hdtolattachment">@gridAttachment.TotalRowCount</label></b>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        @*<div class="gridCount" style="text-align:left;">Page <b>@(gridAttachment.PageIndex + 1)</b> of <b>@gridAttachment.PageCount</b> - Total No Of Records: <b><label id="hdtolattachment">@gridAttachment.TotalRowCount </label></b></div>*@
+    @*}*@
+
+    @if (@ViewBag.NoRecordsFound == "NoRecords")
+    {
+        <div class="borderStyle">
+            <center>
+                <b> @ViewBag.NoRecordsFoundAttachment </b>
+            </center>
+        </div>
+    }
+    else
+    {
+        <div>
+            <table style="width:100%">
+                <tr>
+                    <td align="left"></td>
+                    <td align="right">
+                        Total No Of Records: <b> <label id="hdtolattachmentdel">@gridAttachment.TotalRowCount</label></b>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+</div> 
+
+<script>
+    $(document).ready(function () {
+        $("#wgridAttachDetails tr #id").click(function () {
+            $('#wgridAttachDetails').find('tr').css('background', 'none');
+            $(this).closest('tr').css('background', '#ccc');
+        })
+    });
+</script>
+<script type="text/javascript">
+    var objDialogAttach;
+    $(document).ready(function () {
+        debugger;
+        objDialogAttach = $("[id$='ForDelmatAttachment']");
+        objDialogAttach.dialog({
+            autoOpen: false,
+            cache: false,
+            modal: true,
+            //show: 'fade-in',
+            //close: 'fade-out',
+            width: 700,
+            height: 280
+
+        });
+
+    });
+
+    function NewAttachment1() {
+        debugger;
+        var url = '@Url.Action("DelmatAttachmentCreate", "IEM_DELMAT")';
+        objDialogAttach.load(url);
+        objDialogAttach.dialog({ title: 'New Attachment' });
+        objDialogAttach.dialog("open");
+    }
+    function GotoIndexAttachmentV() {
+        debugger;
+        window.parent.jQuery('#ForDelmatAttachment').dialog('close');
+    }
+    function DeleteAttachment(id) {
+        debugger;
+        jConfirm("Confirm deletion of ECF Attachment", "Message", function (u) {
+            if (u == true) {
+                debugger;
+                var EmpPaymentmodel = { "AttachmentFilenameId": id }
+                var urldel = '@Url.Action("AttachmentDelete", "IEM_DELMAT")';
+
+                $.post(urldel, EmpPaymentmodel,
+              function (data) {
+                  debugger;
+                  if (data == 0) {
+                      debugger;
+
+                      jAlert("Error.", "Error");
+                      return false; location = location.href;
+                  } else {
+                      debugger;
+                      jAlert("Deleted Successfully.", "Message");
+
+                      // $("#wgridEmployeeDetails").load('@Url.Action("DelmatAttachmentDetails", "IEM_DELMAT")');
+
+                      var url = '@Url.Action("DelmatAttachmentDetails", "IEM_DELMAT")?';
+                      $("#wgridAttachDetails").load(url);
+                      //$("#wgAttachment").load("../EmployeeClaimNew/_EmpAttachmentDetails?" + new Date().getTime());
+                      window.parent.jQuery('#ForDelmatAttachment').dialog('close');
+                  }
+              }, 'json');
+            }
+        });
+    }
+</script>

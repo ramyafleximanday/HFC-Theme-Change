@@ -1,0 +1,256 @@
+﻿@using IEM.Common
+@using IEM.Areas.FLEXISPEND.Models
+@model  IEM.Areas.FLEXISPEND.Models.EmployeeMaster_Model
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="@Url.Content("~/Content/Rmax_Site.css")" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/Scripts/jquery-ui-1.8.24.min.js")" type="text/javascript"></script>
+@{
+    EmployeeMaster_Datamodel dm = new EmployeeMaster_Datamodel();
+    List<EmployeeMaster_Model> lst = new List<EmployeeMaster_Model>();
+    //string IsChecker = "";
+    lst = (List<EmployeeMaster_Model>)TempData["SearchItems"];
+    if (lst == null || lst.Count == 0)
+    {
+        lst = dm.GetEmployeeList("top10");
+        
+        //lst = dm.GetEmployeeList("full");
+    }
+    else
+    {
+        lst = dm.GetEmployeeList("full");
+    }
+}
+<style type="text/css">
+    .hide {
+        display: none;
+    }
+</style>
+
+<div class="pageHeadingLayout">
+    <span class="pageHeading">Employee Master </span>
+</div>
+<button type="button" formaction="" value="Export Excel" onclick="DownloadExcel()" class="btn btn-primary" style="margin-top:20px;">
+    <span style="color:white;font-size:12px; " class="glyphicon glyphicon-export"></span> Export Excel
+</button>
+<div id="ForEmployeeDetails" class="well">
+    @{
+        CmnFunctions objCmnFunctions = new CmnFunctions();
+        var grid = new WebGrid(lst, canSort: false, canPage: false, rowsPerPage: 10, ajaxUpdateContainerId: "wgridEmployeeDetails", ajaxUpdateCallback: "DummyFunction9()");
+
+
+       // int rowVal = 0;
+    }
+    <div class="table-responsive" style="margin-top:10px; width:100%">
+        @grid.GetHtml(
+        htmlAttributes: new { id = "wgridEmployeeDetails" },
+                    tableStyle: "tableSmall table-bordered table-hover",
+        //mode: WebGridPagerModes.All,
+        columns:
+            grid.Columns(
+            //grid.Column("S.No", style: "slno", format: item => rowVal = rowVal + 1, canSort: false),
+
+          //grid.Column("Employee_gid", objCmnFunctions.Sorter("Employee_gid", "Employee Gid", grid), style: "colmedium"),
+                                                      grid.Column("Employee_Code", objCmnFunctions.Sorter("Employee_Code", "Employee Code", grid), style: "colmedium"),
+                                             grid.Column("Employee_Name", objCmnFunctions.Sorter("Employee_Name", "Name", grid), style: "colmedium"),
+                                             grid.Column("Employee_dob", objCmnFunctions.Sorter("Employee_dob", "DOB", grid), style: "colmedium"),
+                                             //grid.Column("Employee_doj", objCmnFunctions.Sorter("Employee_doj", "Employee Doj", grid), style: "colmedium"),
+                                             grid.Column("Employee_designation", objCmnFunctions.Sorter("Employee_designation", "Designation", grid), style: "colmedium"),
+                                             grid.Column("Employee_hris_designation", objCmnFunctions.Sorter("Employee_hris_designation", "HRIS Designation", grid), style: "colmedium"),
+                                                       grid.Column("Employee_grade_code", objCmnFunctions.Sorter("Employee_grade_code", "Grade Code", grid), style: "colmedium"),
+                                                       //grid.Column("Employee_office_email", objCmnFunctions.Sorter("Employee_office_email", "Employee Office Email", grid), style: "colmedium"),
+                                                       //grid.Column("Employee_mobile_no", objCmnFunctions.Sorter("Employee_mobile_no", "Employee Mobile No", grid), style: "colmedium"),
+                                                       //grid.Column("Employee_account_no", objCmnFunctions.Sorter("Employee_account_no", "Employee Account No", grid), style: "colmedium"),
+                                                       //grid.Column("Employee_ifsc_code", objCmnFunctions.Sorter("Employee_ifsc_code", "Employee Ifsc Code", grid), style: "colmedium"),
+                                                       //grid.Column("Employee_supervisor", objCmnFunctions.Sorter("Employee_supervisor", "Employee Supervisor", grid), style: "colmedium"),
+                                                       grid.Column("Employee_status", objCmnFunctions.Sorter("Employee_status", "Status", grid), style: "colmedium"),
+
+                    grid.Column(header: "Action", style: "action",
+                  format:
+                @<text>
+
+                    @Html.Raw("<a style='text-decoration:none;' title='Edit' onclick='EditType(" + item.Employee_gid + ")'> <span class='glyphicon glyphicon-edit' ></span> </a>")
+
+
+                </text>)))
+    </div>
+
+    @*@if (@ViewBag.NoRecordsFound != null && @ViewBag.NoRecordsFound != "")
+    {
+        <div class="gridMessage">
+            @ViewBag.NoRecordsFound
+        </div>
+    }
+    else
+    {
+        <div class="gridCount" style="text-align:left;">Page <b>@(grid.PageIndex + 1)</b> of <b>@grid.PageCount</b> - Total No Of Records: <b>@grid.TotalRowCount</b></div>
+ 
+    }*@
+
+
+</div>
+<div id="ForEmployeeEdt"></div>
+<script type="text/javascript">
+    var objDialogTax;
+    var objATax;
+    var objDialog;
+
+    $(document).ready(function () {
+        debugger;
+        @*showProgress();
+        setTimeout(function () {
+            hideProgress(); 
+        }, 3000);*@
+        objDialog = $("[id$='ForEmployeeEdt']");
+        objDialog.dialog({
+            autoOpen: false,
+            modal: true,
+            width: 851,
+            height: 310,
+            top: 117,
+            duration: 300
+        });
+        $('#wgridEmployeeDetails tr th:nth-child(6)').addClass("nosort");
+        $('#wgridEmployeeDetails').dataTable({
+
+            "aoColumnDefs": [{
+                "aTargets": ["nosort"],
+                "bSortable": false
+            }]
+        }).css("width", "99%");
+
+
+
+
+
+        //$('#wgridEmployeeDetails tr th:nth-child(3)').addClass("nosort");
+        //$('#wgridEmployeeDetails').dataTable({
+        //    "aoColumnDefs": [{
+        //        "aTargets": ["nosort"],
+        //        "bSortable": false
+        //    }]
+        //}).css("width", "99%");
+    });
+
+    $(document).ready(function () {
+        //$("#wgridEmployeeDetails td:nth-child(1),#wgridEmployeeDetails th:nth-child(1)").hide();
+        //$("#wgridEmployeeDetails td:nth-last-child(1)").show();
+    });
+
+    function DummyFunction9() {
+        //$("#wgridEmployeeDetails td:nth-child(1),#wgridEmployeeDetails th:nth-child(1)").hide();
+        //$("#wgridEmployeeDetails td:nth-last-child(1)").show();
+    }
+    function EditType(id) {
+        debugger;
+        objDialog.load('../EmployeeMaster/EmployeeMasterEdit?id=' + id);
+        objDialog.dialog({ title: 'Edit Employee' });
+        objDialog.dialog("open");
+        return false;
+    }
+    function DownloadExcel() {
+        debugger;
+        var UrlDet = "@Url.Action("DownloadExcel", "EmployeeMaster")"
+        ko.utils.postJson(UrlDet + '?ViewType=27&FileName=Employee Master&' + new Date().getTime());
+    }
+
+
+
+    //var objDialog;
+    //$(document).ready(function () {
+    //    debugger;
+    //    $(function () {
+    //        debugger;
+    //        $("#txtEmpCodeEdit").focus();
+    //    });
+    //    $('#wgridEmployeeDetails tr th:nth-child(6)').addClass("nosort");
+    //    $('#wgridEmployeeDetails').dataTable({
+
+    //        "aoColumnDefs": [{
+    //            "aTargets": ["nosort"],
+    //            "bSortable": false
+    //        }]
+    //    }).css("width", "99%");
+
+
+
+    //    $("#txtEmpCodeEdit").focus();
+    //    $("#txtEmpCodeEdit").keypress(function (event) {
+    //        return isSplAlphaNumeric(event, this);
+    //    });
+    //    $("#txtEmpNameEdit").focus();
+    //    $("#txtEmpNameEdit").keypress(function (event) {
+    //        return isSplAlphaNumeric(event, this);
+    //    });
+
+
+    //    $("#txtEmpDobEdit").focus();
+    //    $("#txtEmpDobEdit").keypress(function (event) {
+    //        return isSplAlphaNumeric(event, this);
+    //    });
+    //    $("#txtEmpDojEdit").focus();
+    //    $("#txtEmpDojEdit").keypress(function (event) {
+    //        return isSplAlphaNumeric(event, this);
+
+    //        $("#txtEmpDesignationEdit").focus();
+    //        $("#txtEmpDesignationEdit").keypress(function (event) {
+    //            return isSplAlphaNumeric(event, this);
+
+    //            $("#txtEmpOfficialmailEdit").focus();
+    //            $("#txtEmpOfficialmailEdit").keypress(function (event) {
+    //                return isSplAlphaNumeric(event, this);
+    //            });
+
+    //            $("#txtEmphrisDesignationEdit").focus();
+    //            $("#txtEmphrisDesignationEdit").keypress(function (event) {
+    //                return isSplAlphaNumeric(event, this);
+    //            });
+    //            $("#txtEmpSupEdit").focus();
+    //            $("#txtEmpSupEdit").keypress(function (event) {
+    //                return isSplAlphaNumeric(event, this);
+    //            });
+    //            $("#txtEmpMobNoEdit").focus();
+    //            $("#txtEmpMobNoEdit").keypress(function (event) {
+    //                return isSplAlphaNumeric(event, this);
+    //            });
+
+
+    //            $("#txtEmpAccnoEdit").focus();
+    //            $("#txtEmpAccnoEdit").keypress(function (event) {
+    //                return isSplAlphaNumeric(event, this);
+    //            });
+
+    //            $("#txtEmpIFSCEdit").focus();
+    //            $("#txtEmpIFSCEdit").keypress(function (event) {
+    //                return isSplAlphaNumeric(event, this);
+    //            });
+    //            $("#txtEmpgradeCodeEdit").focus();
+    //            $("#txtEmpgradeCodeEdit").keypress(function (event) {
+    //                return isSplAlphaNumeric(event, this);
+    //            });
+
+    //            $("#txtEmpStatusEdit").focus();
+    //            $("#txtEmpStatusEdit").keypress(function (event) {
+    //                return isSplAlphaNumeric(event, this);
+    //            });
+
+    //        });
+    //    });
+    //    objDialog = $("[id$='ForEmployeeEdt']");
+    //    objDialog.dialog({
+
+    //        autoOpen: false,
+    //        modal: true,
+    //        width: 350,
+    //        height: 400
+
+    //    });
+
+    //});
+</script>
+
+
+

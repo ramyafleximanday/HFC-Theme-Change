@@ -1,0 +1,193 @@
+﻿@{
+    ViewBag.Title = "CreditNoteProtoChecker";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="pageHeadingLayout">
+    <span class="pageHeading">Credit Note - Checker</span>
+</div>
+<div class="well">
+    <table class="myTableStyleTabNew" style="width:100%;">
+        <tr>
+            <td width="20%" style="padding: 0px 10px">
+                <span>Date From</span>
+                <br />
+                <input type="text"
+                       name="txtDateFrom"
+                       id="txtDateFrom"
+                       onkeypress="return isEvent(event)"
+                       maxlength="10"
+                       class="fstextbox fsdatepicker required" />
+            </td>
+            <td width="20%" style="padding: 0px 10px">
+                <span>Date To</span>
+                <br />
+                <input type="text"
+                       name="txtDateTo"
+                       id="txtDateTo"
+                       onkeypress="return isEvent(event)"
+                       maxlength="10"
+                       class="fstextbox fsdatepicker required" />
+            </td>
+            <td width="20%" style="padding: 0px 10px">
+                <span>Supplier Code/Name</span>
+                <br />
+                <input type="hidden" name="hdfSupplier" id="hdfSupplier" value="0" />
+                <input type="text"
+                       id="txtSupplier"
+                       class="fstextbox" />
+            </td>
+            <td width="20%" style="padding: 0px 10px; vertical-align:bottom;">
+                <button class="btn btn-primary" accesskey="q" id="btnsearch" data-bind="click: $root.search" type="button" style="margin-top:10px;  color:white;">
+                    <span style="color:white;" class="glyphicon glyphicon-search"></span>
+                    Search
+                </button>
+                <button class="btn btn-primary" accesskey="c" data-bind="click: $root.clearFilter" type="button" style="margin-top:10px;  color:white;">
+                    <span style="color:white;" class="glyphicon glyphicon-refresh"></span>
+                    Clear
+                </button>
+            </td>
+            <td width="20%" style="padding: 0px 10px"></td>
+        </tr>
+    </table>
+    <div style="width:100%; overflow:auto; height:100%; margin-top: 15px;">
+        <table id="gvChecker" class="tableSmall table-bordered table-hover table-responsive" data-bind="visible: CreditNoteArray().length > 0">
+            <thead>
+                <tr>
+                    <th style="width:5%; min-width:50px;">
+                        SLNo
+                    </th>
+                    <th style="width:12%; min-width:100px;" class="colDate">
+                        Booking Date
+                    </th>
+                    <th style="width:10%; min-width:100px;" class="colDate">
+                        Credit Note Date
+                    </th>
+                    <th style="width:15%; min-width:150px;">
+                        Credit Note No
+                    </th>
+                    <th style="width:12%; min-width:100px;">
+
+                        Supplier Code
+                    </th>
+                    <th style="width:10%; min-width:120px;">
+                        Supplier Name
+                    </th>
+                    <th style="width:18%; min-width:200px;">
+                        Credit Note Amount
+                    </th>
+                    <th style="width:10%; min-width:100px;">
+                        ECF No
+                    </th>
+                    <th style="width:8%; min-width:100px;">
+                        Invoice No
+                    </th>
+                    <th style="width:8%; min-width:100px;">
+                        Status
+                    </th>
+                    <th style="width:8%; min-width:100px;" class="nosort">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach:{ data: CreditNoteArray, afterRender: DatatableCall }, visible: CreditNoteArray().length > 0">
+                <tr>
+                    <td style="width:5%; min-width:50px;" align="center">
+                        <span> 1 </span>
+                    </td>
+                    <td style="width:12%; min-width:100px;" align="center">
+                        <span data-bind="text: BookingDate">20-10-2020</span>
+                    </td>
+                    <td style="width:10%; min-width:100px;" align="center">
+                        <span data-bind="text: creditnotedate">30-04-2020</span>
+                    </td>
+                    <td style="width:15%; min-width:150px;" align="center">
+                        <span data-bind="text: creditnoteno">217488619</span>
+                    </td>
+                    <td style="width:12%; min-width:100px;" align="right">
+                        <span data-bind="text: suppliercode">SUP012371</span>
+                    </td>
+                    <td style="width:10%; min-width:120px;" align="center">
+                        <span data-bind="text: suppliername">Code Tech</span>
+                    </td>
+                    <td style="width:18%; text-align:center; min-width:200px;">
+                        <span data-bind="text: $root.formatNumber(creditnoteamt)">12.00</span>
+                    </td>
+                    <td style="width:10%; min-width:100px;" align="center">
+                        <span data-bind="text: ECFNo">ECF3004208006</span>
+                    </td>
+                    <td style="width:10%; min-width:100px;">
+                        <span data-bind="text: invno">INV102020</span>
+                    </td>
+                    <td style="width:10%; min-width:100px;" align="center">
+                        <span data-bind="text: Status">Inprocess</span>
+                    </td>
+                    <td style="width:8%; min-width:100px;" align="center">
+                        <span onclick="ShowDialogCheckerPopup()" title="Edit" style="cursor:pointer; color:blue; ">Select</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="display:none" id="ShowDialog">
+
+        <div class="table-responsive" id="InvoiceSearchParams">
+            <br />
+            <div class="well table-responsive" style="width: 99%;border-color: #43B6F5;border-width: 1px;padding: 0px;">
+                <table class="myTableStyleTab" style="width: 99%;">
+                    <tr>
+                        <td colspan="6">
+                            @Html.Partial("CreditNoteCheckerPopup")
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+
+    var objDialog;
+
+    $(document).ready(function () {
+
+      
+        objDialog = $("[id$='ShowDialog']");
+        objDialog.dialog({
+            autoOpen: false,
+            modal: true,
+            width: 600,
+            height: 350,
+            duration: 300
+        });
+
+        $("#txtBookDate").val('20-10-2020');
+        $("#txtESupplier").val('SUP012371-Code Tech');
+        $("#txtCreditNoteNo").val('217488619');
+        $("#txtECFNo").val('ECF3004208006');
+        $("#txtInvoiceNo").val('INV102020');
+        $("#txtCreditNoteDate").val('30-04-2020');
+        $("#txtCreditNoteAmount").val('12.00');
+        $("#txtMakerRemark").val('Business');
+        $("#txtInvoiceAmount").val('5700.00')
+        $("#txthsncode").val("996403-Air Economy Class")
+        $("#txtProviderlocation").val("TAMILNADU-33")
+        $("#txtreceiverlocation").val("DELHI-07")
+        
+
+    });
+
+    function ShowDialogCheckerPopup() {
+        $('#ShowDialog').attr("style", "display:block;");
+        objDialog.dialog({ title: 'Credit Note - Checker', width: '1200', height: '600' });
+        objDialog.dialog("open");
+        return false;
+       
+    }
+
+</script>

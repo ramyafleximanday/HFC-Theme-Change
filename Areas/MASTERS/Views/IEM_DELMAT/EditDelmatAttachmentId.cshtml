@@ -1,0 +1,66 @@
+﻿ @using IEM.Areas.MASTERS.Models;
+@using IEM.Common
+@*@model IEM.Areas.EOW.Models.EOW_EmployeeeExpense*@
+@model IEnumerable<IEM.Areas.MASTERS.Models.iem_mst_delmat>
+@{
+    CmnFunctions objCmnFunctions = new CmnFunctions();
+    IEM_MST_DELMAT objd = new IEM_MST_DELMAT();
+    List<iem_mst_delmat> lstAttachment = new List<iem_mst_delmat>();
+
+   // lstAttachment = (List<AttachFile>)TempData["SearchItems"];
+    if (lstAttachment == null)
+    {
+        ViewBag.IsSearched = "no";
+        lstAttachment = objd.GetdelmatAttachmentById(Session["Update_delmat_gid"].ToString()).ToList();
+    }
+    if (lstAttachment.Count == 0)
+    {
+        ViewBag.NoRecordsAttachment = "NoRecords";
+        ViewBag.NoRecordsFoundAttachment = "No Records Found";
+    }
+
+}
+
+<div id="ForEmployeeDetails1">
+    @{
+        var gridAttachment = new WebGrid(lstAttachment, canSort: true, canPage: false, rowsPerPage: 3, ajaxUpdateContainerId: "wgridEmployeeDetails1", ajaxUpdateCallback: "DummyFunction()");
+        int rowValAttachment = 0;
+    }
+    <div class="table-responsive" style="max-height: 350px;">
+        @gridAttachment.GetHtml(
+                                                htmlAttributes: new { id = "wgridEmployeeDetails1" },
+                              tableStyle: "tableSmall table-bordered",
+                        mode: WebGridPagerModes.All,
+                        columns:
+                gridAttachment.Columns(
+                            gridAttachment.Column("AttachmentFilename", objCmnFunctions.Sorter("AttachmentFilename", "Attachment", gridAttachment), canSort: false, style: "collargeBreak"),
+                                                    gridAttachment.Column("AttachmentTypeName", objCmnFunctions.Sorter("AttachmentTypeName", "Attachment Type", gridAttachment), canSort: false, style: "collargeBreak"),
+                                                    gridAttachment.Column("AttachmentDescription", objCmnFunctions.Sorter("AttachmentDescription", "Description", gridAttachment), canSort: false, style: "collargeBreak"),
+                                                    gridAttachment.Column("AttachmentDate", objCmnFunctions.Sorter("AttachmentDate", "Attached Date", gridAttachment), canSort: false, style: "collargeBreak"),
+                                                    gridAttachment.Column("AttachmentBy", objCmnFunctions.Sorter("AttachmentBy", "Attached By", gridAttachment), canSort: false, style: "collargeBreak"),
+                                           gridAttachment.Column(header: "Action", canSort: false, style: "action",
+                format: @<text>
+
+                </text>)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ))
+
+
+        @if (@ViewBag.NoRecordsAttachment == "NoRecords")
+        {
+            <div class="borderStyle">
+                <center>
+                    <b> @ViewBag.NoRecordsFoundAttachment </b>
+                </center>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#wgAttachmentsupplier tr #id").click(function () {
+            $('#wgAttachmentsupplier').find('tr').css('background', 'none');
+            $(this).closest('tr').css('background', '#ccc');
+        })
+    });
+</script>

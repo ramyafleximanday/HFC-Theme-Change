@@ -1,0 +1,397 @@
+﻿
+<div class="well">
+    <table class="myTableStyleTabNew" style="width:100%;"></table>
+    <div style="width:100%; overflow:auto; height:100%; margin-top: 15px;">
+        <span>ECF No : ECF0110208001</span>
+        <table id="gvChecker" class="tableSmall table-bordered table-hover table-responsive" data-bind="visible: GSTHoldqRunArray().length > 0">
+            <thead>
+                <tr>
+                    <th style="width:8%; min-width:60px;" class="nosort">
+                        Select
+                        <input type="checkbox" id="chkHSelete">
+                    </th>
+
+                    <th style="width:5%; min-width:50px;">
+                        SLNo
+                    </th>
+                    <th style="width:12%; min-width:80px;" class="colDate">
+                        Supplier Name
+                    </th>
+
+
+                    <th style="width:12%; min-width:80px;" class="colDate">
+                        Invoice No
+                    </th>                    
+                    
+                    <th style="width:10%; min-width:100px;">
+                        Invoice Date
+                    </th>
+                    <th style="width:15%; min-width:80px;">
+                        Invoice Amount
+                    </th>
+                    <th style="width:12%; min-width:80px;" class="colDate">
+                        Provider Location
+                    </th>
+
+                    <th style="width:12%; min-width:80px;" class="colDate">
+                        Receiver Location
+                    </th>
+
+                    <th style="width:12%; min-width:100px;">
+                        Taxable Amount
+                    </th>
+                    <th style="width:12%; min-width:100px;">
+                        CGST Amount
+                    </th>
+                    <th style="width:12%; min-width:100px;">
+                        SGST Amount
+                    </th>
+                    <th style="width:10%; min-width:100px;">
+                        IGST Amount
+                    </th>
+
+                </tr>
+            </thead>
+            <tbody id="ContentPaymentRun" data-bind="foreach:{ data: GSTHoldqRunArray, afterRender: DatatableCall }, visible: GSTHoldqRunArray().length > 0">
+                <tr>
+                    <td style="width:8%; min-width:60px; text-align: center;" class="nosort">
+                        <input type="checkbox" data-bind="attr: { name: 'chk_'+ ecfId, id: 'chk_'+ ecfId }, event:{ change:$root.checkChange }" />
+                    </td>
+
+                    <td style="width:5%; min-width:50px;">
+                        <span> 1 </span>
+                    </td>
+
+                    <td style="width:12%; min-width:80px;">
+                        Code Tech
+                    </td>
+                    <td style="width:12%; min-width:80px;">
+                        217488619
+                    </td>
+                    <td style="width:10%; min-width:100px;">
+                        11/10/2020
+                    </td>
+                    <td style="width:15%; min-width:80px;">
+                        17700.00
+                    </td>
+
+                    <td style="width:15%; min-width:80px;">
+                       Delhi
+                    </td>
+                    <td style="width:15%; min-width:80px;">
+                        Punjab
+                    </td>
+
+                    <td style="width:12%; min-width:100px; text-align:right;">
+                        885.00
+                    </td>
+                    <td style="width:12%; min-width:100px; text-align:right;">
+                        442.50
+                    </td>
+                    <td style="width:12%; min-width:100px; text-align:right;">
+                        442.50
+                    </td>
+
+                    <td style="width:12%; min-width:100px; text-align:right;">
+                       0.00
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="width:8%; min-width:60px; text-align: center;" class="nosort">
+                        <input type="checkbox" data-bind="attr: { name: 'chk_'+ ecfId, id: 'chk_'+ ecfId }, event:{ change:$root.checkChange }" />
+                    </td>
+
+                    <td style="width:5%; min-width:50px;">
+                        <span> 2 </span>
+                    </td>
+
+                    <td style="width:12%; min-width:80px;">
+                        FORTUNE BUSINESS SOLUTIONS
+                    </td>
+
+                    <td style="width:12%; min-width:80px;">
+                        FBBL0820B3849
+                    </td>
+                    <td style="width:10%; min-width:100px;">
+                        11/10/2020
+                    </td>
+                    <td style="width:15%; min-width:80px;">
+                       25,000.00
+                    </td>
+                    <td style="width:15%; min-width:80px;">
+                        Tamil Nadu
+                    </td>
+                    <td style="width:15%; min-width:80px;">
+                      Rajasthan
+                    </td>
+                    <td style="width:12%; min-width:100px; text-align:right;">
+                      1250.00
+                    </td>
+                    <td style="width:12%; min-width:100px; text-align:right;">
+                        625.00
+                    </td>
+                    <td style="width:12%; min-width:100px; text-align:right;">
+                        625.00
+                    </td>
+
+                    <td style="width:12%; min-width:100px; text-align:right;">
+                        0.00
+                    </td>
+                </tr>
+
+                @*<tr>
+                        <td style="width:5%; min-width:50px;">
+                            <span>2</span>
+                        </td>
+                        <td style="width:12%; min-width:80px;">
+                            05/11/2020
+                        </td>
+                        <td style="width:10%; min-width:100px;">
+                            ECF0210208002
+                        </td>
+                        <td style="width:15%; min-width:80px;">
+                            ECF
+                        </td>
+                        <td style="width:12%; min-width:100px; text-align:right;">
+                            25,0000.00
+                        </td>
+                        <td style="width:12%; min-width:100px; text-align:right;">
+                            20000.00
+                        </td>
+                        <td style="width:12%; min-width:100px; text-align:right;">
+                            5000.00
+                        </td>
+                        <td style="width:10%; min-width:100px;">
+                            Supplier
+                        </td>
+                        <td style="width:18%; min-width:200px;">
+                            Lavanya G
+                        </td>
+                        <td style="width:10%; min-width:150px;">
+                            173292 - Nimish Jayantkumar Trivedi
+                        </td>
+                        <td style="width:10%; min-width:150px;">
+                            158412 - Pratim Tare
+                        </td>
+                        <td style="width:8%; min-width:150px; text-align: center;" class="nosort">
+                            <span onclick="ShowGSTHoldQ()" title="View" style="color: blue; cursor:pointer;  text-decoration:underline;">Match with Temptable</span>
+                        </td>
+                        <td style="width:8%; min-width:60px; text-align: center;" class="nosort">
+                            <input type="checkbox" data-bind="attr: { name: 'chk_'+ ecfId, id: 'chk_'+ ecfId }, event:{ change:$root.checkChange }" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width:5%; min-width:50px;">
+                            <span>3</span>
+                        </td>
+                        <td style="width:12%; min-width:80px;">
+                            10/11/2020
+                        </td>
+                        <td style="width:10%; min-width:100px;">
+                            ECF0310208003
+                        </td>
+                        <td style="width:15%; min-width:80px;">
+                            ECF
+                        </td>
+                        <td style="width:12%; min-width:100px; text-align:right;">
+                            4500.00
+                        </td>
+                        <td style="width:12%; min-width:100px; text-align:right;">
+                            4000.00
+                        </td>
+                        <td style="width:12%; min-width:100px; text-align:right;">
+                            500.00
+                        </td>
+                        <td style="width:10%; min-width:100px;">
+                            Employee
+                        </td>
+                        <td style="width:18%; min-width:200px;">
+                            ARCHI AGENCY
+                        </td>
+                        <td style="width:10%; min-width:150px;">
+                            158467 - Daxit Mistry
+                        </td>
+                        <td style="width:10%; min-width:150px;">
+                            144252 - Lavanya G
+                        </td>
+                        <td style="width:8%; min-width:150px; text-align: center;" class="nosort">
+
+                            <span onclick="ShowGSTHoldQ()" title="View" style="color: blue; cursor:pointer;  text-decoration:underline;">Match with Temptable</span>
+                        </td>
+                        <td style="width:8%; min-width:60px; text-align: center;" class="nosort">
+                            <input type="checkbox" data-bind="attr: { name: 'chk_'+ ecfId, id: 'chk_'+ ecfId }, event:{ change:$root.checkChange }" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width:5%; min-width:50px;">
+                            <span>4</span>
+                        </td>
+                        <td style="width:12%; min-width:80px;">
+                            11/11/2020
+                        </td>
+                        <td style="width:10%; min-width:100px;">
+                            ECF0410208004
+                        </td>
+                        <td style="width:15%; min-width:80px;">
+                            ECF
+                        </td>
+                        <td style="width:12%; min-width:100px; text-align:right;">
+                            4,50,000.00
+                        </td>
+                        <td style="width:12%; min-width:100px; text-align:right;">
+                            4,00000.00
+                        </td>
+                        <td style="width:12%; min-width:100px; text-align:right;">
+                            50,000.00
+                        </td>
+                        <td style="width:10%; min-width:100px;">
+                            Employee
+                        </td>
+                        <td style="width:18%; min-width:200px;">
+                            ARCHI AGENCY
+                        </td>
+                        <td style="width:10%; min-width:150px;">
+                            158467 - Daxit Mistry
+                        </td>
+                        <td style="width:10%; min-width:150px;">
+                            144252 - Lavanya G
+                        </td>
+                        <td style="width:8%; min-width:150px; text-align: center;" class="nosort">
+
+                            <span onclick="ShowGSTHoldQ()" title="View" style="color: blue; cursor:pointer;  text-decoration:underline;">Match with Temptable</span>
+
+                        </td>
+                        <td style="width:8%; min-width:60px; text-align: center;" class="nosort">
+                            <input type="checkbox" data-bind="attr: { name: 'chk_'+ ecfId, id: 'chk_'+ ecfId }, event:{ change:$root.checkChange }" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width:5%; min-width:50px;">
+                            <span>5</span>
+                        </td>
+                        <td style="width:12%; min-width:80px;">
+                            20/11/2020
+                        </td>
+                        <td style="width:10%; min-width:100px;">
+                            ECF1010208005
+                        </td>
+                        <td style="width:15%; min-width:80px;">
+                            ECF
+                        </td>
+                        <td style="width:12%; min-width:100px; text-align:right;">
+                            2,30,000.00
+                        </td>
+                        <td style="width:12%; min-width:100px; text-align:right;">
+                            2,25,000.00
+                        </td>
+                        <td style="width:12%; min-width:100px; text-align:right;">
+                            5000.00
+                        </td>
+                        <td style="width:10%; min-width:100px;">
+                            Supplier
+                        </td>
+                        <td style="width:18%; min-width:200px;">
+                            Apollo Office Suppliers
+                        </td>
+                        <td style="width:10%; min-width:150px;">
+                            P110872 - Pradeep E
+                        </td>
+                        <td style="width:10%; min-width:150px;">
+                            144252 - Lavanya G	A
+                        </td>
+                        <td style="width:8%; min-width:150px; text-align: center;" class="nosort">
+                            <span title="View" style="color: blue; cursor:pointer; text-decoration:underline;" data-bind="click: $root.ShowAuthorizationReverse1">Match With Temtable</span>
+
+                        </td>
+                        <td style="width:8%; min-width:60px; text-align: center;" class="nosort">
+                            <input type="checkbox" data-bind="attr: { name: 'chk_'+ ecfId, id: 'chk_'+ ecfId }, event:{ change:$root.checkChange }" />
+                        </td>
+                    </tr>*@
+
+            </tbody>
+        </table>
+    </div>
+
+
+</div>
+
+
+@*@model  IEnumerable<IEM.Areas.EOW.Models.CygnetSearchModel>
+    @using IEM.Areas.EOW.Models
+    @{
+        ViewBag.Title = "Invoice Search";
+        CygnetDataModel objd = new CygnetDataModel();
+        CygnetSearchModel objcyg = new CygnetSearchModel();
+        List<CygnetSearchModel> lstTempInvoice = new List<CygnetSearchModel>();
+        lstTempInvoice = (List<CygnetSearchModel>)TempData["SearchItems"];
+
+        if (lstTempInvoice == null)
+        {
+            ViewBag.IsSearched = "no";
+            if (Session["invoiceGid"] != null)
+            {
+                lstTempInvoice = objd.SelectInvoiceSearch(objcyg).ToList();
+            }
+            else
+            {
+                lstTempInvoice = objd.SelectInvoiceSearch(objcyg).ToList();
+            }
+        }
+        if (lstTempInvoice.Count == 0)
+        {
+            ViewBag.NoRecordsPayment = "NoRecords";
+            ViewBag.NoRecordsFoundPayment = "No Records Found";
+        }
+    }
+
+
+    @{
+        var gridTempInvoice = new WebGrid(lstTempInvoice, canSort: true, canPage: false, rowsPerPage: 3, ajaxUpdateContainerId: "wgempPayment", ajaxUpdateCallback: "DummyFunction()");
+        int rowVal = 0;
+    }
+
+    <div id="divInvoiceGrid" class="overflowy" style="max-height: 380px;">
+        @functions {
+            public static string Sorter(string columnName, string columnHeader, WebGrid grid)
+            {
+                return string.Format("{0} {1}", columnHeader, grid.SortColumn == columnName ?
+                grid.SortDirection == SortDirection.Ascending ? "▲" :
+                "▼" : string.Empty);
+            }
+        }
+        @gridTempInvoice.GetHtml(
+                 htmlAttributes: new { id = "wgTempInvoice" },
+                    tableStyle: "tableSmall table-bordered",
+                    mode: WebGridPagerModes.All,
+                    columns:
+                                gridTempInvoice.Columns
+                        (
+                                     gridTempInvoice.Columns(
+                                     gridTempInvoice.Column(header: "Select", canSort: false, style: "action",
+                            format: @<text>
+                                        <center>   <input type="checkbox" id="chkInvoice" name="chkInvoice" value="@item.Cygnet_gid" /> </center>
+                            </text>),
+
+     gridTempInvoice.Column("SlNo", style: "slno", format: item => rowVal = rowVal + 1),
+        gridTempInvoice.Column("Cygnet_InvoiceNo", Sorter("Cygnet_InvoiceNo", "Invoice No.", gridTempInvoice), style: "colmediumCenter"),
+                gridTempInvoice.Column("Cygnet_InvoiceDate", Sorter("Cygnet_InvoiceDate", "Invoice Date", gridTempInvoice), style: "colmediumBreak"),
+                gridTempInvoice.Column("Cygnet_InvoiceAmt", Sorter("Cygnet_InvoiceAmt", "Invoice Amount", gridTempInvoice), style: "colmediumCenter"),
+                gridTempInvoice.Column("Cygnet_TaxableAmt", Sorter("Cygnet_TaxableAmt", "Taxable Amount", gridTempInvoice), style: "colmediumCenter"),
+                gridTempInvoice.Column("Cygnet_CGSTAmt", Sorter("Cygnet_CGSTAmt", "CGST Amount", gridTempInvoice), style: "colmediumCenter"),
+                gridTempInvoice.Column("Cygnet_SGSTAmt", Sorter("Cygnet_SGSTAmt", "SGST Amount", gridTempInvoice), style: "colmediumCenter"),
+        gridTempInvoice.Column("Cygnet_IGSTAmt", Sorter("Cygnet_IGSTAmt", "IGST Amount", gridTempInvoice), style: "colmediumBreak")
+
+            )))
+
+        @if (ViewBag.Message != null)
+        {
+            <div class="gridMessage" style="width:100%">
+                @ViewBag.Message
+            </div>
+        }
+        @if (ViewBag.Message == null)
+        {
+            <div class="gridCount" style="text-align:left;">Page <b>@(gridTempInvoice.PageIndex + 1)</b> of <b>@gridTempInvoice.PageCount</b> - Total No Of Records: <b>@gridTempInvoice.TotalRowCount</b></div>
+        }
+    </div>*@

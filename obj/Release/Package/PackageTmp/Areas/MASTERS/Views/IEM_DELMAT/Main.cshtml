@@ -1,0 +1,259 @@
+﻿@model  IEnumerable<IEM.Areas.MASTERS.Models.iem_mst_delmat>
+@{
+    //ViewBag.Title = "Index";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    //WebGrid grid = new WebGrid(source: Model, canSort: true, canPage: true, rowsPerPage: 10, ajaxUpdateContainerId: "grid", ajaxUpdateCallback: "grid", selectionFieldName: "SelectedRow");
+    //grid.Pager(WebGridPagerModes.All);
+    //int rowVal = 0;
+
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var grid = new WebGrid(canPage: false, canSort: false, ajaxUpdateContainerId: "grid", ajaxUpdateCallback: "grid", selectionFieldName: "SelectedRow");
+    grid.Bind(Model);
+    int rowVal = 0;
+}
+
+<link href="@Url.Content("~/Content/Rmax_Site.css")" rel="stylesheet" type="text/css" />
+<div class="pageHeadingLayout">
+    <span class="pageHeading">Delmat </span>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="well" style="padding:10px;">
+        <input type="hidden" id="_DelmatMC" value="@Session["RoleDelmat"]" />
+        <table class="myTableStyleTabNew" style="width:100%;">
+            <tr>
+                <td style="width:25%; padding:0px 10px 0px 3px;">
+                    <span> Delmat Name </span>
+                    <br />
+                    <input type="text"
+                           name="delmatnamefilter"
+                           id="txtFilter"
+                           value="@ViewBag.filter"
+                           class="fstextbox"
+                           maxlength="70" />
+                </td>
+                <td style="width:75%; padding:0px 10px 0px 3px;">
+                    <button class="btn btn-primary" value="Search" name="command" type="submit" style="margin-top:20px;color:white;">
+                        <span style="color:white;font-size:12px;" class="glyphicon glyphicon-search"></span> Search
+                    </button>
+
+
+                    <button class="btn btn-primary" value="Clear" onclick="refresh()" name="command" type="button" style="margin-top:20px;">
+                        <span style="color:white;font-size:12px;" class="glyphicon glyphicon-remove-circle"></span> Clear
+                    </button>
+
+@if (ViewBag.IsDelmatRole == "M")
+{
+                    <button type="button" value="New Delmat" id="_NewDelmat" class="btn btn-primary" style="margin-top:20px;color:white;">
+                        <span style="color:white; font-size:12px;" class="glyphicon glyphicon-plus"></span> New Delmat
+                    </button>
+}
+                    <button type="button" formaction="" value="Export Excel" onclick="DownloadExcel()" class="btn btn-primary" style="margin-top:20px;">
+                        <span style="color:white;font-size:12px; " class="glyphicon glyphicon-export"></span> Export Excel
+                    </button>
+                </td>
+                @*<td>
+                    <button type="button" formaction="" value="Export Excel" onclick="DownloadExcel()" class="btn btn-primary" style="margin-top:20px;">
+                        <span style="color:white;font-size:12px; " class="glyphicon glyphicon-export"></span> Export Excel
+                    </button>
+                </td>*@
+            </tr>
+        </table>
+
+        <div class="table-responsive" style="margin-top:10px;">
+            @grid.GetHtml(
+       htmlAttributes: new { id = "grid" },
+                tableStyle: "tableSmall table-bordered table-hover",
+                columns: grid.Columns
+                        (
+             grid.Columns(grid.Column("SNo", style: "slno", format: item => rowVal = rowVal + 1),
+             grid.Column(header: "Delmat Name", columnName: "delmat_name"),
+             grid.Column(header: "Doc Type", columnName: "Doc_Type"),
+
+            //grid.Column(header: "Slab",columnName: "Slab"),
+            grid.Column(header: "Branch", columnName: "Branch"),
+        //grid.Column(header: "Branch Type", columnName: "BranchType"),
+            grid.Column(header: "Claim Type", columnName: "Claim_Type"),
+            grid.Column(header: "DSA Flag ", columnName: "Dsa_Flag"),
+           grid.Column(header: "Request For", columnName: "Requestfor"),
+        //grid.Column(header: "IT", columnName: "IT"),
+        //grid.Column(header: "Expenditure Type", columnName: "Expenditure"),
+           grid.Column(header: "Budget", columnName: "Budget"),
+        //grid.Column(header: "Jump Flag ", columnName: "Jump"),
+          grid.Column(header: "Status", columnName: "Status"),
+    grid.Column(header: "Action Status", columnName: "delmat_Actionstatus"),
+                            grid.Column(header: "Action", style: "action",
+                            format: @<text>
+                                <input type="hidden" name="Slab" id="Slab" value="@item.Slab" />
+                                <input type="hidden" name="BranchType" id="BranchType" value="@item.BranchType" />
+                                <input type="hidden" name="IT" id="IT" value="@item.IT" />
+                                <input type="hidden" name="Expenditure" id="Expenditure" value="@item.Expenditure" />
+                                <input type="hidden" name="Jump" id="BranchType" value="@item.Jump" />
+                                @*<input type="hidden" name="BranchType" id="BranchType" value="@item.BranchType" />*@
+                                @Html.Raw("<a style='text-decoration:none;' title='View' onclick='ViewType(" + item.delmat_gid + ")'> <span class='glyphicon glyphicon-eye-open'> </span> </a>")
+                                @if ((item.delmat_Actionstatus == "Approved" || item.delmat_Actionstatus == "Draft" || item.delmat_Actionstatus == "Rejected") && ViewBag.IsDelmatRole == "M")
+                                {               
+                                   @Html.Raw("<a style='text-decoration:none;' title='Edit' onclick='EditType(" + item.delmat_gid + ")'> <span class='glyphicon glyphicon-edit' ></span> </a>")
+                                   @Html.Raw("<a style='text-decoration:none;' title='Delete' onclick='DeleteType(" + item.delmat_gid + ")'> <span class='glyphicon glyphicon-trash' > </span> </a> ")
+                                }
+                                else if (item.delmat_Actionstatus == "Approved" && ViewBag.IsDelmatRole == "C")
+                                {
+                                    @Html.Raw("<a style='text-decoration:none;cursor:not-allowed;' title='Edit Not Allowed' > <span class='glyphicon glyphicon-edit' style='text-decoration:none;cursor:not-allowed;' ></span> </a>")
+                                    @Html.Raw("<a style='text-decoration:none;cursor:not-allowed;' title='Delete Not Allowed'> <span class='glyphicon glyphicon-trash' > </span> </a> ")
+                                }
+                                else if (item.delmat_Actionstatus == "Pending for Approval" && ViewBag.IsDelmatRole == "C")
+                                {               
+                                   @Html.Raw("<a style='text-decoration:none;' title='Edit' onclick='EditType(" + item.delmat_gid + ")'> <span class='glyphicon glyphicon-edit' ></span> </a>")
+                                   @Html.Raw("<a style='text-decoration:none;cursor:not-allowed;' title='Delete Not Allowed'> <span class='glyphicon glyphicon-trash' > </span> </a> ")
+                                }
+                                else
+                                {
+                                    @Html.Raw("<a style='text-decoration:none;cursor:not-allowed;' title='Edit Not Allowed' > <span class='glyphicon glyphicon-edit'></span> </a>")
+                                    @Html.Raw("<a style='text-decoration:none;cursor:not-allowed;' title='Delete Not Allowed'> <span class='glyphicon glyphicon-trash' > </span> </a> ")
+                                }
+                            </text>))))
+        </div>
+
+    </div>
+}
+<div id="ForPartialView"></div>
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        debugger;
+        $('#grid tr th:nth-child(3)').addClass("nosort");
+        $('#grid').dataTable({
+            "aoColumnDefs": [{
+                "aTargets": ["nosort"],
+                "bSortable": false
+            }]
+        }).css("width", "99%");
+        var DELMC = $('#_DelmatMC').val();
+        $('#_NewDelmat').click(function () {
+            window.location = '../IEM_DELMAT/Index';
+        });
+
+    });
+</script>
+<script type="text/javascript">
+
+    function EditType(id) {
+        var Delmat_gid = id;
+        debugger;
+        var str = "Edit";
+        var DelmatModel = { "Viewfor": str };
+        $.ajax({
+            url: '../IEM_DELMAT/GetFunction/',
+            data: JSON.stringify(DelmatModel),
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+
+            success: function (result) {
+                debugger;
+                if (result == "Success");
+                window.location = '../IEM_DELMAT/EditDelmat/' + id;
+            },
+            error: function (result) {
+                isSuccess = result;
+            }
+
+        })
+
+
+        //  window.location = '/IEM_DELMAT/EditDelmat/' + id;
+
+
+    }
+    function ViewType(id) {
+
+        debugger;
+        var str = "View";
+        var DelmatModel = { "Viewfor": str };
+
+        $.ajax({
+            url: '../IEM_DELMAT/GetFunction/',
+            data: JSON.stringify(DelmatModel),
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+
+            success: function (result) {
+                if (result == "Success");
+                window.location = '../IEM_DELMAT/EditDelmat/' + id;
+            },
+            error: function (result) {
+                isSuccess = result;
+            }
+
+        })
+        // window.location = '/IEM_DELMAT/EditDelmat/' + id ;
+    }
+    //function DeleteType(id) {
+
+
+    //    var str = "Delete";
+    //    var DelmatModel = { "Viewfor": str };
+
+    //    $.ajax({
+    //        url: '../IEM_DELMAT/GetFunction/',
+    //        data: JSON.stringify(DelmatModel),
+    //        type: 'POST',
+    //        contentType: 'application/json; charset=utf-8',
+
+    //        success: function (result) {
+    //            if (result == "Success");
+    //            window.location = '../IEM_DELMAT/EditDelmat/' + id;
+    //        },
+    //        error: function (result) {
+    //            isSuccess = result;
+    //        }
+
+    //    })
+    //    // window.location = '/IEM_DELMAT/EditDelmat/' + id ;
+    //}
+
+    function refresh() {
+        location = '../IEM_DELMAT/Main';
+    }
+    function DeleteType(id) {
+
+
+        var str = "Delete";
+        var DelmatModel = { "Viewfor": str };
+
+        $.ajax({
+            url: '../IEM_DELMAT/GetFunction/',
+            data: JSON.stringify(DelmatModel),
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+
+            success: function (result) {
+                if (result == "Success");
+                window.location = '../IEM_DELMAT/EditDelmat/' + id;
+            },
+            error: function (result) {
+                isSuccess = result;
+            }
+
+        })
+        // window.location = '/IEM_DELMAT/EditDelmat/' + id ;
+    }
+
+    function DownloadExcel() {
+        debugger;
+        var DELMC = $('#_DelmatMC').val();
+        if (DELMC == "C")
+        {
+            var UrlDet = "@Url.Action("DownloadExcel", "IEM_DELMAT")"
+            ko.utils.postJson(UrlDet + '?ViewType=29&FileName=Delmat&' + new Date().getTime());
+        }
+        else {
+            var UrlDet = "@Url.Action("DownloadExcel", "IEM_DELMAT")"
+            ko.utils.postJson(UrlDet + '?ViewType=28&FileName=Delmat&' + new Date().getTime());
+        }
+     
+    }
+</script>

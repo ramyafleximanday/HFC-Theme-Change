@@ -1,0 +1,379 @@
+﻿@using IEM.Areas.FLEXISPEND.Models
+@using IEM.Common
+
+@model IEnumerable<IEM.Areas.FLEXISPEND.Models.GSTHoldQ>
+
+@{
+    ViewBag.Title = "Sunkcost";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    FlexispendDataModel objd = new FlexispendDataModel();
+    List<GSTHoldQ> lstPayment = new List<GSTHoldQ>();
+    lstPayment = (List<GSTHoldQ>)TempData["SearchItems"];
+
+    GSTHoldQ objMExpenseEdit = new GSTHoldQ();
+    lstPayment = objd.GetForfeiture().ToList();
+    decimal remamount = 0;
+    if (lstPayment == null)
+    {
+        ViewBag.NoRecordstolp = "total";
+        Session["invoicePaymentamnt"] = remamount.ToString();
+    }
+    //if (lstPayment.Count == 0)
+    //{
+    //    ViewBag.NoRecordsPayment = "NoRecords";
+    //    ViewBag.NoRecordsFoundPayment = "No Records Found";
+    //}
+}
+
+
+
+
+
+<link href="@Url.Content("~/Content/themes/base/jquery-ui.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/Rmax_Site.css")" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/Scripts/jquery-ui-1.8.24.min.js")" type="text/javascript"></script>
+<style>
+    table, th, td {
+        white-space: nowrap;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        $("#txtReceivedDate").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: 'dd-mm-yy',
+            maxDate: '-id',
+        });
+
+        // web grid column hide
+        $("#wgridForfeiture td:nth-child(2),th:nth-child(2)").hide();
+        $("#wgridForfeiture td:nth-child(3),th:nth-child(3)").hide();
+        //   $("#wgridSunkCostApprovalDetails td:nth-child(1),th:nth-child(1)").hide();
+
+        //$("#wgridSunkCostApprovalDetails th:nth-child(1)").hide();
+        //$("#wgridSunkCostApprovalDetails td:nth-child(1)").hide();
+        //$("#wgridSunkCostApprovalDetails th:nth-child(2)").hide();
+        //$("#wgridSunkCostApprovalDetails td:nth-child(2)").hide();
+    });
+    $(document).keydown(function (e) {
+        if (e.keyCode == 8 && e.target.tagName != 'INPUT' && e.target.tagName != 'TEXTAREA')
+            e.preventDefault();
+    });
+</script>
+<div class="pageHeadingLayout">
+    <span class="pageHeading">GST Forfeiture</span>
+</div>
+<div id="wgempEmployeeev">
+    @{
+        IEM.Common.CmnFunctions objCmnFunctions = new IEM.Common.CmnFunctions();
+        var gridPayment = new WebGrid(lstPayment, canSort: true, canPage: false, rowsPerPage: 3, ajaxUpdateContainerId: "wgempEmployeeev", ajaxUpdateCallback: "DummyFunction()");
+        int rowValPayment = 0;
+    }
+
+    <div class="container" style="width:102%;margin-left: -1%;">
+        <div>
+            @gridPayment.GetHtml(
+                                  htmlAttributes: new { id = "wgridForfeiture" },
+                                  tableStyle: "tableSmall table-bordered table-hover table-responsive",
+                mode: WebGridPagerModes.All,
+                columns:
+                gridPayment.Columns(gridPayment.Column("#", canSort: false, format: item => rowValPayment = rowValPayment + 1),
+                          gridPayment.Column("ecfId", objCmnFunctions.Sorter("ecfId", " ", gridPayment), canSort: false),
+                                                                       gridPayment.Column("ecf_docsubtype_gid", objCmnFunctions.Sorter("ecf_docsubtype_gid", " ", gridPayment), canSort: false),
+
+                                                          gridPayment.Column("Ecf_Date", objCmnFunctions.Sorter("Ecf_Date", "Doc Date", gridPayment), canSort: false),
+                                                             gridPayment.Column("DocNo", objCmnFunctions.Sorter("DocNo", "Doc No", gridPayment), canSort: false),
+                                                             gridPayment.Column("Ecf_Amount", objCmnFunctions.Sorter("Ecf_Amount", "Doc Amount", gridPayment), canSort: false),
+                                                              gridPayment.Column("Ecf_Base_Amount", objCmnFunctions.Sorter("Ecf_Base_Amount", "Base Amount", gridPayment), canSort: false),
+                                                              gridPayment.Column("Ecf_Gst_Amount", objCmnFunctions.Sorter("Ecf_Gst_Amount", "GST Amount", gridPayment), canSort: false),
+                                        gridPayment.Column("ClaimType", objCmnFunctions.Sorter("ClaimType", "Claim Type", gridPayment), canSort: false),
+                                        gridPayment.Column("SupplierEmployee", objCmnFunctions.Sorter("SupplierEmployee", "Supplier / Employee Name", gridPayment), canSort: false),
+                                                 gridPayment.Column("Raiser", objCmnFunctions.Sorter("Raiser", "Raiser", gridPayment), canSort: false),
+                    // gridPayment.Column("StateUTTax", objCmnFunctions.Sorter("StateUTTax", "SGST Amount", gridPayment), canSort: false),
+                               gridPayment.Column(header: "View", format: @<text>
+
+                        <a title="View"> <span class="glyphicon glyphicon-eye-open" onclick="Search(this)"></span></a>
+
+
+                            </text>),
+
+
+                       gridPayment.Column(format: @<text>
+                <input type="checkbox" value="@item.ecfId" name="ids" />
+                    </text>, style: " ", header: "{checkall}")
+))
+
+
+
+
+
+        </div>
+        <table align="right">
+            <tr>
+                <td colspan="3" style="text-align:left;">
+                    <span class="input-append">
+
+
+                        <button class="btn btn-primary" id="btnGenerateAcc" value="Clear" type="button" style="margin-top:20px;">
+                            <span style="color:white;font-size:12px">
+                            </span>
+                            Generate Accounting Entries
+                        </button>
+                    </span>
+                </td>
+                <td colspan="3" style="text-align:left;">
+                    <button class="btn btn-success" type="button" id="_ExportForfeitureExcel" onclick="ExportForfietureQ()" style="margin-top:20px;">
+                        <span style=" color:white;font-size:12px" class="glyphicon glyphicon-export">
+                        </span> Export Excel
+                    </button>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+</div>
+
+<div id="ForPartialView"></div>
+<div style="padding:2px;" id="ForPartialViewcentralMaker"></div>
+@*Dialog Box*@
+<div style="display:none" id="Dialog">
+
+</div>
+
+<script>
+
+    function ExportForfietureQ() {
+        location = '@Url.Action("ExportForfietureQ", "GSTHoldQ")';
+    }
+
+    //add WEB gird Select All
+    $("#wgridForfeiture th").each(function () {
+
+        var checked = $("#wgridForfeiture td :checkbox:checked").length;
+
+        if ($.trim($(this).text().toString().toLowerCase()) === "{checkall}") {
+            $(this).text('');
+            $("<input/>", { type: "checkbox", id: "cbSelectAll", value: "" }).appendTo($(this));
+            $(this).append("<span>Select All</span>");
+        }
+    });
+
+    //2nd click event for header checkbox for select /deselect all
+    $("#cbSelectAll").live("click", function () {
+
+        var ischecked = this.checked;
+        $('#wgridForfeiture').find("input:checkbox").each(function () {
+            this.checked = ischecked;
+        });
+
+    });
+
+
+    //add WEB gird Select All
+    $("#wgridForfeiture th").each(function () {
+
+        var checked = $("#wgridForfeiture td :checkbox:checked").length;
+
+        if ($.trim($(this).text().toString().toLowerCase()) === "{checkall}") {
+            $(this).text('');
+            $("<input/>", { type: "checkbox", id: "cbSelectAll", value: "" }).appendTo($(this));
+            $(this).append("<span>Select All</span>");
+        }
+    });
+
+    //2nd click event for header checkbox for select /deselect all
+    $("#cbSelectAll").live("click", function () {
+
+        var ischecked = this.checked;
+        $('#wgridForfeiture').find("input:checkbox").each(function () {
+            this.checked = ischecked;
+        });
+
+    });
+
+
+
+
+
+</script>
+
+<script>
+    var ViewModel1 = function () {
+        debugger;
+        var self = this;
+        // alert("Next Function");
+        self.viewECF = function (paramvalue1, paramvalue2, paramvalue3) {
+            debugger;
+            ShowDialog(paramvalue1, paramvalue2, paramvalue3);
+        };
+    }
+
+    function ShowDialog(ecfId, DocSubTypeId, ecfNo) {
+        debugger;
+        //var objDialog;
+
+        $('#objDialogyCentralMaker').attr("style", "display:block;");
+        var MUrlDet = MUrlDet.replace("GetQuery", "");
+
+        var url = MUrlDet + 'DocumentDetails/' + ecfId + '/' + DocSubTypeId + '/' + ecfNo;
+        objDialog.load(url);
+
+        objDialog.dialog({
+            title: 'ECF Details',
+            close: ReloadPage
+
+        });
+        objDialog.dialog("open");
+    }
+
+
+
+    function ReloadPage() {
+
+        debugger;
+        if (objDialogyExpenseDetails != undefined) {
+            objDialogyExpenseDetails.remove();
+        }
+        if (objDialogyInvoice != undefined) {
+            objDialogyInvoice.remove();
+        }
+        if (objDialogyAdd != undefined) {
+            objDialogyAdd.remove();
+        }
+        if (objDialogyAddDebit != undefined) {
+            objDialogyAddDebit.remove();
+        }
+        if (objDialogyAddPayment != undefined) {
+            objDialogyAddPayment.remove();
+        }
+        if (objDialogyAddAttachment != undefined) {
+            objDialogyAddAttachment.remove();
+        }
+        if (objDialogyPPX != undefined) {
+            objDialogyPPX.remove();
+        }
+        if (objDialogyCreditNote != undefined) {
+            objDialogyCreditNote.remove();
+        }
+        if (objDialogyAmort != undefined) {
+            objDialogyAmort.remove();
+        }
+        if (objDialogyPoMapping != undefined) {
+            objDialogyPoMapping.remove();
+        }
+        if (objDialogyAddPayment1 != undefined) {
+            objDialogyAddPayment1.remove();
+        }
+        if (objDialogyBenificiary != undefined) {
+            objDialogyBenificiary.remove();
+        }
+        if (objDialogyGST != undefined) {
+            objDialogyGST.remove();
+        }
+        if (objDialogySUS != undefined) {
+            objDialogySUS.remove();
+        }
+        if (objDialogyAddAttachment != undefined) {
+            objDialogyAddAttachment.remove();
+        }
+        if (objDialogyInvoiceTravel != undefined) {
+            objDialogyInvoiceTravel.remove();
+        }
+        if (objDialogyGSTTravel != undefined) {
+            objDialogyGSTTravel.remove();
+        }
+        if (objDialogyInvoiceNonTravel != undefined)
+            objDialogyInvoiceNonTravel.remove();
+
+        if (objDialogyGSTNonTravel != undefined)
+            objDialogyGSTNonTravel.remove();
+        if (objDialogyWHTax != undefined)
+            objDialogyWHTax.remove();
+
+        if (objDialogyInvoicePC != undefined)
+            objDialogyInvoicePC.remove();
+        if (objDialogyGSTPC != undefined)
+            objDialogyGSTPC.remove();
+
+        $('#Dialog').dialog("refresh");
+
+    }
+
+    $("#btnGenerateAcc").click(function () {
+        debugger;
+
+        var ids = "";
+        $("#wgempEmployeeev").find("input:checkbox").each(function () {
+            if (this.checked == true) {
+                var checked = $("#wgempEmployeeev td :checkbox:checked").length;
+                if (checked == 1) {
+                    ids = $(this).val();
+                }
+                else {
+                    ids = $(this).val() + "," + ids;
+                }
+            }
+        });
+        if (ids == 0 || ids == "" || ids == undefined || ids == ",") {
+            jAlert("Please select a records to process.", "Message");
+            return false;
+        }
+        var model = {
+            "ecfId": ids,
+            "Remark": "success"
+        }
+
+        $.ajax({
+            type: "POST",
+            url: '../GSTHoldQ/Save_forfeiture',
+            data: JSON.stringify(model),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (Result) {
+                debugger;
+                if (Result == "success") {
+                    debugger;
+                    jAlert("Accounting Entries Generate Successfully!", "Information");
+                }
+                else {
+                    jAlert("Error", "Information");
+                }
+                setTimeout(function () {
+                    //referesh();
+                    location = '@Url.Action("GSTForfieture", "GSTHoldQ")?' + new Date().getTime();
+                }, 1500);
+            }
+        });
+    });
+
+
+
+    function Search(element) {
+        // paramvalue = 1;
+        debugger;
+        var row = $(element).closest('tr');
+        var ecfid = row.find('td:eq(1)').text();
+        ecfid = ecfid.toString().trim();
+
+        var ecf_docsub_gid = row.find('td:eq(2)').text();
+        ecf_docsub_gid = ecf_docsub_gid.toString().trim();
+
+        var ecfnum = row.find('td:eq(4)').text();
+        ecfnum = ecfnum.toString().trim();
+
+        var vm1 = new ViewModel1();
+
+        //alert(ecfnum);
+
+        vm1.viewECF(ecfid, ecf_docsub_gid, ecfnum);
+    }
+
+    var MUrlDet = "@Url.Action("GetQuery", "Search")"
+    var MUrlHelper = "@Url.Action("GetAutoCompleteCourier", "Helper")"
+
+</script>
+<script src="@Url.Content("~/Areas/FLEXISPEND/FS_UserScript/jsQuery.js")" type="text/javascript"></script>
+

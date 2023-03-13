@@ -1,0 +1,108 @@
+﻿@model IEM.Areas.IFAMS.Models.AssetVRModel
+@using IEM.Areas.IFAMS.Models
+@using IEM.Common
+@{
+    AssetVRModel objAttach = new AssetVRModel();
+    IfamsAssetVRDataModel_M VRModel = new IfamsAssetVRDataModel_M();
+    objAttach.AVRGid = Convert.ToInt32(Session["AVRGid"].ToString());
+    if (objAttach.AVRGid != 0)
+    {
+        Model.attachLst = VRModel.VRPopulateAttachment(objAttach);
+    }
+    objAttach.attachLst = Model.attachLst;
+    var attachGrid = new WebGrid(source: Model.attachLst, canSort: false, canPage: false, ajaxUpdateContainerId: "vrattachment", ajaxUpdateCallback: "vrattachmentLst()");
+    CmnFunctions objcmnFunctions = new CmnFunctions();
+}
+<div>
+    <div>
+        @attachGrid.GetHtml(
+                          htmlAttributes: new { id = "VRAttachment" },
+                                   tableStyle: "tableSmall table-bordered aligncenter",
+                                   columns:
+                                            attachGrid.Columns(
+                                            attachGrid.Column(header: "S.No", format: item => item.WebGrid.Rows.IndexOf(item) + 1 + Math.Round(Convert.ToDouble(
+                                            attachGrid.TotalRowCount / attachGrid.PageCount) / attachGrid.RowsPerPage) * attachGrid.RowsPerPage * attachGrid.PageIndex),
+                                            attachGrid.Column("AVRNo", "AVR No"),
+                                            attachGrid.Column("AttachName", "File Names", style: " MidColumn50",
+                                            format: @<text> <a title='Click here to download' onclick="DownloadAVRAttachments('@item.AttachId','@item.AttachName')"> @item.AttachName </a> </text>),
+                                            //attachGrid.Column("AttachName", "File Name"),
+                                            attachGrid.Column("AttachDate", "Date", style: " MidColumn50"),
+                                            attachGrid.Column("AttachDesc", "Description"),
+                                            attachGrid.Column(header: "Action", canSort: false, style: "action",
+                                            format: @<text>@if (Convert.ToString(Session["Status"]) == "DRAFT")
+                                            {
+                                                <a onclick='AVRAbort(@item.AttachId)' title='Delete Attachment'> <span id='Color' class='glyphicon glyphicon-trash'> </span> </a>
+                                            } </text>)
+
+                                                                                                                                                                                                                        ))
+        <div class="table-bordered btnCenter">
+            @ViewBag.NoRecordsFound
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $('#vridtab3').text('@Model.attachLst.Count')
+
+    function DownloadAVRAttachments(AttachId, AttachName) {
+        debugger;
+        var AttachFile = AttachId + '_' + AttachName;
+        $.ajax({
+            url: '@Url.Action("CheckFileExists", "AssetValueReduction")?id=' + AttachFile + '&' + new Date().getTime(),
+            type: 'POST',
+            async: false,
+            cache: false,
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                debugger;
+                if (data == "0") {
+                    jAlert("File Not Found", "Error", function () {
+                        return false;
+                    });
+                }
+                else {
+                    location = "../AssetValueReduction/DownloadDocument?id=" + AttachFile + "&" + new Date().getTime();
+                }
+            },
+            error: function (result) {
+                jAlert("Something went wrong", "Error");
+            }
+        });
+    }
+
+    function AVRAbort(AttachIds) {
+        debugger
+       /* var objData =
+                 {
+                     "AVRGid": AttachIds, "Type": "Abort"
+                 };*/
+        var AttachIds = AttachIds;
+        $.ajax({
+            url: '@Url.Action("AbortAttachments", "AssetValueReduction")?_Action=Abort' + "&AttachIds=" + AttachIds + "&" + new Date().getTime(),
+            type: 'POST',
+            //async: false,
+            cache: false,
+            data: {},
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                debugger;
+                if (data == "0") {
+                    jAlert("File Not Delete..!", "Error", function () {
+                        return false;
+                    });
+                }
+                else {
+                    jAlert("File Delete Succesfully..!", "Message", function () {
+                        $('#AttachmentGrid').load("@Url.Action("VRAttachment", "AssetValueReduction")?" + new Date().getTime());
+                        return false;
+                    });
+
+                }
+            },
+            error: function (result) {
+                jAlert("Something went wrong", "Error");
+            }
+        });
+    }
+</script>

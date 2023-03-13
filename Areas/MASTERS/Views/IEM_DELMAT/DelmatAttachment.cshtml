@@ -1,0 +1,84 @@
+﻿
+@{
+    var dis = ViewBag.viewfor;
+    //var dis1 = ViewBag.viewfor1;
+}
+@if (dis != "disabled")
+{
+<div class="table-responsive" style="padding-right: 10px;">
+
+    <div align="right" style="padding-bottom:5px;">
+        <button type="button" id="btnempNewExpensddet" value="New Attachment" onclick="NewAttachment1()" class="btn btn-primary">
+            <span style="color:white;font-size: 12px;" class="glyphicon glyphicon-plus"></span> New Attachment
+        </button>
+
+
+        @Html.Partial("DelmatAttachmentDetails")
+    </div>
+</div>
+   
+}
+<br />
+<div id="ForDelmatAttachment"></div>
+
+<script type="text/javascript">
+    var objDialogAttach;
+    $(document).ready(function () {
+        debugger;
+        objDialogAttach = $("[id$='ForDelmatAttachment']");
+        objDialogAttach.dialog({
+            autoOpen: false,
+            cache: false,
+            modal: true,
+            //show: 'fade-in',
+            //close: 'fade-out',
+            width: 700,
+            height: 280
+
+        });
+
+    });
+
+    function NewAttachment1() {
+        debugger;
+        var url = '@Url.Action("DelmatAttachmentCreate", "IEM_DELMAT")';
+        objDialogAttach.load(url);
+        objDialogAttach.dialog({ title: 'New Attachment' });
+        objDialogAttach.dialog("open");
+    }
+    function GotoIndexAttachmentV() {
+        debugger;
+        window.parent.jQuery('#ForDelmatAttachment').dialog('close');
+    }
+    function DeleteAttachment(id) {
+        debugger;
+        jConfirm("Confirm deletion of ECF Attachment", "Message", function (u) {
+            if (u == true) {
+                debugger;
+                var EmpPaymentmodel = { "AttachmentFilenameId": id }
+                var urldel = '@Url.Action("AttachmentDelete", "IEM_DELMAT")';
+              
+                $.post(urldel, EmpPaymentmodel,
+              function (data) {
+                  debugger;
+                  if (data == 0) {
+                      debugger;
+
+                      jAlert("Error.", "Error");
+                      return false; location = location.href;
+                  } else {
+                      debugger;
+                      jAlert("Deleted Successfully.", "Message");
+
+                     // $("#wgridEmployeeDetails").load('@Url.Action("DelmatAttachmentDetails", "IEM_DELMAT")');
+
+                      var url = '@Url.Action("DelmatAttachmentDetails", "IEM_DELMAT")?' ;
+                      $("#wgridAttachDetails").load(url);
+                      //$("#wgAttachment").load("../EmployeeClaimNew/_EmpAttachmentDetails?" + new Date().getTime());
+                      window.parent.jQuery('#ForDelmatAttachment').dialog('close');
+                  }
+              }, 'json');
+            }
+        });
+    }
+</script>

@@ -1,0 +1,109 @@
+﻿@using IEM.Areas.FLEXISPEND.Models
+@using IEM.Common
+
+@model IEnumerable<IEM.Areas.FLEXISPEND.Models.FS_GSTRModel>
+
+@{
+
+    FlexispendDataModel objd = new FlexispendDataModel();
+    List<FS_GSTRModel> lstPayment = new List<FS_GSTRModel>();
+    lstPayment = (List<FS_GSTRModel>)TempData["SearchItems"];
+
+    FS_GSTRModel objMExpenseEdit = new FS_GSTRModel();
+
+    if (TempData["action"] != null)
+    {
+        lstPayment = objd.GetTDSfilelist((TempData["action"].ToString()), (Session["headerid"].ToString())).ToList();
+
+    }
+    else
+    {
+        lstPayment = objd.GetTDSfilelistChecker("Load", "").ToList();
+
+    }
+    decimal remamount = 0;
+    if (lstPayment == null)
+    {
+        ViewBag.NoRecordstolp = "total";
+        Session["invoicePaymentamnt"] = remamount.ToString();
+    }
+    if (lstPayment.Count == 0)
+    {
+        ViewBag.NoRecordsPayment = "NoRecords";
+        ViewBag.NoRecordsFoundPayment = "No Records Found";
+    }
+}
+
+<div id="wgempEmployeeev">
+    @{
+        IEM.Common.CmnFunctions objCmnFunctions = new IEM.Common.CmnFunctions();
+        var gridPayment = new WebGrid(lstPayment, canSort: true, canPage: false, rowsPerPage: 3, ajaxUpdateContainerId: "wgempEmployeeev", ajaxUpdateCallback: "DummyFunction()");
+        int rowValPayment = 0;
+    }
+
+    <div class="container" style="width:102%;margin-left: -1%;">
+        <div>
+            @gridPayment.GetHtml(
+                                  htmlAttributes: new { id = "wgriGSTRUploadDetails" },
+                                  tableStyle: "tableSmall table-bordered table-hover table-responsive",
+                mode: WebGridPagerModes.All,
+                columns:
+                gridPayment.Columns(gridPayment.Column("#", canSort: false, format: item => rowValPayment = rowValPayment + 1),
+                                  gridPayment.Column("filename", objCmnFunctions.Sorter("filename", "File Name", gridPayment), canSort: false),
+                                           gridPayment.Column("insertdate", objCmnFunctions.Sorter("insertdate", "Uploaded Date", gridPayment), canSort: false),
+                                  gridPayment.Column("makerid", objCmnFunctions.Sorter("makerid", "Uploaded by", gridPayment), canSort: false),
+                                                   gridPayment.Column("Status", objCmnFunctions.Sorter("Status", "Status", gridPayment), canSort: false),
+
+                    //gridPayment.Column("headergid", objCmnFunctions.Sorter("headergid", "", gridPayment), canSort: false),
+
+                                             gridPayment.Column(header: "Action", canSort: false, style: "action",
+                        format: @<text>
+                                      <a onclick="TDSUploaddetails(@item.headergid)" title='View Detail'> <span id='Color' class='glyphicon glyphicon-eye-open'> </span> </a>
+
+
+                        </text>
+                                                      ),
+                                                        gridPayment.Column(format: @<input type="hidden" name="headergid" value="@item.headergid" />)
+
+                                            ))
+
+        </div>
+    </div>
+</div>
+
+<div id="ForPartialView"></div>
+
+<div id="forAttachment"></div>
+
+<input type="hidden" name="hdheaderid" id="hdheaderid" />
+
+
+<script>
+
+    var objforAttachment;
+    var forficcsearch;
+    $(document).ready(function () {
+        objforAttachment = $("[id$='forAttachment']");
+        forficcsearch = $("[id$='forficcsearch']");
+    });
+    function TDSUploaddetails(id) { 
+        debugger;
+
+        var gid = id;
+        $("#hdheaderid").val(gid);
+        var action = "Getdetails";
+        objforAttachment.dialog({
+            autoOpen: false,
+            modal: true,
+            show: 'fade-in',
+            close: 'fade-out',
+            //width: 950,
+            //height: 450,
+            resizable: false
+        });
+        objforAttachment.load('@Url.Action("_GetTDSUploadDetails", "TDSSpecialRateCheckerSummary")?straction=' + action + '&' + "&id=" + gid + '&' + new Date().getTime());
+        objforAttachment.dialog({ title: 'View TDS Details', width: '1300', height: '600' });
+        objforAttachment.dialog("open");
+    }
+</script>
+

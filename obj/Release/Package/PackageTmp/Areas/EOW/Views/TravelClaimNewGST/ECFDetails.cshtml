@@ -1,0 +1,435 @@
+﻿@model  IEM.Areas.EOW.Models.EOW_TravelClaim
+@using IEM.Areas.EOW.Models
+@{
+    EOW_EmployeeeExpense sh = (EOW_EmployeeeExpense)ViewBag.EOW_Employeeheader;
+}
+<style>
+    .diapy {
+        display: none;
+    }
+
+    .wth {
+        width: 100%;
+        height: 60px;
+    }
+
+    /*.required monthYearPicker {
+        top: 558.615px !important;
+        position: relative;
+    }*/
+</style>
+<div class="panel11 panel11-default11">
+    @*@using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()*@
+    <table style="width: 65%;">
+        <tr>
+            <td style="width: 75%;background-color: #F5F5F5;border-radius: 10px;padding: 2px 12px 0px 10px; vertical-align:top;">
+                <table class="myTableStyleTabNew" style="width: 100%;">
+                    <tr>
+                        <td style="width:25%;">
+                            @Html.HiddenFor(n => sh.ECF_Date, new { @id = "txtecfdateh", @placeholder = "dd-mm-yyyy" })
+                            <span>ECF Date</span><br />
+                            @Html.TextBoxFor(n => sh.ECF_Date, new { disable = true, @class = "textboxStyle required", @id = "txtecfdatet", @placeholder = "dd-mm-yyyy", @maxlength = "10", @readonly = "readonly" })
+
+                        </td>
+                        <td style="width:25%;">
+                            @Html.HiddenFor(n => sh.ClaimMonth, new { @id = "txtclaimmonthh" })
+                            <span>Service  Month</span><br />
+                            @*textboxStyle required monthYearPicker*@
+
+                            @Html.TextBoxFor(n => sh.ClaimMonth, new { disable = true, @class = "textboxStyle required monthYearPicker", @id = "txtclaimmontht", @maxlength = "20", @placeholder = "MMM-yyyy" })
+                            @*@Html.TextBoxFor(n => sh.ClaimMonth, new { @class = "textboxStyle required monthYearPicker hasDatepicker", @id = "txtclaimmontht", @maxlength = "20", @placeholder = "MMM-yyyy" })*@
+                        </td>
+                        <td style="width:25%;">
+                            @Html.HiddenFor(n => sh.noofperson, new { @id = "txtnoofpersonh" })
+                            <span>No.of Persons</span><br />
+                            @Html.TextBoxFor(n => sh.noofperson, new { @class = "textboxStyle required", @id = "txtnoofperson", @onkeypress = "return isAmount(event);", @maxlength = "3" })
+                        </td>
+                        <td style="width:25%;">
+                            @Html.HiddenFor(n => sh.ECF_Amount, new { @id = "txtecfamounth" })
+                            <span>ECF  Amount</span><br />
+                            @Html.TextBoxFor(n => sh.ECF_Amount, new { disabled = "disabled", @class = "textboxStyle required", @id = "txtecfamountt", @onkeypress = "return isAmount(event);", @maxlength = "13" })
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="width:75%;" colspan="3">
+                            @Html.HiddenFor(n => sh.ecfremark, new { @id = "txtecfremarkh" })
+                            @Html.HiddenFor(n => sh.ecfdescription, new { @id = "txtecfdescriptionh" })
+                            <span>ECF Description</span><br />
+                            @Html.TextAreaFor(n => sh.ecfdescription, new { disable = true, @class = "textboxStyle required wth", @id = "txtecfdescription", @maxlength = "255" })
+                        </td>
+                        <td style="width:25%; vertical-align:bottom; text-align:right;">
+
+                            <button id="btnfrstsubmitt" class="btn btn-primary" onclick="EcfSubmit()"><span style="color:white"></span> Proceed</button>
+                        </td>
+                    <tr>
+                        <td colspan="6" style="font-size:16px;color:red;">
+                            <span>Pay Method : </span> <label id="lblPayMethod" style="font-weight:normal">Single Payment</label>
+                        </td>
+                    </tr>
+        </tr>
+    </table>
+    </td>
+    </tr>
+    </table>
+    <input type="hidden" id="nooffperson" />
+    @*}*@
+</div>
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        //  alert('kumar');
+        $("#txtecfamountt").keyup(function (event) {
+            if (event.which >= 37 && event.which <= 40) {
+                event.preventDefault();
+            }
+            var currentval = $("#txtecfamountt").val();
+            if (currentval != "") {
+                $("#txtecfamountt").removeClass('required');
+                $("#txtecfamountt").addClass('valid');
+            }
+
+            var testDecimal = testDecimals(currentval);
+            if (testDecimal.length > 1) {
+                currentval = currentval.slice(0, -1);
+            }
+            $("#txtecfamountt").val(replaceCommas(currentval));
+        });
+
+        //selva
+        var curecfamount = $("#txtecfamountt").val();
+        if (curecfamount != "") {
+            $("#txtecfamountt").removeClass('required');
+            $("#txtecfamountt").addClass('valid');
+        }
+
+        var txtecfdescriptionh = $("#txtecfdescriptionh").val();
+        if (txtecfdescriptionh.trim() != "") {
+            $("#txtecfdescription").val(txtecfdescriptionh);
+        }
+        var txtecfdateh = $("#txtnoofpersonh").val();
+        if (txtecfdateh.trim() != "") {
+            $("#txtnoofperson").val(txtecfdateh);
+        }
+
+        //selva add add remove css class red and green
+        var noofperson = $("#txtnoofperson").val();
+        if (noofperson != "") {
+            $("#txtnoofperson").removeClass('required');
+            $("#txtnoofperson").addClass('valid');
+        }
+
+        var txtecfdateh = $("#txtecfdateh").val();
+        if (txtecfdateh.trim() != "") {
+            $("#txtecfdatet").val(txtecfdateh);
+        }
+
+        //07.12.2020 vadivu
+        var txtclaimmonthh = $("#txtclaimmonthh").val();
+        if (txtclaimmonthh.trim() != "") {
+            $("#txtclaimmontht").val(txtclaimmonthh);
+        }
+
+        var txtecfamounth = $("#txtecfamounth").val();
+        if (txtecfamounth.trim() != "") {
+            $("#txtecfamountt").val(txtecfamounth);
+        }
+
+        $("#txtecfdescriptionh").val('');
+        $("#txtecfdateh").val('');
+        $("#txtclaimmonthh").val('');
+        $("#txtecfamounth").val('');
+        $("#txtnoofpersonh").val('');
+
+        $("#txtecfdatet").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            maxDate: '-id',
+            minDate: '+id',
+            dateFormat: 'dd-mm-yy'
+
+        });
+        var selmode = $("#raisermodeNamet option:selected").text();
+        if (selmode.trim() != "") {
+            $("#txtmodest").text(selmode);
+        }
+        else {
+            $("#txtmodest").text('Self');
+        }
+
+        $(function () {
+            $('.monthYearPicker').datepicker({
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                maxDate: '-id',
+                dateFormat: 'MM-yy'
+            }).focus(function () {
+                var thisCalendar = $(this);
+                $('.ui-datepicker-calendar').detach();
+                $('.ui-datepicker-close').click(function () {
+                    var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                    var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                    thisCalendar.datepicker('setDate', new Date(year, month, 1));
+                    $("#txtclaimmontht").removeClass('required');
+                    $("#txtclaimmontht").addClass('valid');
+                });
+            });
+        });
+
+
+        //$(".monthYearPicker").focus(function () {
+        //    $(".ui-datepicker-calendar").hide();
+        //    $("#ui-datepicker-div").position({
+        //        my: "center top",
+        //        at: "center bottom",
+        //        of: $(this)
+        //    });
+        //});
+
+        var txtecfdescription = $("#txtecfdescription").val();
+        if (txtecfdescription.trim() != "") {
+            $("#txtecfdescription").addClass('valid');
+        }
+        else {
+            $("#txtecfdescription").addClass('required');
+        }
+        var txtContractFromdd = $("#txtecfdatet").val();
+        if (txtContractFromdd == "") {
+            $('#txtecfdatet').datepicker().datepicker('setDate', 'today');
+            $("#txtecfdatet").removeClass('required');
+            $("#txtecfdatet").addClass('valid');
+        }
+        var txtContractFromr = $("#txtnoofperson").val();
+        if (txtContractFromr == "") {
+            $("#txtnoofperson").val('1');
+            $("#txtnoofperson").removeClass('required');
+            $("#txtnoofperson").addClass('valid');
+        }
+        $("#txtecfdatet").keyup(function () {
+            var txtContractFrom = $("#txtecfdatet").val();
+            if (txtContractFrom.trim() != "") {
+                $("#txtecfdatet").removeClass('required');
+                $("#txtecfdatet").addClass('valid');
+            }
+            else {
+                $("#txtecfdatet").removeClass('valid');
+                $("#txtecfdatet").addClass('required');
+            }
+        });
+        var txtContractFrom = $("#txtecfdatet").val();
+        if (txtContractFrom.trim() != "") {
+            $("#txtecfdatet").addClass('valid');
+        }
+        else {
+            $("#txtecfdatet").addClass('required');
+        }
+        $("#txtecfdatet").change(function () {
+            var txtContractFrom = $("#txtecfdatet").val();
+            if (txtContractFrom.trim() != "") {
+                $("#txtecfdatet").removeClass('required');
+                $("#txtecfdatet").addClass('valid');
+            }
+            else {
+                $("#txtecfdatet").removeClass('valid');
+                $("#txtecfdatet").addClass('required');
+            }
+        });
+        $("#txtecfamountt").keyup(function () {
+            var txtContractFrom = $("#txtecfamountt").val();
+            //    if (txtContractFrom.trim() != "") {
+            //        $("#txtecfamountt").removeClass('required');
+            //        $("#txtecfamountt").addClass('valid');
+            //    }
+            //    else {
+            //        $("#txtecfamountt").removeClass('valid');
+            //        $("#txtecfamountt").addClass('required');
+            //    }
+        });
+        var txtContractFrom = $("#txtecfamountt").val();
+        //if (txtContractFrom.trim() != "") {
+        //    $("#txtecfamountt").addClass('valid');
+        //}
+        //else {
+        //    $("#txtecfamountt").addClass('required');
+        //}
+        $("#txtclaimmontht").keyup(function () {
+            var txtContractFrom = $("#txtclaimmontht").val();
+            if (txtContractFrom.trim() != "") {
+                $("#txtclaimmontht").removeClass('required');
+                $("#txtclaimmontht").addClass('valid');
+            }
+            else {
+                $("#txtclaimmontht").removeClass('valid');
+                $("#txtclaimmontht").addClass('required');
+            }
+        });
+        var txtContractFrom = $("#txtclaimmontht").val();
+        if (txtContractFrom.trim() != "") {
+            $("#txtclaimmontht").addClass('valid');
+        }
+        else {
+            $("#txtclaimmontht").addClass('required');
+        }
+        $("#txtclaimmontht").change(function () {
+            var txtContractFrom = $("#txtclaimmontht").val();
+            if (txtContractFrom.trim() != "") {
+                $("#txtclaimmontht").removeClass('required');
+                $("#txtclaimmontht").addClass('valid');
+            }
+            else {
+                $("#txtclaimmontht").removeClass('valid');
+                $("#txtclaimmontht").addClass('required');
+            }
+        });
+        $("#raisermodeNamet").keyup(function () {
+            var txtContractFrom = $("#raisermodeNamet").val();
+            if (txtContractFrom.trim() != "0") {
+                $("#raisermodeNamet").removeClass('required');
+                $("#raisermodeNamet").addClass('valid');
+            }
+            else {
+                $("#raisermodeNamet").removeClass('valid');
+                $("#raisermodeNamet").addClass('required');
+            }
+        });
+        $("#raisermodeNamet").change(function () {
+            var txtContractFrom = $("#raisermodeNamet").val();
+            if (txtContractFrom.trim() != "0") {
+                $("#raisermodeNamet").removeClass('required');
+                $("#raisermodeNamet").addClass('valid');
+            }
+            else {
+                $("#raisermodeNamet").removeClass('valid');
+                $("#raisermodeNamet").addClass('required');
+            }
+        });
+        $("#txtecfdescription").keyup(function () {
+            var txtContractFrom = $("#txtecfdescription").val();
+            if (txtContractFrom.trim() != "") {
+                $("#txtecfdescription").removeClass('required');
+                $("#txtecfdescription").addClass('valid');
+            }
+            else {
+                $("#txtecfdescription").removeClass('valid');
+                $("#txtecfdescription").addClass('required');
+            }
+        });
+        $("#txtecfdescription").change(function () {
+            var txtContractFrom = $("#txtecfdescription").val();
+            if (txtContractFrom.trim() != "") {
+                $("#txtecfdescription").removeClass('required');
+                $("#txtecfdescription").addClass('valid');
+            }
+            else {
+                $("#txtecfdescription").removeClass('valid');
+                $("#txtecfdescription").addClass('required');
+            }
+        });
+    });
+
+
+    function EcfSubmit() {
+        debugger;
+        //showProgress();
+        var raisermode = $("#raisermodeNamet").val();
+        var raisercode = $("#txtraisercodet").text();
+        var raisername = $("#txtraisernamet").text();
+        var ecfdate = $("#txtecfdatet").val();
+        var grade = $("#txtgradet").text();
+        var claimmonth = $("#txtclaimmontht").val();
+        var ecfamount = $("#txtecfamountt").val();
+        var ecfdescription = $("#txtecfdescription").val();
+        var noofperson = $("#txtnoofperson").val();
+        if (raisermode == null || raisermode == "0") {
+            hideProgress();
+            jAlert("Please Select Raiser Mode.", "Message");
+            return false;
+        }
+
+        if (claimmonth == "") {
+            hideProgress();
+            jAlert("Claim Month Not Match", "Message");
+            return false;
+        }
+
+        if (raisercode == null || raisercode == "") {
+            hideProgress();
+            jAlert("Please Enter Raiser Code.", "Message");
+            return false;
+        }
+        if (raisername == null || raisername == "") {
+            hideProgress();
+            jAlert("Please Enter Raiser Name.", "Message");
+            return false;
+        }
+        if (ecfdate == null || ecfdate == "") {
+            hideProgress();
+            jAlert("Please Select ECF Date.", "Message");
+            $("#txtecfdatet").focus();
+            return false;
+        }
+        if (grade == null || grade == "") {
+            hideProgress();
+            jAlert("Please Enter  Grade.", "Message");
+            return false;
+        }
+        if (claimmonth == null || claimmonth == "") {
+            hideProgress();
+            jAlert("Please Select Claim Month.", "Message");
+            $("#txtclaimmontht").focus();
+            return false;
+        }
+        if (ecfamount == null || ecfamount == "") {
+            hideProgress();
+            jAlert("Please Enter ECF Amount.", "Message");
+            $("#txtecfamountt").focus();
+            return false;
+        }
+        if (ecfamount == "0" || ecfamount == "00" || ecfamount == "000" || ecfamount == "0000" || ecfamount == "00000" || ecfamount == "000000" || ecfamount == "0000000" || ecfamount == "0.000" || ecfamount == "00.000") {
+            hideProgress();
+            jAlert("Please Enter ECF Amount Greather then Zero.", "Message");
+            $("#txtecfamount").focus();
+            return false;
+        }
+        if (ecfdescription == null || ecfdescription == "") {
+            hideProgress();
+            jAlert("Please Enter ECF Description.", "Message");
+            //$("#txtecfdescription").focus();
+            return false;
+        }
+
+        var obj = {
+            "ECF_Amount": ecfamount,
+            "ClaimMonth": claimmonth,
+            "ecfdescription": ecfdescription,  //changes selva 16-12-2020
+            "noofperson": noofperson,
+            "ECF_Date": ecfdate,
+            "raisermodeId": raisermode
+        };
+        $.post('../TravelClaimNewGST/ECFDetails', obj,
+       function (data) {
+           if (data.message == "Success") {
+               $("#lblIFSCCode").html(data.IFSCCodeMess);
+               jAlert("Saved Successfully.", "Message", function (u) {
+                   if (u == true) {
+
+                       var url = '@Url.Action("EmployeeList", "TravelClaimNewGST")?' + new Date().getTime();
+                       $("#tabsmaintravel-3").load(url);
+                   }
+
+               });
+           }
+           else {
+               jAlert(data, "Message");
+               return false;
+           }
+       }, 'json');
+
+    }
+
+
+</script>

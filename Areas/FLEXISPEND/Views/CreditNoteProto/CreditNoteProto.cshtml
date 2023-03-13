@@ -1,0 +1,537 @@
+﻿@{
+    ViewBag.Title = "CreditNoteProto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="@Url.Content("~/Content/themes/base/jquery-ui.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/Rmax_Site.css")" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/Scripts/jquery-ui-1.8.24.min.js")" type="text/javascript"></script>
+<style>
+    table, th, td {
+        white-space: nowrap;
+    }
+</style>
+<div class="pageHeadingLayout">
+    <span class="pageHeading">Credit Note - Maker</span>
+</div>
+<div class="well">
+    <table class="myTableStyleTabNew" style="width:100%;">
+        <tr>
+            <td width="15%" style="padding: 0px 10px" nowrap="nowrap">
+                Credit Note - Type
+                <br />
+                <input type="radio" id="id_NStatus" checked="checked" name="modeStatus" data-bind="event:{ change:$root.RadioChecked }" value="0" />
+                <span style="padding-right:15px;">New</span>
+                <input type="radio" id="id_RStatus" name="modeStatus" value="1" data-bind="event:{ change:$root.RadioChecked }" />
+                <span>Rejected</span>
+            </td>
+            <td width="20%" style="padding: 0px 10px">
+                <span>Date From</span>
+                <br />
+                <input type="text"
+                       name="txtDateFrom"
+                       id="txtDateFrom"
+                       onkeypress="return isEvent(event)"
+                       maxlength="10"
+                       class="fstextbox fsdatepicker required" />
+            </td>
+            <td width="20%" style="padding: 0px 10px">
+                <span>Date To</span>
+                <br />
+                <input type="text"
+                       name="txtDateTo"
+                       id="txtDateTo"
+                       onkeypress="return isEvent(event)"
+                       maxlength="10"
+                       class="fstextbox fsdatepicker required" />
+            </td>
+            <td width="20%" style="padding: 0px 10px">
+                <span>Supplier Code/Name</span>
+                <br />
+                <input type="hidden" name="hdfSupplier" id="hdfSupplier" value="0" />
+                <input type="text"
+                       id="txtSupplier"
+                       class="fstextbox" />
+            </td>
+            <td width="25%" style="padding: 0px 10px; vertical-align:bottom;">
+                <button class="btn btn-primary" id="btnsearch" accesskey="q" data-bind="click: $root.search" disabled="disabled" type="button" style="margin-top:10px;  color:white;">
+                    <span style="color:white;" class="glyphicon glyphicon-search"></span>
+                    Search
+                </button>
+                <button class="btn btn-primary" accesskey="c" data-bind="click: $root.clearFilter" type="button" style="margin-top:10px;  color:white;">
+                    <span style="color:white;" class="glyphicon glyphicon-refresh"></span>
+                    Clear
+                </button>
+                <button class="btn btn-primary" accesskey="a" onclick="ShowDialog()" type="button" style="margin-top:10px;  color:white;">
+                    <span style="color:white;" class="glyphicon glyphicon-plus"></span>
+                    Add New
+                </button>
+            </td>
+            <td width="20%" style="padding: 0px 10px"></td>
+        </tr>
+    </table>
+
+</div>
+<div style="display:none;" id="ShowDialog">
+    <table class="myTableStyleTabNew" style="width:100%;">
+        <tr>
+            <td style="width:33%; padding:0px 5px;">
+                <input type="hidden" name="hdfCNMId" id="hdfCNMId" value="0" />
+                <span>Booking Date</span>
+                <br />
+                <input type="text" disabled="disabled"
+                       id="txtBookDate"
+                       class="textboxStyleBig valid" />
+            </td>
+            <td style="width:33%; padding:0px 5px;">
+                <span>Supplier Code/Name</span>
+                <br />
+                <input type="hidden" name="hdfESupplier" id="hdfESupplier" value="0" />
+                <input type="text"
+                       id="txtESupplier"
+                       class="textboxStyleBig required" />
+            </td>
+            <td style="width:33%; padding:0px 5px;">
+                <span>Credit Note No</span>
+                <br />
+                <input type="text"
+                       id="txtCreditNoteNo"
+                       class="textboxStyleBig valid" />
+            </td>
+            <td style="padding:25px 10px;">
+                <a onclick="ShowCreditNotePopup()" id="btncustomerSearchHeader"><span class="glyphicon glyphicon-search"></span></a>
+            </td>
+        </tr>
+        <tr>
+            <td style="width:33%; padding:0px 5px;">
+                <span>ECF No</span>
+                <br />
+                <input type="text"
+                       id="txtECFNo"
+                       class="textboxStyleBig required" />
+            </td>
+            <td style="width:33%; padding:0px 5px;">
+                <span>Invoice No</span>
+                <br />
+
+                <input type="text"
+                       id="txtInvoiceNo"
+                       class="textboxStyleBig required" />
+            </td>
+            <td style="width:33%; padding:0px 5px;">
+                <span>Invoice Date</span>
+                <br />
+                <input type="text"
+                       id="txtCreditNoteDate"
+                       disabled="disabled"
+                       class="textboxStyleBig required" />
+            </td>
+        </tr>
+        <tr>
+            <td style="width:33%; padding:0px 5px;">
+                <span>Invoice Amount</span>
+                <br />
+                <input type="text"
+                       id="txtInvoiceAmount"
+                       disabled="disabled"
+                       class="textboxStyleBig" />
+            </td>
+            <td style="width:33%; padding:0px 5px;">
+                <span>Credit Note Amount</span>
+                <br />
+                <input type="text"
+                       id="txtCreditNoteAmount"
+                       maxlength="10"
+                       class="textboxStyleBig required" />
+            </td>
+            <td style="width:33%; padding:0px 5px;">
+                <span>HSN Code</span>
+                <br />
+                <select id="ddlhsn" class="textboxStyle" style="width:100%;margin-top: 2px;">
+                    <option value="0">---Select---</option>
+                    <option value="U">9900-Non-Taxable</option>
+                    <option value="U">996405-Air Others</option>
+                    <option value="U">996403 -Air Economy Class</option>
+                </select>
+            </td>
+        </tr>
+     
+        <tr>
+            <td style="width:33%; padding:0px 5px;">
+                <span>Provider Location</span>
+                <br />
+                <input type="text"
+                       id="txtproviderlocation"
+                       disabled="disabled"
+                       class="textboxStyleBig" />
+                
+            </td>
+            <td style="width:33%; padding:0px 5px;">
+                <span>Receiver Location</span>
+                <br />
+                <select id="ddlReceiverLocation" class="textboxStyle" style="width:100%;margin-top: 2px;">
+                    <option value="0">---Select---</option>
+                    <option value="1">ASSAM-18</option>
+                    <option value="2">BIHAR-10</option>
+                    <option value="3">TAMILNADU-33</option>
+                    <option value="4">DELHI-07</option>
+                    <option value="5">GOA-30</option>
+                </select>
+            </td>
+            <td style="width:33%; padding:0px 5px;">
+                <button type="button" id="btnUpdate" accesskey="s" style="margin-top: 15px;" class="btn btn-primary" onclick="Proceedgriddisplay()">
+                    <span style="color:white;"></span>
+                    Populate GST
+                </button>
+            </td>
+        </tr>
+
+        @*<tr>
+            <td colspan="3" style="width:33%; padding:0px 5px;">
+                <span>Receiver Location</span>
+                <br />
+                <select id="ddlReceiverLocation" class="textboxStyle" style="width:32%;margin-top: 2px;">
+                    <option value="0">---Select---</option>
+                    <option value="1">ASSAM</option>
+                    <option value="2">BIHAR</option>
+                    <option value="3">TAMILNADU</option>
+                    <option value="4">DELHI</option>
+                    <option value="5">GOA</option>
+                </select>
+
+                <button type="button" id="btnUpdate" accesskey="s" class="btn btn-primary" onclick="Proceedgriddisplay()">
+                    <span style="color:white;"></span>
+                    Proceed For GST
+                </button>
+            </td>         
+
+          
+
+        </tr>*@
+
+        <tr>
+            <td colspan="3" style="width:99%; padding:0px 5px;">
+                @Html.Partial("CreditNoteProceddGST")
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" style="width:99%; padding:0px 5px;">
+                <span>Remark</span>
+                <br />
+                <textarea id="txtMakerRemark" rows="3" class="txtboxStyleBig" style="width:100%; background-color: white; border-radius: 4px;"></textarea>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="3" style="width:33%; padding:15px 5px; text-align:center;">
+                <button type="button" id="btnproceedforGST" disabled="disabled" accesskey="s" class="btn btn-success" data-bind="click: $root.Update">
+                    <span class="glyphicon glyphicon-save" style="color:white;"></span>
+                    Submit
+                </button>
+            </td>
+        </tr>
+
+    </table>
+</div>
+
+<div style="display:none;" id="ShowCrditNotePopup">
+
+    <div class="table-responsive" id="InvoiceSearchParams">
+        <br />
+        <div class="well table-responsive" style="width: 99%;border-color: #43B6F5;border-width: 1px;padding: 0px;">
+
+            <input hidden id="hdsupplier_gid" value="" />
+            <input hidden id="hdCygnet_gid" value="" />
+            <table class="myTableStyleTab" style="width: 99%;">
+                <tr>
+                    <td style="width:15%">
+                        <span>Pan No. </span>
+                        </br>
+                        <input type="text"
+                               name="panno"
+                               id="txtpanno"
+                               value="@ViewBag.panno"
+                               class="textboxStyle" style="width:96%" />
+                    </td>
+                    <td style="width:15%">
+                        <span> Supplier Name </span>
+                        </br>
+                        <input type="text"
+                               name="supname"
+                               id="txtsupname"
+                               value="@ViewBag.suppliername"
+                               class="textboxStyle" style="width:96%" />
+                    </td>
+                    <td style="padding-left: 15px;">
+                        <span>GSTN No</span>
+                        </br>
+                        <input type="text"
+                               name="GSTNNo"
+                               id="txtGSTNNo"
+                               value="@ViewBag.GSTNNo"
+                               class="textboxStyle" style="width:96%" />
+                    </td>
+                    <td style="padding-left: 15px;">
+                        <span>Credit Note No</span><br />
+                        <input type="text"
+                               name="txtInvoiceNo"
+                               id="txtInvoiceNo"
+                               value="@ViewBag.InvoiceNo"
+                               class="textboxStyle" style="width:96%" />
+                    </td>
+                    <td style="padding-left: 15px;">
+                        <span>Credit Note From Date</span><br />
+                        <input class="textboxStyle required" type="text" value="@ViewBag.InvoiceFromDate" name="fromdate" id="txtInvoiceFromdate" maxlength="10" placeholder="dd-mm-yyyy" />
+                    </td>
+
+                    <td style="padding-left:30px;">
+                        <span>Credit Note To Date</span><br />
+                        <input class="textboxStyle required" type="text" value="@ViewBag.InvoiceToDate" name="todate" id="txtInvoiceTodate" maxlength="10" placeholder="dd-mm-yyyy" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="text-align:right;" colspan="3">
+                        <span class="input-append">
+                            <button class="btn btn-primary" id="btnsearch" value="Search" name="command" type="button" onclick="SearchInvoice()" style="margin-top:20px;color:white;"><span style="color:white;font-size:12px" class="glyphicon glyphicon-search"></span> Search</button>
+                        </span>
+                    </td>
+                    <td style="text-align:left;" colspan="3">
+                        <span class="input-append">
+                            <button class="btn btn-primary" id="btncenclea" value="Clear" name="command" type="button" onclick="SelectClear()" style="margin-top:20px;"><span style="color:white;font-size:12px" class="glyphicon glyphicon-remove-circle"></span> Clear</button>
+                        </span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="6">
+                        @*@Html.Partial("CreditNotePopup")*@
+
+                        <table id="gvChecker" class="tableSmall table-bordered table-hover table-responsive" data-bind="visible: GSTHoldqRunArray().length > 0">
+                            <thead>
+                                <tr>
+
+                                    <th style="width:5%; min-width:50px;">
+                                        SLNo
+                                    </th>
+
+                                    <th style="width:10%; min-width:100px;">
+                                        Action
+                                    </th>
+
+                                    <th style="width:12%; min-width:80px;" class="colDate">
+                                        Supplier Name
+                                    </th>
+
+
+                                    <th style="width:12%; min-width:80px;" class="colDate">
+                                        Credit Note No
+                                    </th>
+
+                                    <th style="width:10%; min-width:100px;">
+                                        Credit Note Date
+                                    </th>
+                                    <th style="width:15%; min-width:80px;">
+                                        Credit Note Amount
+                                    </th>
+                                    <th style="width:12%; min-width:80px;" class="colDate">
+                                        Provider Location
+                                    </th>
+
+                                    <th style="width:12%; min-width:80px;" class="colDate">
+                                        Receiver Location
+                                    </th>
+
+                                    <th style="width:12%; min-width:100px;">
+                                        Taxable Amount
+                                    </th>
+                                    <th style="width:12%; min-width:100px;">
+                                        CGST Amount
+                                    </th>
+                                    <th style="width:12%; min-width:100px;">
+                                        SGST Amount
+                                    </th>
+                                    <th style="width:10%; min-width:100px;">
+                                        IGST Amount
+                                    </th>
+
+
+                                </tr>
+                            </thead>
+                            <tbody id="ContentPaymentRun" data-bind="foreach:{ data: GSTHoldqRunArray, afterRender: DatatableCall }, visible: GSTHoldqRunArray().length > 0">
+                                <tr>
+
+                                    <td style="width:5%; min-width:50px;">
+                                        <span> 1 </span>
+                                    </td>
+                                    <td style="width:12%; min-width:100px; text-align:center;">
+                                        <span onclick="DisplayCrditNoteDetails()" title="View" style="color: blue; cursor:pointer;  text-decoration:underline;">Select</span>
+                                    </td>
+
+
+                                    <td style="width:12%; min-width:80px;">
+                                        SUP012371-Code Tech
+                                    </td>
+                                    <td style="width:12%; min-width:80px;">
+                                        217488619
+                                    </td>
+                                    <td style="width:10%; min-width:100px;">
+                                        11-10-2020
+                                    </td>
+                                    <td style="width:15%; min-width:80px;">
+                                        12.00
+                                    </td>
+
+                                    <td style="width:15%; min-width:80px;">
+                                        Delhi
+                                    </td>
+                                    <td style="width:15%; min-width:80px;">
+                                        Punjab
+                                    </td>
+
+                                    <td style="width:12%; min-width:100px; text-align:right;">
+                                        1.14
+                                    </td>
+                                    <td style="width:12%; min-width:100px; text-align:right;">
+                                        0.57
+                                    </td>
+                                    <td style="width:12%; min-width:100px; text-align:right;">
+                                        0.57
+                                    </td>
+
+                                    <td style="width:12%; min-width:100px; text-align:right;">
+                                        0.00
+                                    </td>
+
+                                </tr>
+
+
+                            </tbody>
+                        </table>
+                    </td>
+
+
+                </tr>
+
+
+            </table>
+            <table class="myTableStyleTab" style="width: 99%;">
+                <tr>
+                    <td colspan="3" style="text-align:right;">
+                        <span class="input-append">
+                            <button class="btn btn-primary" id="btnProceed" value="Search" type="button" onclick="InvoiceMismatch()" style="margin-top:-5px;color:white;margin-right:530px;"><span style="color:white;font-size:12px"></span> Invoice Mismatch</button>
+
+                        </span>
+                    </td>
+                </tr>
+
+            </table>
+
+        </div>
+    </div>
+
+
+</div>
+
+
+
+
+<script>
+
+    var objDialog;
+    var objShowCreditnoteDialog;
+    $(document).ready(function () {
+        $("#txtBookDate").val($.datepicker.formatDate("dd-mm-yy", new Date()));
+        //  $("#txtCreditNoteNo").val("CRD2010200001");
+        objDialog = $("[id$='ShowDialog']");
+        objDialog.dialog({
+            autoOpen: false,
+            modal: true,
+            width: 600,
+            height: 350,
+            duration: 300
+        });
+        objShowCreditnoteDialog = $("[id$='ShowCrditNotePopup']");
+        objShowCreditnoteDialog.dialog({
+            autoOpen: false,
+            modal: true,
+            width: 600,
+            height: 350,
+            duration: 300
+        });
+
+
+
+        $("#txtECFNo").change(function () {
+            debugger;
+            $("#txtECFNo").removeClass('required');
+            $("#txtECFNo").addClass('valid');
+        });
+
+
+        $("#txtInvoiceNo").change(function () {
+            debugger;
+            var invoiceno = $("#txtInvoiceNo").val();
+            var matchinvno = $("#txtInvoiceNo").val();
+
+            if (invoiceno == matchinvno) {
+                $('#ddlReceiverLocation option[value="3"]').attr("selected", "selected");
+
+            }
+            $("#txtInvoiceAmount").val("5700.00");
+
+            if (invoiceno != "") {
+                $("#txtInvoiceNo").removeClass('required');
+                $("#txtInvoiceNo").addClass('valid');
+            }
+
+        });
+    });
+
+    function ShowDialog() {
+        $('#ShowDialog').attr("style", "display:block;");
+        objDialog.dialog({ title: 'Credit Note Entry', width: '1200', height: '500' });
+        objDialog.dialog("open");
+        return false;
+    }
+
+    function ShowCreditNotePopup() {
+        debugger;
+        $('#ShowCrditNotePopup').attr("style", "display:block;");
+        objShowCreditnoteDialog.dialog({ title: 'Credit Note Details', width: '1200', height: '700' });
+        objShowCreditnoteDialog.dialog("open");
+    }
+
+    function Proceedgriddisplay() {
+        $("#proceedforgstid").show();
+        $("#btnproceedforGST").attr("disabled", false);
+    }
+
+    function DisplayCrditNoteDetails() {
+        debugger;
+        $("#txtproviderlocation").val("DELHI-07");
+        $("#txtESupplier").val("SUP012371-Code Tech");
+        $("#txtCreditNoteDate").val("11-10-2020");
+        $("#txtCreditNoteAmount").val("12.00");
+        $("#txtCreditNoteNo").val("217488619");
+        objShowCreditnoteDialog.dialog("close");
+
+        var esupplier = $("#txtESupplier").val();
+        var creditnotedate = $("#txtCreditNoteDate").val();
+        var creditnoteamount = $("#txtCreditNoteAmount").val();
+
+        if (esupplier != "") {
+            $("#txtESupplier").removeClass('required');
+            $("#txtESupplier").addClass('valid');
+        }
+        if (creditnotedate != "") {
+            $("#txtCreditNoteDate").removeClass('required');
+            $("#txtCreditNoteDate").addClass('valid');
+        }
+        if (creditnoteamount != "") {
+            $("#txtCreditNoteAmount").removeClass('required');
+            $("#txtCreditNoteAmount").addClass('valid');
+        }
+    }
+
+</script>

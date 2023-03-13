@@ -1,0 +1,428 @@
+﻿@model  IEM.Areas.EOW.Models.CygnetSearchModel
+@using IEM.Areas.EOW.Models
+@{
+    ViewBag.Title = "Invoice Search";
+    //CygnetDataModel objd = new CygnetDataModel();
+    //CygnetSearchModel objcyg = new CygnetSearchModel();
+    //List<CygnetSearchModel> lstTempInvoice = new List<CygnetSearchModel>();
+    //lstTempInvoice = (List<CygnetSearchModel>)TempData["SearchItems"];
+
+    //if (lstTempInvoice == null)
+    //{
+    //    ViewBag.IsSearched = "no";
+    //    if (Session["invoiceGid"] != null)
+    //    {
+    //        lstTempInvoice = objd.SelectInvoiceSearch(objcyg).ToList();
+    //    }
+    //    else
+    //    {
+    //        lstTempInvoice = objd.SelectInvoiceSearch(objcyg).ToList();
+    //    }
+    //}
+    //if (lstTempInvoice.Count == 0)
+    //{
+    //    ViewBag.NoRecordsPayment = "NoRecords";
+    //    ViewBag.NoRecordsFoundPayment = "No Records Found";
+    //}
+}
+
+
+
+<div class="table-responsive" id="InvoiceSearchParams" style="height:600px;">
+    <br />
+    <div class="well table-responsive" style="width: 99%;border-color: #43B6F5;border-width: 1px;padding: 0px;">
+
+
+        <table class="myTableStyleTab" style="width: 99%;">
+            <tr>
+                <td style="width:15%">
+                    <span>Pan No. </span>
+                    <input type="text"
+                           name="panno"
+                           id="txtpanno"
+                           value="@ViewBag.panno"
+                           class="textboxStyle" style="width:96%" />
+                </td>
+                <td style="width:15%">
+                    <span> Supplier Name </span>
+                    <input type="text"
+                           name="txtsupname"
+                           id="txtsupname"
+                           value="@ViewBag.suppliername"
+                           class="textboxStyle" style="width:96%" />
+                </td>
+                <td style="width:15%">
+                    <span>GSTN No.</span>
+                    <input type="text"
+                           name="GSTNNo"
+                           id="txtGSTNNo"
+                           value="@ViewBag.GSTNNo"
+                           class="textboxStyle" style="width:96%" />
+                </td>
+                <td>
+                    <span>Invoice No</span><br />
+                    <input type="text"
+                           name="InvoiceNo"
+                           id="txtInvoiceNumber"
+                           value="@ViewBag.InvoiceNo"
+                           class="textboxStyle" style="width:96%" />
+                </td>
+                <td style="padding-left: 15px;">
+                    <span>Invoice From Date</span><br />
+                    <input class="textboxStyle required" type="text" value="@ViewBag.InvoiceFromDate" name="fromdate" id="txtInvoiceFromdate" maxlength="10" placeholder="dd-mm-yyyy" />
+                </td>
+
+                <td style="padding-left: 15px;">
+                    <span>Invoice To Date</span><br />
+                    <input class="textboxStyle required" type="text" value="@ViewBag.InvoiceToDate" name="todate" id="txtInvoiceTodate" maxlength="10" placeholder="dd-mm-yyyy" />
+                </td>
+            </tr>
+
+            <tr>
+                <td style="text-align:right;" colspan="3">
+                    <span class="input-append">
+                        <button class="btn btn-primary" id="btnsearch" value="Search" name="command" type="button" onclick="SearchInvoice()" style="margin-top:20px;color:white;"><span style="color:white;font-size:12px" class="glyphicon glyphicon-search"></span> Search</button>
+                    </span>
+                </td>
+                <td style="text-align:left;" colspan="3">
+                    <span class="input-append">
+                        <button class="btn btn-primary" id="btncenclea" value="Clear" name="command" type="button" onclick="Clear()" style="margin-top:20px;"><span style="color:white;font-size:12px" class="glyphicon glyphicon-remove-circle"></span> Clear</button>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6">
+                    @Html.Partial("CygnetGrid")
+                </td>
+            </tr>
+            @*<tr>
+                    <td colspan="3" style="text-align:right;">
+                        <span class="input-append">
+                            <button class="btn btn-primary" id="btnProceed" value="Search" type="button" onclick="CreateECFInvoice()" style="margin-top:20px;color:white;"><span style="color:white;font-size:12px" class="glyphicon glyphicon-search"></span> Proceed</button>
+                        </span>
+                    </td>
+                    <td colspan="3" style="text-align:left;">
+                        <span class="input-append">
+                            <button class="btn btn-primary" id="btnClear" value="Clear" type="button" onclick="ClearSelection()" style="margin-top:20px;"><span style="color:white;font-size:12px" class="glyphicon glyphicon-remove-circle"></span> Clear</button>
+                        </span>
+                    </td>
+                </tr>*@
+        </table>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var pickerOpts = {
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '1950:2100',
+            currentText: "Now",
+            dateFormat: "dd-mm-yy"
+        };
+        $("#txtInvoiceFromdate").datepicker(pickerOpts);
+        $("#txtInvoiceTodate").datepicker(pickerOpts);
+
+
+
+        //11-03-2021 selva Created
+        //$("#txtsupname").autocomplete({
+        //    source: function (request, response) {
+        //        $.ajax({
+        //            url: "../TravelClaimNewGST/AutoCompletecodes",
+        //            type: "POST",
+        //            dataType: "json",
+        //            data: { term: request.term },
+        //            success: function (data) {
+        //                response($.map(data, function (item) {
+        //                    return { label: item.SupplierCode, value: item.SupplierCode };
+        //                }))
+
+        //            }
+        //        })
+        //    },
+        //    messages: {
+        //        noResults: "", results: ""
+        //    }
+        //});
+
+        $("#txtsupname").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "../TravelClaimNewGST/AutoCompletenames",
+                    type: "POST",
+                    dataType: "json",
+                    data: { term: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.SupplierName, value: item.SupplierName };
+                        }))
+
+                    }
+                })
+            },
+            messages: {
+                noResults: "", results: ""
+            }
+        });
+
+
+
+
+    });
+    function DummyFunction() {
+
+    }
+    function CreateECFInvoice() {
+        debugger;
+        var first = "";
+        var array = "";
+        $('#wgTempInvoice').find('tbody > tr').each(function (index) {
+            var row = $(this).closest('tr');
+            first = row.find("td").eq(0).html()
+            var select = row.find("td").eq(0).find("input:checkbox").is(":checked")
+            if (select == true) {
+                array = array + row.find("td").eq(0).find("input:checkbox").val() + ',';
+            }
+        });
+        //jAlert(array, "Message");
+        if (array == "") {
+            jAlert("Please select atleast one Invoice!", "Message");
+            return false;
+        }
+        //var ObjCygnet = {
+        //    "Cygnet_Gids": array
+        //};
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("CreateECFInvoice", "SupplierInvoiceNew")?Cygnet_Gids=' + array,
+            //data: ObjCygnet,
+            success: function (response) {
+                debugger;
+                if (response.Data0 != null && response.Data0 != "" && JSON.parse(response.Data0) != null)
+                    Data0 = JSON.parse(response.Data0);
+                if (Data0.length > 0) {
+                    jAlert(Data0[0].Msg, "Message");
+                    if (Data0[0].Clear == 1) {
+                        location.href = '@Url.Action("selectdatadraft", "DashBoard")?id=' + Data0[0].ecf_gid + '&' + new Date().getTime();
+                    }
+                }
+            },
+            error: function () {
+            }
+        });
+    }
+    function ClearSelection() {
+
+    }
+
+    //function SearchInvoice() {
+    //    var SupplierPanNo = $('#txtpanno').val();
+    //    var SupplierName = $('#txtsupname').val();
+    //    var Supplier_GSTNNo = $('#txtGSTNNo').val();
+    //    var InvoiceNo = $('#txtInvoiceNumber').val();
+    //    var InvoiceFromDate = $('#txtInvoiceFromdate').val();
+    //    var InvoiceToDate = $('#txtInvoiceTodate').val();
+
+    //    $("#divInvoiceGrid").load('../TravelClaimNewGST/CygnetGrid?panno=' + SupplierPanNo + "&suppliername=" + SupplierName + "&GSNTNNo=" + Supplier_GSTNNo + "&InvoiceNo=" + InvoiceNo +
+    //        "&FromDate=" + InvoiceFromDate + "&ToDate=" + InvoiceToDate);
+    //}
+
+
+
+    //selva 28-12-2020 cygnet  changes
+    function SearchInvoice() {
+        debugger;
+        var SupplierPanNo = $('#txtpanno').val();
+        var SupplierName = $('#txtsupname').val();
+        var Supplier_GSTNNo = $('#txtGSTNNo').val();
+        var InvoiceNo = $('#txtInvoiceNumber').val();
+        var InvoiceFromDate = $('#txtInvoiceFromdate').val();
+        var InvoiceToDate = $('#txtInvoiceTodate').val();
+
+        var CygnetsearchInvDetail = {
+            "panno": SupplierPanNo,
+            "suppliername": SupplierName,
+            "GSNTNNo": Supplier_GSTNNo,
+            "InvoiceNo": InvoiceNo,
+            "FromDate": InvoiceFromDate,
+            "ToDate": InvoiceToDate,
+        }
+        $.ajax({
+            type: "POST",
+            url: '../TravelClaimNewGST/GetCygnetSearchCountInvDetails',
+            data: JSON.stringify(CygnetsearchInvDetail),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                debugger;
+                var Data1 = "";
+
+                if (response.Data1 != null && response.Data1 != "") {
+                    debugger;
+                    Data1 = JSON.parse(response.Data1);
+                    var supgid = Data1[0].InvoiceSupplier_gid;
+
+                    if (Data1[0].Cygnet_Invoice_Status == 3) {
+
+                        var cyggrd = '@Url.Action("CygnetGrid", "TravelClaimNewGST")';
+                        $("#divInvoiceGrid").load(cyggrd);
+
+                    }
+                }
+                else {
+                    jAlert("No record found!", "Message");
+                    return false;
+                }
+
+
+            }
+        });
+    }
+
+
+    function fn_gridshow() {
+        $("#grid td:nth-child(2),#grid th:nth-child(2)").show();
+    }
+
+    function SelectAdd(id) {
+        debugger;
+        var CustomerInvDetail = {
+            "Cygnet_gid": id
+        }
+        $.ajax({
+            type: "POST",
+            url: '../TravelClaimNewGST/GetCygnetSearchInvDetails',
+            data: JSON.stringify(CustomerInvDetail),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                var Data1 = "";
+                if (JSON.parse(response.Data1 != null)) {
+                    debugger;
+                    Data1 = JSON.parse(response.Data1);
+
+                    $('#txtVendorName').val(Data1[0].Cygnet_Supplier_Name);
+                    $('#txtInvoiceNo').val(Data1[0].Cygnet_Invoice_No);
+                    $('#hsncode').val(Data1[0].Cygnet_HSN_Code);
+
+                    $("#hfCygnet_gid").val(Data1[0].Cygnet_gid);
+
+                    $('#txtInvoiceDate').val(Data1[0].Cygnet_Invoice_Date);
+
+                   //  $('#txtInvoiceDate').val(Data1[0].InvDate);  //14-12-2020 selva Changes
+
+                    //  $('#txtInvoiceDate').val(Data1[0].InvDate);
+                    //   $('#txtServiceMonth').val(Data1[0].InvDate);
+                    $('#txtInvoiceAmount').val(Data1[0].Cygnet_Invoice_Amount);
+
+                    $('#txtWithoutTaxAmount').val(Data1[0].Cygnet_Taxable_Amount); // 19-Jan-2021 selva
+
+
+                    $('#txtInvoiceDescription').val(' ');
+                    $('#txtAdjustAmount').val(0);
+                    $('#txtGSTINVendor').val(Data1[0].Cygnet_Supplier_GSTN_No);
+                    $('#ddlgstProviderLoc').val(Data1[0].Cygnet_Provider_Location_Gid);
+                    $('#ddlgstReceiverLoc').val(Data1[0].Cygnet_Receiver_Location_Gid);
+                    $('#ddlgstReceiverLoc').trigger("change");
+                    $('#hdfSVendorName').val(Data1[0].SupplierID)
+                    $("#txtVendorName").removeClass("required").removeClass("valid");
+
+                    //selva
+
+                    var vendorname = $("#txtVendorName").val();
+                    var invoiceno = $("#txtInvoiceNo").val();
+                    var invoicedate = $("#txtInvoiceDate").val();
+                    var servicemonth = $("#txtServiceMonth").val();
+                    var invoiceamount = $("#txtInvoiceAmount").val();
+                    var withouttaxamt = $("#txtWithoutTaxAmount").val();
+                    var Gstinvendor = $("#txtGSTINVendor").val();
+                    var providerloc = $("#ddlgstProviderLoc").val();
+                    var receiverloc = $("#ddlgstReceiverLoc").val();
+                    var GSTFIHFC = $("#txtGSTINFICCL").val();
+
+                    if (vendorname != "") {
+                        $("#txtVendorName").removeClass('required');
+                        $("#txtVendorName").addClass('valid');
+                    }
+                    if (invoiceno != "") {
+                        $("#txtInvoiceNo").removeClass('required');
+                        $("#txtInvoiceNo").addClass('valid');
+                    }
+                    if (invoicedate != "") {
+                        $("#txtInvoiceDate").removeClass('required');
+                        $("#txtInvoiceDate").addClass('valid');
+                    }
+                    if (servicemonth != "") {
+                        $("#txtServiceMonth").removeClass('required');
+                        $("#txtServiceMonth").addClass('valid');
+                    }
+                    if (invoiceamount != "") {
+                        $("#txtInvoiceAmount").removeClass('required');
+                        $("#txtInvoiceAmount").addClass('valid');
+                    }
+
+                    if (withouttaxamt != "") {
+                        $("#txtWithoutTaxAmount").removeClass('required');
+                        $("#txtWithoutTaxAmount").addClass('valid');
+                    }
+
+                    if (Gstinvendor != "") {
+                        $("#txtGSTINVendor").removeClass('required');
+                        $("#txtGSTINVendor").addClass('valid');
+                    }
+                    if (providerloc != "") {
+                        $("#ddlgstProviderLoc").removeClass('required');
+                        $("#ddlgstProviderLoc").addClass('valid');
+                    }
+                    if (receiverloc != "") {
+                        $("#ddlgstReceiverLoc").removeClass('required');
+                        $("#ddlgstReceiverLoc").addClass('valid');
+                    }
+                    if (GSTFIHFC != "") {
+                        $("#txtGSTINFICCL").removeClass('required');
+                        $("#txtGSTINFICCL").addClass('valid');
+                    }
+
+                    Gottodel();
+                }
+            }
+        });
+        //validation();
+    }
+
+    function Gottodel() {
+
+        ob.dialog("close");
+    }
+
+
+    function Clear() {
+
+        $("#txtpanno").val('');
+        $("#txtsupname").val('');
+        $("#txtGSTNNo").val('');
+        $("#txtInvoiceNumber").val('');
+        $("#txtInvoiceFromdate").val('');
+        $("#txtInvoiceTodate").val('');
+
+        /* var SupplierPanNo = $('#txtpanno').val();
+         var SupplierName = $('#txtsupname').val();
+         var Supplier_GSTNNo = $('#txtGSTNNo').val();
+         var InvoiceNo = $('#txtInvoiceNo').val();
+         var InvoiceFromDate = $('#txtInvoiceFromdate').val();
+         var InvoiceToDate = $('#txtInvoiceTodate').val();*/
+
+        @*var url = '@(Url.Action("CygnetGrid", "TravelClaimNewGST"))?panno=' + SupplierPanNo + "&suppliername=" + SupplierName + "&GSNTNNo=" + Supplier_GSTNNo + "&InvoiceNo=" + InvoiceNo +
+        "&FromDate=" + InvoiceFromDate + "&ToDate=" + InvoiceToDate;
+        $("#divInvoiceGrid").load(url);*@
+
+        var url = '@Url.Action("CygnetGrid", "SupplierInvoiceNew")';
+        $("#divInvoiceGrid").load(url);
+    }
+
+
+
+</script>

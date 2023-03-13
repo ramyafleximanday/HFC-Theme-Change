@@ -1,0 +1,90 @@
+﻿@using IEM.Areas.EOW.Models;
+@using IEM.Common
+@model IEnumerable<IEM.Areas.EOW.Models.Recovery>
+@{
+    EOW_DataModel objd = new EOW_DataModel();
+    List<Recovery> lstPayment = new List<Recovery>();
+    lstPayment = (List<Recovery>)TempData["SearchItems"];
+    if (lstPayment == null)
+    {
+        ViewBag.IsSearched = "no";
+        lstPayment = objd.GetSupplierRecovery(Session["SupplierGid"].ToString(), "GetRecovery").ToList();
+    }
+    if (lstPayment.Count == 0)
+    {
+        ViewBag.NoRecordsPayment = "NoRecords";
+        ViewBag.NoRecordsFoundPayment = "No Records Found";
+    }
+}
+
+
+<div id="wgempEmployeeeefds" class="overflowy" style="max-height: 350px;">
+    @{
+        CmnFunctions objCmnFunctions = new CmnFunctions();
+        var gridPaymentfg = new WebGrid(lstPayment, canSort: false, canPage: false);
+        int rowValPayment = 0;
+    }
+    @gridPaymentfg.GetHtml(
+                                    htmlAttributes: new { id = "GridtoselectREV" },
+                            tableStyle: "tableSmall table-bordered table-hover table-responsive",
+                            mode: WebGridPagerModes.All,
+                            columns:
+                            gridPaymentfg.Columns(gridPaymentfg.Column("#", style: "IdColumn", canSort: false, format: item => rowValPayment = rowValPayment + 1),
+                                    gridPaymentfg.Column("Recovery No",
+                            format: @<text>
+                                <label style="font-weight:normal;" id="RefNoName">@item.r_Recoveryno</label>
+                            </text>, canSort: false),
+                                gridPaymentfg.Column("r_Recoveryamt", " Recovery Amount"),
+                                                                    gridPaymentfg.Column("Recovery Exception Amount", format: @<text>
+    <label style="font-weight:normal;" id="RefException">@item.r_RecoveryExecption</label>
+                                </text>,style: "MidColumn20"),
+                                        gridPaymentfg.Column("r_ecfno", "ECF No"),
+                                        gridPaymentfg.Column("r_ecfamount", "ECF Amount", style: "MidColumn20"),
+                                        gridPaymentfg.Column("r_invoiceno", "Invoice No", style: "MidColumn20"),
+                                        gridPaymentfg.Column("r_Invdate", "Invoice Date", style: "MidColumn20"),
+                                        gridPaymentfg.Column("r_invoicedesc", "Invoice Description", style: "MidColumn20"),
+                                        gridPaymentfg.Column("r_invoiceamt", "Invoice Amount", style: "MidColumn20"),
+                            gridPaymentfg.Column(header: "Action", canSort: false, style: "action",
+                            format: @<text>
+                            <span class="btn btn-link btnselect">Select</span>
+                            </text>)))
+   
+</div>
+<br />
+<div align="center" style="width:100%">
+    <input type="button" id="btncanpay" class="btn btn-warning" value="Close" onclick="GotoIndexPaymentmodepopupd()" />
+</div>
+<script>
+    $('.btnselect').click(function () {
+        var tr = $(this).parents('tr:first');
+        var RefNoName = tr.find("#RefNoName").text();
+        var RefException = tr.find("#RefException").text();
+        $("#ddlRefNo option:selected").text(RefNoName);
+        $("#arfamont").val(RefException);
+        $("#ddlRefNo").addClass('valid');
+
+
+        var currentval = RefException;
+        var testDecimal = testDecimals(currentval);
+        if (testDecimal.length > 1) {
+            currentval = currentval.slice(0, -1);
+        }
+        $("#txtPaymentAmount").val(replaceCommas(currentval));
+        $("#txtpayBeneficiary").val(RefNoName);
+        //$("#txtPaymentAmount").val(RefException);
+        $("#txtPaymentAmount").addClass('valid');
+        $("#txtpayBeneficiary").addClass('valid');
+        GotoIndexPaymentmodepopupd();
+
+    });
+    $(document).ready(function () {
+        $('#GridtoselectPPX tr th:nth-child(5)').addClass("nosort");
+        $('#GridtoselectPPX').dataTable({
+            "aoColumnDefs": [{
+                "aTargets": ["nosort"],
+                "bSortable": false
+            }]
+        }).css("width", "99%");
+    });
+</script>
+

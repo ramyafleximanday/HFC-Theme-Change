@@ -1,0 +1,65 @@
+﻿@using IEM.Areas.FLEXISPEND.Models
+@using IEM.Common
+
+@model IEnumerable<IEM.Areas.FLEXISPEND.Models.FS_GSTRModel>
+
+@{
+
+    FlexispendDataModel objd = new FlexispendDataModel();
+    List<FS_GSTRModel> lstPayment = new List<FS_GSTRModel>();
+    lstPayment = (List<FS_GSTRModel>)TempData["SearchItems"];
+    FS_GSTRModel objMExpenseEdit = new FS_GSTRModel();
+    if (TempData["action"] != null)
+    {
+        lstPayment = objd.GetPopulateAuditList((TempData["action"].ToString()), (Session["headerid"].ToString())).ToList();
+
+    }
+    else
+    {
+        lstPayment = objd.GetPopulateAuditList("Load", "").ToList();
+    }
+    decimal remamount = 0;
+    if (lstPayment == null)
+    {
+        ViewBag.NoRecordstolp = "total";
+        Session["invoicePaymentamnt"] = remamount.ToString();
+    }
+    if (lstPayment.Count == 0)
+    {
+        ViewBag.NoRecordsPayment = "NoRecords";
+        ViewBag.NoRecordsFoundPayment = "No Records Found";
+    }
+}
+
+<div id="wgempEmployeeev">
+    @{
+        IEM.Common.CmnFunctions objCmnFunctions = new IEM.Common.CmnFunctions();
+        var gridPayment = new WebGrid(lstPayment, canSort: true, canPage: false, rowsPerPage: 3, ajaxUpdateContainerId: "wgempEmployeeev", ajaxUpdateCallback: "DummyFunction()");
+        int rowValPayment = 0;
+    }
+
+    <div class="container" style="width:102%;margin-left: -1%;">
+        <div>
+            @gridPayment.GetHtml(
+                                  htmlAttributes: new { id = "wgriGSTRUploadDetails" },
+                                  tableStyle: "tableSmall table-bordered table-hover table-responsive",
+                mode: WebGridPagerModes.All,
+                columns:
+                                          gridPayment.Columns(gridPayment.Column("#", canSort: false, format: item => rowValPayment = rowValPayment + 1),
+                                        gridPayment.Column("makerid", objCmnFunctions.Sorter("makerid", "Employee ID-Name", gridPayment), canSort: false),
+                                           gridPayment.Column("insertdate", objCmnFunctions.Sorter("insertdate", "Action Date", gridPayment), canSort: false),
+                                       gridPayment.Column("Status", objCmnFunctions.Sorter("Status", "Status", gridPayment), canSort: false)
+
+
+
+    ))
+
+
+
+
+        </div>
+    </div>
+</div>
+
+<div id="ForPartialView"></div>
+

@@ -1,0 +1,343 @@
+﻿@using IEM.Areas.FLEXIBUY.Models
+@*@model IEnumerable<IEM.Areas.FLEXIBUY.Models.POWOmodel>*@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    EFlexiQuery doclist = (EFlexiQuery)ViewBag.DoctypeList;
+}
+<link href="@Url.Content("~/Content/themes/base/jquery-ui.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/Rmax_Site.css")" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/Scripts/jquery-ui-1.8.24.min.js")" type="text/javascript"></script>
+<div class="pageHeadingLayout">
+    <span class="pageHeading">PO WO Report</span>
+</div>
+@using (Html.BeginForm())
+{
+
+    <div class="well">
+        <table class="myTableStyleTabNew" style="width:100%;">
+            <tr>
+                @*<td style="width:25%; padding:0px 10px 0px 3px;">
+                        <span>WO No</span>
+                        <br />
+                        <input type="text" id="txtwono" class="fstextbox" />
+                    </td>*@
+                <td>
+                    <input type="hidden" id="txtwono" class="fstextbox" />
+                </td>
+                <td style="width:15%; padding:0px 10px 0px 3px;">
+                    <span>From Date</span>
+                    <br />
+                    <input type="text" class="textboxStyle" placeholder="dd-mm-yyyy" title="dd-mm-yyyy" name="txtFrom" id="txtFrom" />
+                </td>
+                <td style="width:15%; padding:0px 10px 0px 3px;">
+                    <span>To Date</span>
+                    <br />
+                    <input type="text" class="textboxStyle" placeholder="dd-mm-yyyy" title="dd-mm-yyyy" name="txtto" id="txtto" />
+                </td>
+                <td style="width:8%; padding:0px 10px 0px 3px;">
+                    <span></span>
+                    <br />
+
+                    <span id="lblsingle">
+                        <input type="radio" id="id_rdsing" name="rbpoworpt" value="GetPO" checked="checked" /> PO Report
+                    </span>
+
+                </td>
+                <td style="width:8%; padding:0px 10px 0px 3px;">
+                    <span></span>
+                    <br />
+
+                    <span id="lblmultiple">
+                        <input type="radio" id="id_rdmult" name="rbpoworpt" value="GetWO" /> WO Report
+                    </span>
+
+
+                </td>
+                <td style="width:38%; padding:15px; vertical-align:bottom;">
+                    <button class="btn btn-primary" data-bind="click:$root.search" style="color:white;">
+                        <span style="color:white; font-size:12px;" class="glyphicon glyphicon-search"></span>
+                        Search
+                    </button>
+
+                    <button class="btn btn-primary" style="color:white;" value="Clear" name="command">
+                        <span style="color:white; font-size:12px;" class="glyphicon glyphicon-refresh"></span>
+                        Clear
+                    </button>
+                    <button class="btn btn-success" id="btnExporExcel" onclick="ctrlExport()" disabled="disabled" type="button" style="color:white;">
+                        <span style="color:white; font-size:12px;" class="glyphicon glyphicon-export"></span>
+                        Export to Excel
+                    </button>
+
+                   
+                  
+                </td>
+            </tr>
+        </table>
+
+        <div style="width:100%; overflow:auto; height:100%; margin-top: 15px;">
+            <table class="tableSmall table-bordered table-hover table-responsive" id="gvReport" data-bind="visible: ResultArray().length > 0">
+                <thead>
+                    <tr>
+                        <th style="width:8%; min-width:120px; max-width:100%;">
+                            SlNo
+                        </th>
+                        <th style="width:8%; min-width:120px; max-width:100%;">
+                            CBF/PR No
+                        </th>
+                        <th style="width:8%; min-width:120px; max-width:100%;">
+                            CBF/PR Amount
+                        </th>
+
+                        <th style="width:8%; min-width:120px; max-width:100%;">
+                            PO/WO No
+                        </th>
+
+                        <th style="width:8%; min-width:120px; max-width:100%;">
+                            PO Date
+                        </th>
+
+                        <th style="width:8%; min-width:120px; max-width:100%;">
+                            Amount
+                        </th>
+
+                        <th style="width:8%; min-width:120px; max-width:100%;">
+                            Vendor Name
+                        </th>
+
+                        <th style="width:8%; min-width:120px; max-width:100%;">
+                            Description
+                        </th>
+
+                        <th style="width:8%; min-width:120px; max-width:100%;">
+                            Branch Name
+                        </th>
+
+                        <th style="width:8%; min-width:120px; max-width:100%;">
+                            Invoice No
+                        </th>
+                        <th style="width:8%; min-width:120px; max-width:100%;">
+                            Invoice Amount
+                        </th>
+                        <th style="width:8%; min-width:120px; max-width:100%;">
+                            Invoice Date
+                        </th>
+                        
+                        <th style="width:8%; min-width:120px; max-width:100%;">
+                            ECF No
+                        </th>
+                        <th style="width:8%; min-width:120px; max-width:100%;">
+                            ECF Amount
+                        </th>
+                        <th style="width:8%; min-width:120px; max-width:100%;">
+                            ECF Date
+                        </th>
+
+                        <th style="width:8%; min-width:120px; max-width:100%;">
+                            ECF Status
+                        </th>
+
+
+
+                        @*<th style="width:8%; min-width:120px; max-width:100%;">
+                                ECF NO
+                            </th>
+
+                            <th style="width:8%; min-width:120px; max-width:100%;">
+                                INVOICE NO
+                            </th>
+                            <th style="width:8%; min-width:120px; max-width:100%;">
+                                INVOICE AMOUNT
+                            </th>
+                            <th style="width:8%; min-width:120px; max-width:100%;">
+                                INVOICE DATE
+                            </th>
+                            <th style="width:8%; min-width:120px; max-width:100%;">
+                                BEN ACCOUNTNO
+                            </th>
+                            <th style="width:8%; min-width:120px; max-width:100%;">
+                                CHQ NO
+                            </th>
+                            <th style="width:8%; min-width:120px; max-width:100%;">
+                                CHQ AMOUNT
+                            </th>
+                            <th style="width:8%; min-width:120px; max-width:100%;">
+                                PAY MODE
+                            </th>
+                            <th style="width:8%; min-width:120px; max-width:100%;">
+                                DEPARTMENT
+                            </th>*@
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach:{ data: ResultArray, afterRender: DatatableCall }">
+                    <tr>
+                        <td align="center">
+                            <span data-bind="text: SlNo"></span>
+                        </td>
+
+                        <td>
+                            <span data-bind="text: CBFNo"></span>
+                        </td>
+                        <td>
+                            <span data-bind="text: CBF_Amount"></span>
+                        </td>
+
+                        <td>
+                            <span data-bind="text: PO_No"></span>
+                        </td>
+
+                        <td>
+                            <span data-bind="text: PO_DATE"></span>
+                        </td>
+
+                        <td>
+                            <span data-bind="text:POAmount"></span>
+                        </td>
+
+                        <td>
+                            <span data-bind="text:VendorName"></span>
+                        </td>
+
+                        <td>
+                            <span data-bind="text: PODescription"></span>
+                        </td>
+
+                        <td>
+                            <span data-bind="text: BranchName"></span>
+                        </td>
+
+                        <td>
+                            <span data-bind="text: INVOICE_NO"></span>
+                        </td>
+                        <td>
+                            <span data-bind="text: InvoiceAmount"></span>
+                        </td>
+                        <td>
+                            <span data-bind="text: InvoiceDate"></span>
+                        </td>                      
+
+                        <td>
+                            <span data-bind="text: ECF_NO"></span>
+                        </td>
+
+                        <td>
+                            <span data-bind="text: ECF_AMOUNT"></span>
+                        </td>
+
+
+                        <td>
+                            <span data-bind="text: ECF_DATE"></span>
+                        </td>
+                        <td>
+                            <span data-bind="text: EcfStatus"></span>
+                        </td>
+
+
+
+                        @*<td>
+                                <span data-bind="text: ECF_NO"></span>
+                            </td>
+
+                            <td>
+                                <span data-bind="text: INVOICE_NO"></span>
+                            </td>
+                            <td>
+                                <span data-bind="text: INVOICE_AMOUNT"></span>
+                            </td>
+                            <td>
+                                <span data-bind="text: INVOICE_DATE"></span>
+                            </td>
+                            <td>
+                                <span data-bind="text: BEN_ACCOUNTNO"></span>
+                            </td>
+                            <td>
+                                <span data-bind="text: CHQ_NO"></span>
+                            </td>
+                            <td>
+                                <span data-bind="text: CHQ_AMOUNT"></span>
+                            </td>
+                            <td>
+                                <span data-bind="text: PAY_MODE"></span>
+                            </td>
+                            <td>
+                                <span data-bind="text: Depat"></span>
+                            </td>*@
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+<style type="text/css">
+    .webgrid {
+        width: 100%;
+        font: normal 12px/150% Arial, Helvetica, sans-serif;
+        background: #fff;
+        overflow: hidden;
+        border: 1px solid #ddd;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+    }
+
+    .col-1 {
+        width: 1px;
+        min-width: 5px;
+    }
+
+    .col-2 {
+        width: 20px;
+        min-width: 10px;
+    }
+</style>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        //var Datepicker = {
+        //    changeMonth: true,
+        //    changeYear: true,
+        //    yearRange: '1950:2100',
+        //    currentText: "Now",
+        //    dateFormat: "dd-mm-yy"
+        //};
+        //$("#txtFrom").datepicker(Datepicker);
+        //$("#txtto").datepicker(Datepicker);
+
+        $("#txtFrom").datepicker ({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: 'dd-mm-yy',
+            onSelect: function (selected) {
+                $("#txtFrom").addClass('valid');
+                $("#txtto").datepicker("option", "minDate", selected);
+            }
+        });
+
+        $("#txtto").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: 'dd-mm-yy',
+            onSelect: function (selected) {
+                $("#txtto").addClass('valid');
+                $("#txtFrom").datepicker("option", "maxDate", selected);
+            }
+        });
+    });
+
+    function ctrlExport() {
+        debugger;
+      //  alert('ram');       
+        var rbpoworpt;
+        rbpoworpt = $('input:radio[name=rbpoworpt]:checked').val();
+       
+
+        location = '../POWOreport/GetPOWOQueryReportexport?rbpoworpt=' + rbpoworpt;
+
+       
+
+    }
+</script>
+
+
+<script src="@Url.Content("~/Areas/FLEXIBUY/FS_UserScript/jsReportPOWOReport.js")" type="text/javascript"></script>

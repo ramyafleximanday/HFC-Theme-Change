@@ -1,0 +1,232 @@
+﻿@{
+    ViewBag.Title = "CreditNoteCheckerPopup";
+
+}
+
+
+
+<div>
+    <table  style="width:100%;">
+        <tr>
+            <td style="width:33%; padding:0px 5px;">
+                <input type="hidden" name="hdfCNMId" id="hdfCNMId" value="0" />
+                <span>Booking Date</span>
+                <br />
+                <input type="text"
+                       id="txtBookDate"
+                       disabled="disabled"
+                       class="textboxStyleBig" />
+            </td>
+            <td style="width:33%; padding:0px 5px;">
+                <span>Supplier Code/Name</span>
+                <br />
+                <input type="text"
+                       id="txtESupplier"
+                       disabled="disabled"
+                       class="textboxStyleBig" />
+            </td>
+            <td style="width:33%; padding:0px 5px;">
+                <span>Credit Note No</span>
+                <br />
+                <input type="text"
+                       id="txtCreditNoteNo"
+                       disabled="disabled"
+                       class="textboxStyleBig" />
+            </td>
+        </tr>
+        <tr>
+            <td style="width:33%; padding:0px 5px;">
+                <span>ECF No</span>
+                <br />
+                <input type="text"
+                       id="txtECFNo"
+                       disabled="disabled"
+                       class="textboxStyleBig" />
+            </td>
+            <td style="width:33%; padding:0px 5px;">
+                <span>Invoice No</span>
+                <br />
+                <input type="text"
+                       id="txtInvoiceNo"
+                       disabled="disabled"
+                       class="textboxStyleBig" />
+            </td>
+            <td style="width:33%; padding:0px 5px;">
+                <span>Invoice Date</span>
+                <br />
+                <input type="text"
+                       disabled="disabled"
+                       id="txtCreditNoteDate"
+                       class="textboxStyleBig" />
+            </td>
+        </tr>
+        <tr>
+            <td style="width:33%; padding:0px 5px;">
+                <span>Invoice Amount</span>
+                <br />
+                <input type="text"
+                       id="txtInvoiceAmount"
+                       disabled="disabled"
+                       class="textboxStyleBig" />
+            </td>
+            <td style="width:33%; padding:0px 5px;">
+                <span>Credit Note Amount</span>
+                <br />
+                <input type="text"
+                       id="txtCreditNoteAmount"
+                       disabled="disabled"
+                       class="textboxStyleBig" />
+            </td>
+
+            <td style="width:33%; padding:0px 5px;">
+                <span>HSN Code</span>
+                <br />
+                <input type="text"
+                       id="txthsncode"
+                       disabled="disabled"
+                       class="textboxStyleBig" />
+            </td>
+            <td style="width:33%; padding:0px 5px;"></td>
+        </tr>
+
+        <tr>
+            <td style="width:33%; padding:0px 5px;">
+                <span>Provider Location</span>
+                <br />
+                <input type="text"
+                       id="txtProviderlocation"
+                       disabled="disabled"
+                       class="textboxStyleBig" />
+            </td>
+            <td style="width:33%; padding:0px 5px;">
+                <span>Receiver Location</span>
+                <br />
+                <input type="text"
+                       id="txtreceiverlocation"
+                       disabled="disabled"
+                       class="textboxStyleBig" />
+            </td>
+
+          
+            <td style="width:33%; padding:0px 5px;"></td>
+        </tr>
+        &nbsp;
+        <tr>
+            <td colspan="3" style="width:99%; padding:0px 5px;">
+                
+                <table id="gvChecker" class="tableSmall table-bordered table-hover table-responsive" data-bind="visible: GSTHoldqRunArray().length > 0">
+                    <thead>
+                        <tr>
+                            <th>
+                                SLNo
+                            </th>
+
+                            <th>
+                                GSNApplicable
+                            </th>
+
+                            <th>
+                                HSN Code
+                            </th>
+
+                            <th>
+                                HSN Description
+                            </th>
+                            <th>
+                                Sub Tax
+                            </th>
+                            <th>
+                                Taxable Amount
+                            </th>
+
+                            <th>
+                                Rate(%)
+                            </th>
+
+                            <th>
+                                Tax Amount
+                            </th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody id="ContentPaymentRun" data-bind="foreach:{ data: GSTHoldqRunArray, afterRender: DatatableCall }, visible: GSTHoldqRunArray().length > 0">
+                        <tr>
+
+                            <td>
+                                <span> 1 </span>
+                            </td>
+
+                            <td>
+                                Yes
+                            </td>
+                            <td>
+                                996403
+                            </td>
+                            <td>
+                                Air Economy Class
+                            </td>
+                            <td>
+                                SGST-State Goods and Service Tax
+                            </td>
+
+                            <td>
+                                542.86
+                            </td>
+                            <td>
+                                5.00
+                            </td>
+
+                            <td>
+                               271.43
+                            </td>
+
+
+                        </tr>
+
+
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" style="width:99%; padding:0px 5px;">
+                <span>Maker Remark</span>
+                <br />
+                <textarea id="txtMakerRemark" rows="3" disabled="disabled" class="txtboxStyleBig" style="width:100%; background-color: white; border-radius: 4px;"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" style="width:99%; padding:0px 5px;">
+                <span>Checker Remark</span>
+                <br />
+                <textarea id="txtCheckerRemark" rows="3" class="txtboxStyle required" style="width:100%; border-radius: 4px;"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" style="width:33%; padding:15px 5px; text-align:center;">
+                <button type="button" disabled="disabled" accesskey="a" id="btnApprove" class="btn btn-success" data-bind="click: $root.Approve">
+                    <span class="glyphicon glyphicon-ok" style="color:white;"></span>
+                    Approve
+                </button>
+                <button type="button" disabled="disabled" accesskey="r" id="btnReject" class="btn btn-danger" data-bind="click: $root.Reject">
+                    <span class="glyphicon glyphicon-remove" style="color:white;"></span>
+                    Reject
+                </button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+
+    $("#txtCheckerRemark").keypress(function () {
+        debugger;
+
+        $("#txtCheckerRemark").removeClass('required');
+        $("#txtCheckerRemark").addClass('valid');
+        $("#btnApprove").attr("disabled", false);
+        $("#btnReject").attr("disabled", false);     
+    });
+
+</script>

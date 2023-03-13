@@ -1,0 +1,103 @@
+﻿@using IEM.Areas.FLEXISPEND.Models
+@using IEM.Common
+
+@model IEnumerable<IEM.Areas.FLEXISPEND.Models.FS_GSTRModel>
+
+@{
+
+    FlexispendDataModel objd = new FlexispendDataModel();
+    List<FS_GSTRModel> lstPayment = new List<FS_GSTRModel>();
+    lstPayment = (List<FS_GSTRModel>)TempData["SearchItems"];
+
+    FS_GSTRModel objMExpenseEdit = new FS_GSTRModel();
+    if (TempData["action"] != null)
+    {
+        lstPayment = objd.GetTDSlist((TempData["action"].ToString()), (Session["headerid"].ToString())).ToList();
+
+    }
+    else
+    {
+        lstPayment = objd.GetTDSlist("Load", "").ToList();
+    }
+    decimal remamount = 0;
+    if (lstPayment == null)
+    {
+        ViewBag.NoRecordstolp = "total";
+        Session["invoicePaymentamnt"] = remamount.ToString();
+    }
+    if (lstPayment.Count == 0)
+    {
+        ViewBag.NoRecordsPayment = "NoRecords";
+        ViewBag.NoRecordsFoundPayment = "No Records Found";
+    }
+}
+
+
+
+<link href="@Url.Content("~/Content/themes/base/jquery-ui.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/Rmax_Site.css")" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/Scripts/jquery-ui-1.8.24.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/RMScript/knockout-3.3.0.js")" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+    var currentTab = 0;
+    $(function () {
+        $("#tabsmaintravel").tabs({
+            select: function (e, i) {
+                currentTab = i.index;
+            }
+        });
+    });
+</script>
+
+<div>
+    <div id="tabsmaintravel" style="font-size:12px">
+        <ul>
+            <li><a href="#tabsmaintravel-1">TDS Details</a></li>
+            <li><a href="#tabsmaintravel-2">Audit Trail</a></li>
+        </ul>
+        <div id="tabsmaintravel-1" style="padding: 10px 4px 3px 15px">
+            <div id="wgempEmployeeev">
+                @{
+                    IEM.Common.CmnFunctions objCmnFunctions = new IEM.Common.CmnFunctions();
+                    var gridPayment = new WebGrid(lstPayment, canSort: true, canPage: false, rowsPerPage: 3, ajaxUpdateContainerId: "wgempEmployeeev", ajaxUpdateCallback: "DummyFunction()");
+                    int rowValPayment = 0;
+                }
+
+                <div class="container" style="width:102%;margin-left: -1%;">
+                    <div>
+                        @gridPayment.GetHtml(
+                                  htmlAttributes: new { id = "wgriGSTRUploadDetails" },
+                                  tableStyle: "tableSmall table-bordered table-hover table-responsive",
+                mode: WebGridPagerModes.All,
+                columns:
+                gridPayment.Columns(gridPayment.Column("#", canSort: false, format: item => rowValPayment = rowValPayment + 1),
+                                                              gridPayment.Column("Suppliergid", objCmnFunctions.Sorter("Suppliergid", "Supplier Code", gridPayment), canSort: false),
+                                                             gridPayment.Column("PANNo", objCmnFunctions.Sorter("PANNo", "PAN No", gridPayment), canSort: false),
+                                                             gridPayment.Column("Tax", objCmnFunctions.Sorter("Tax", "TAX Name", gridPayment), canSort: false),
+                                                              gridPayment.Column("TaxSubtype", objCmnFunctions.Sorter("TaxSubtype", "Tax Sub Type", gridPayment), canSort: false),
+
+                                        gridPayment.Column("Rate", objCmnFunctions.Sorter("Rate", "Rate", gridPayment), canSort: false)
+
+    ))
+
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="tabsmaintravel-2" style="padding: 10px 4px 3px 15px">
+            @Html.Partial("TDSAuditTrail")
+
+        </div>
+    </div>
+
+</div>
+
+
+
+<div id="ForPartialView"></div>
+

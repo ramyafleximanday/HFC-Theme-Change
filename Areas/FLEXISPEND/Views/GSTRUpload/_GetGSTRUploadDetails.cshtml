@@ -1,0 +1,71 @@
+﻿@using IEM.Areas.FLEXISPEND.Models  
+@using IEM.Common
+ 
+@model IEnumerable<IEM.Areas.FLEXISPEND.Models.FS_GSTRModel>
+ 
+@{
+     
+    FlexispendDataModel objd = new FlexispendDataModel();
+    List<FS_GSTRModel> lstPayment = new List<FS_GSTRModel>();
+    lstPayment = (List<FS_GSTRModel>)TempData["SearchItems"];
+
+    FS_GSTRModel objMExpenseEdit = new FS_GSTRModel();
+    if (TempData["action"]!=null)
+    {
+        lstPayment = objd.GetGSTRlist((TempData["action"].ToString()), (Session["headerid"].ToString())).ToList();  
+  
+    }
+    else
+    {
+        lstPayment = objd.GetGSTRlist("Load","").ToList();  
+    }
+    decimal remamount = 0;
+    if (lstPayment == null)
+    { 
+        ViewBag.NoRecordstolp = "total";
+        Session["invoicePaymentamnt"] = remamount.ToString();
+    }
+    if (lstPayment.Count == 0)
+    {
+        ViewBag.NoRecordsPayment = "NoRecords";
+        ViewBag.NoRecordsFoundPayment = "No Records Found";
+    }
+}
+
+<div id="wgempEmployeeev"   >
+    @{
+        IEM.Common.CmnFunctions objCmnFunctions = new IEM.Common.CmnFunctions();
+        var gridPayment = new WebGrid(lstPayment, canSort: true, canPage: false, rowsPerPage: 3, ajaxUpdateContainerId: "wgempEmployeeev", ajaxUpdateCallback: "DummyFunction()");
+        int rowValPayment = 0;
+    }
+
+    <div class="container" style="width:102%;margin-left: -1%;"  >
+        <div>
+            @gridPayment.GetHtml(
+                                  htmlAttributes: new { id = "wgriGSTRUploadDetails" },
+                                  tableStyle: "tableSmall table-bordered table-hover table-responsive",
+                mode: WebGridPagerModes.All,
+                columns:
+                gridPayment.Columns(gridPayment.Column("#", canSort: false, format: item => rowValPayment = rowValPayment + 1),
+                                            gridPayment.Column("GSTNumber", objCmnFunctions.Sorter("GSTNumber", "GSTIN of supplier", gridPayment), canSort: false),
+                                           gridPayment.Column("InvoiceNo", objCmnFunctions.Sorter("InvoiceNo", "Invoice number", gridPayment), canSort: false),
+                                           gridPayment.Column("InvoiceValue", objCmnFunctions.Sorter("InvoiceValue", "Invoice Value(₹)", gridPayment), canSort: false),
+                                            gridPayment.Column("InvoiceDate", objCmnFunctions.Sorter("InvoiceDate", "Invoice Date", gridPayment), canSort: false),
+                                            gridPayment.Column("TaxableValue", objCmnFunctions.Sorter("TaxableValue", "Taxable Value (₹)", gridPayment), canSort: false),
+                      gridPayment.Column("ProviderLocation", objCmnFunctions.Sorter("ProviderLocation", "Provider Location", gridPayment), canSort: false),
+                      gridPayment.Column("ReceiverLocation", objCmnFunctions.Sorter("ReceiverLocation", "Receiver Location", gridPayment), canSort: false),
+                               gridPayment.Column("CentralTax", objCmnFunctions.Sorter("CentralTax", "CGST Amount", gridPayment), canSort: false),
+                      gridPayment.Column("StateUTTax", objCmnFunctions.Sorter("StateUTTax", "SGST Amount", gridPayment), canSort: false),
+                      gridPayment.Column("integratedTax", objCmnFunctions.Sorter("integratedTax", "IGST Amount", gridPayment), canSort: false),
+                          gridPayment.Column("ReceiverGSTN", objCmnFunctions.Sorter("ReceiverGSTN", "Receiver GSTN", gridPayment), canSort: false)
+    ))
+
+
+
+
+        </div>
+    </div>
+</div>
+ 
+<div id="ForPartialView"></div>
+ 

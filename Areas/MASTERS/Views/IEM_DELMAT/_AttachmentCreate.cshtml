@@ -1,0 +1,118 @@
+﻿@model IEM.Areas.MASTERS.Models.AttachFile
+@{
+    ViewBag.Title = "Index";
+}
+@{
+    var dis = ViewBag.viewfor;
+}
+
+
+@*@if(dis !="disabled")
+{*@
+<div id="createAttachment">
+    <div style="padding:0;margin:0;">
+        <input type="hidden" id="ecfamomtssession" value="@Session["Ecfamountvalmain"]" />
+        <table class="myTableStyleTabNew" style="width: 100%;">
+            <tr>
+                <td style="width:50%;">
+                    <span>Select File</span><br />
+                    <form id="theuploadformemp">
+                        @Html.AntiForgeryToken()
+                        <input type="file" name="UploadFile" style="width: 95%;padding-top: 5px;" id="fileuploadnew" class="fileuploadnew" />
+                    </form>
+                </td>
+                
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <span>Description</span><br />
+                    @Html.TextAreaFor(model => model.AttachmentDescription, new { disable = true, @class = "textboxStyle txtarea required", @id = "txtDescription", @maxlength = "250", style = "margin: 0px;width: 668px;height: 101px;" }) @*//Max length Modified by selva (Pre 128)*@
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center">
+                    <center>
+                        <button type="button" title="Save"   name="Save" id="btnsavattvala" class="btn btn-primary"><span style="color:white;" class="glyphicon glyphicon-floppy-disk"></span> Save</button>
+                        <button type="button" id="btncanattFF" title="Cancel" name="Cancel" class="btn btn-warning" onclick="GotoIndexAttachmentV()"><span style="color:white;" class="glyphicon glyphicon-remove-sign"></span>Cancel</button>
+                    </center>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+@*}*@
+
+<style>
+    .txtarea {
+        height: 90px;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnsavattvala").click(function () {
+            debugger;
+          //  var AttachmentType = $("#ddlAttachmentType").val();
+            var Description = $("#txtDescription").val();
+            $('#btnsavattvala').attr('disabled', true);
+             
+            if (Description == null || Description == "") {
+                jAlert("Please Enter Description.", "Message");
+                $("#txtDescription").focus();
+                return false;
+            }
+            else {
+                var NewAttmodel = {
+                      "AttachmentDescription": Description
+                };
+                var URLATTACH = '@Url.Action("_AttachmentCreate", "IEM_DELMAT")';
+                $.post(URLATTACH, NewAttmodel,
+                function (data) {
+                    if (data == "No") {
+                        jAlert("Please Select File.", "Message");
+                        return false;
+                    }
+                    else if (data == "Yes") {
+                        debugger;
+                        jAlert("Saved Successfully.", "Message");
+                        objDialogAttachmentG.dialog("close");
+                        $("#wgridEmployeeDetails").load('@Url.Action("_AttachmentDetails", "IEM_DELMAT")');
+
+                        @*var url = '@Url.Action("_AttachmentDetails", "IEM_DELMAT")';*@
+                        //$("#wgAttachment").load(url);
+                        // window.parent.jQuery('#ForPartialViewEmpAttachmentmewt').dialog('close');
+                    }
+                    else {
+                        jAlert(data, "Message");
+                        return false;
+                    }
+                }, 'json');
+            }
+        });
+    });
+    function GotoIndexAttachmentV() {
+         
+        window.parent.jQuery('#ForPartialViewEmpAttachmentmewt').dialog('close');
+    }
+</script>
+
+<script>
+    $(".fileuploadnew").on('change', function (e) {
+        //alert("attached");
+        debugger;
+        var iframe = $('<iframe name="postiframe" id="postiframe" style="display: none"></iframe>');
+        $("body").append(iframe);
+        var form = $('#theuploadformemp');
+        var Attach_list = Attachment_list();
+        var Attachment_fomat = Attached_fileformat();
+        var AURL = ('@Url.Action("UploadFiles/?attach=", "IEM_DELMAT")');
+        form.attr("action", AURL + Attach_list + '&attaching_format=' + Attachment_fomat);
+        //form.attr("action", "../TravelClaimNew/UploadFiles");
+        form.attr("method", "post");
+        form.attr("encoding", "multipart/form-data");
+        form.attr("enctype", "multipart/form-data");
+        form.attr("target", "postiframe");
+        form.attr("file", $('#fileuploadnew').val());
+        form.submit();
+        //return false;
+    });
+    </script>

@@ -1,0 +1,621 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    if (Session["Ecfdeclaratonnote"] != null)
+    {
+        ViewBag.decnote = Session["Ecfdeclaratonnote"].ToString();
+    }
+}
+<link href="@Url.Content("~/Content/themes/base/jquery-ui.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/Rmax_Site.css")" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/Scripts/jquery-ui-1.8.24.min.js")" type="text/javascript"></script>
+<script type="text/javascript">
+    var currentTab = 0;
+    $(function () {
+        $("#tabsmaintravel").tabs({
+            select: function (e, i) {
+                currentTab = i.index;
+            }
+        });
+    });
+
+</script>
+<div>
+    <b>
+        <span style="color: rgb(52, 108, 196);">Central Team Maker</span>
+    </b>
+</div>
+<div class="well" style=" padding-top: 1px;">
+    <br />
+
+    <br />
+    <div id="processworking">
+        <input type="hidden" id="ecfamomtssessionlocal" value="@Session["Ecfamountsupplier"]" />
+        <div id="tabsmaintravel" style="font-size:12px">
+            <ul>
+                @if (@ViewBag.processdata == "first")
+                {
+                    <li><a href="#tabsmaintravel-4">ECF Header</a></li>
+                }@if (@ViewBag.processdatasec == "first")
+                {
+
+                    <li><a href="#tabsmaintravel-1">Invoice Summary</a></li>
+                    <li><a href="#tabsmaintravel-2">Attachment</a></li>
+                    if (Session["QueueGide"].ToString() != "")
+                    {
+                        <li><a href="#tabsmaintravel-4">Audit Trail</a></li>
+                    }
+                }
+            </ul>
+            @if (@ViewBag.processdata == "first")
+            {
+                <div id="tabsmaintravel-4" style="padding: 10px 4px 3px 15px">
+                    @Html.Partial("_supplierFristc")
+                </div>
+            }
+            @if (@ViewBag.processdatasec == "first")
+            {
+                <div id="tabsmaintravel-1" style="padding: 25px 4px 3px 15px">
+                    @Html.Partial("_suppliersummary")
+                </div>
+                <div id="tabsmaintravel-2" style="padding: 10px 4px 3px 15px">
+                    @Html.Partial("_supplierAttachment")
+                </div>
+                if (Session["QueueGide"].ToString() != "")
+                {
+                    <div id="tabsmaintravel-3" style="padding: 10px 4px 3px 15px">
+                        @Html.Partial("_EmpAuditTraile")
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    @if (@ViewBag.processdatasec == "first")
+    {
+        <div id="processworkingdatanew" style=" width: 100%;  ">
+            <table align="left" style="margin-top:5px;width:100%;" class="myTableStyleTabNew">
+                <tr>
+                    <td>
+                        <span><b>Remarks</b></span>
+                        <br />
+                        <textarea id="txtempRemarks" style="width: 60%; height:60px;" maxlength="250" class="textboxStyle">@ViewBag.ecfrmarks</textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span><b>Declaration Note</b></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td style="vertical-align:middle;"><input type="checkbox" id="comfirm" /></td>
+                                <td style="vertical-align:middle;"><label id="lbldecnote" style="font-weight:normal">@ViewBag.decnote</label></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <table class="myTableStyleTabNew" align="center">
+                <tr>
+                    <td>
+                        <button type="button" id="btnSubmitfinal" class="btn btn-success" value="Submit" onclick="SaveSubmitfinal()"><span class="glyphicon glyphicon-ok" style="color:white;font-size: small;"></span> Submit</button>
+                        <button type="button" id="btnCancelfinal" value="Cancel" class="btn btn-warning" onclick="SaveCancelfinalddash()"><span style="color:white;font-size: small;" class="glyphicon glyphicon-remove-sign"></span> Cancel</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        if (Session["activetabrsic"] != null)
+        {
+            <div>
+                <input type="hidden" id="hdnactivetabfirsta" value="@Session["activetabrsic"]" />
+            </div>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    var tabda = $("#hdnactivetabfirsta").val();
+                    jQuery("#tabsmaintravel").tabs("option", "selected", [tabda]);
+                });
+            </script>
+        }
+    }
+</div>
+
+
+
+<div id="ForPartialViewpolicypopup"></div>
+<div id="ForPartialViewpolicypopupcre"></div>
+
+
+<script>
+
+    var objDialogpolicypopup;
+    $(document).ready(function () {
+        objDialogpolicypopup = $("[id$='ForPartialViewpolicypopup']");
+        objDialogpolicypopup.dialog({
+            autoOpen: false,
+            cache: false,
+            modal: true,
+            show: 'fade-in',
+            close: 'fade-out',
+            title: 'PPX ',
+            width: 860,
+            height: 400,
+            open: function (event, ui) {
+                $('.ui-dialog').css('z-index', 1003);
+                $('.ui-widget-overlay').css('z-index', 1002);
+            }
+
+        });
+
+    });
+
+    var objDialogpolicypopupce;
+    $(document).ready(function () {
+        objDialogpolicypopupce = $("[id$='ForPartialViewpolicypopupcre']");
+        objDialogpolicypopupce.dialog({
+            autoOpen: false,
+            cache: false,
+            modal: true,
+            show: 'fade-in',
+            close: 'fade-out',
+            title: 'PPX ',
+            width: 860,
+            height: 400,
+            open: function (event, ui) {
+                $('.ui-dialog').css('z-index', 1003);
+                $('.ui-widget-overlay').css('z-index', 1002);
+            }
+
+        });
+
+    });
+
+    function SaveCancelfinalddash() {
+        window.location.href = '@Url.Action("CentralMakerIndex", "CentralMaker")?' + new Date().getTime();
+    }
+    function SaveSubmitfinal() {
+        $('#btnSubmitfinal').attr('disabled', true);
+        // ramya added on 21 sep 22
+        var doctypeNameid = $("#doctypeNames option:selected").val();
+
+        var doctypeNamesneww = $("#doctypeNames option:selected").text();
+        var raisermodeNames = $("#raisermodeNames").val();
+        var txtraisercodes = $("#txtraisercodes").val();
+        var txtraisernames = $("#txtraisernames").val();
+        var txtgrades = $("#txtgrades").val();
+
+        var txtSuppliercode = $("#txtSuppliercode").val();
+        var txtSuppliername = $("#txtSuppliername").val();
+
+        var rblAmort = $("input[name=rblAmort]:checked").val()
+        var txtAmortfron = $("#txtAmortfron").val();
+        var txtAmortto = $("#txtAmortto").val();
+        var txtAmortDescriptionid = $("#txtAmortDescriptionid").val();
+
+        var ecfdate = $("#txtecfdates").val();
+        var doctypeNames = $("#doctypeNames").val();
+        var Suppliercode = $("#txtSuppliercode").val();
+        var currencyNames = $("#currencyNames").val();
+        var exrate = $("#txtexrate").val();
+        var ecfcurramount = $("#txtecfcurramount").val();
+        var ecfDescriptionid = $("#txtecfdescription").val();
+            if (ecfdate == null || ecfdate == "") {
+            $('#btnSubmitfinal').attr('disabled', false);
+            jAlert("Please Select ECF Date.", "Message");
+            $("#txtecfdate").focus();
+            return false;
+            }
+       
+        if (doctypeNames == null || doctypeNames == "0") {
+            $('#btnSubmitfinal').attr('disabled', false);
+            jAlert("Please Select Doc Type.", "Message");
+            return false;
+        }
+        //if (Suppliercode == null || Suppliercode == "") {
+        //    jAlert("Please Select Supplier Code.", "Message");
+        //    return false;
+        //}
+        if (currencyNames == null || currencyNames == "0") {
+            $('#btnSubmitfinal').attr('disabled', false);
+            jAlert("Please Select Currency.", "Message");
+            return false;
+        }
+        if (exrate == null || exrate == "") {
+            $('#btnSubmitfinal').attr('disabled', false);
+            jAlert("Please Enter Currency Rate.", "Message");
+            return false;
+        }
+        if (ecfDescriptionid == null || ecfDescriptionid == "") {
+            $('#btnSubmitfinal').attr('disabled', false);
+            jAlert("Please Enter ECF Description.", "Message");
+            return false;
+        }
+        if (ecfcurramount == null || ecfcurramount == "") {
+            $('#btnSubmitfinal').attr('disabled', false);
+            jAlert("Please Enter Currency Amount.", "Message");
+            $("#txtecfamount").focus();
+            return false;
+        }
+
+        var rodio = $("input[name=rblAmort]:checked").val()
+        if (rodio == 'undefined' || rodio == null) {
+            $('#btnSubmitfinal').attr('disabled', false);
+            jAlert("Please Select Amort.", "Message");
+            $("#rblAmort").focus();
+            return false;
+        }
+        else if (rodio == "Yes") {
+            var txtContractFrom = $("#txtAmortfron").val();
+            if (txtContractFrom.trim() == "") {
+                $('#btnSubmitfinal').attr('disabled', false);
+                jAlert("Please Enter Amort From Amount.", "Message");
+                return false;
+            }
+            var txtContractFrom = $("#txtAmortto").val();
+            if (txtContractFrom.trim() == "") {
+                $('#btnSubmitfinal').attr('disabled', false);
+                jAlert("Please Enter Amort To Date.", "Message");
+                return false;
+            }
+        }
+        //Prema added for MSME on 08-03-2022 start
+        var MSME = $("#txtSuppliermsme").val();
+        var validationmsg = '';
+        if (MSME == "Y") {
+            debugger;
+            var ECFgid = $("#txtECFgid").val();
+            var invoicegid = "";
+            $.ajax({
+                url: "../SupplierInvoiceNew/GetinvoiceData",
+                type: "POST",
+                dataType: "json",
+
+                data: { ecfid: ECFgid, invoiceid: invoicegid, traveltype: "S" },
+                success: function (data) {
+                    debugger;
+                    if (data.length > 0) {
+                        debugger;
+
+                        for (var i = 0; i < data.length; i++) {
+                            debugger;
+                            console.log("loop");
+                            var Invoicereceiptdate = data[i].InvoiceReceiptDate;
+                            console.log(Invoicereceiptdate);
+                            var reasonfordelay = data[i].ReasonForDelay;
+                            var invgid = data[i].Invoicegid;
+                            var invoiceno = data[i].InvoiceNo;
+                            var ECFdate = $("#txtecfdate").val();
+                            if (Invoicereceiptdate == "" || Invoicereceiptdate == null) {
+                                jAlert(" Please Select invoice receipt Date", "Message");
+                                return true;
+                            }
+                            else {
+                                debugger;
+                                var date = Invoicereceiptdate;
+
+                                if (date.length == 10) {
+
+                                    $.ajax({
+                                        url: "../SupplierInvoiceNew/invoicedatereceipt",
+                                        type: "POST",
+                                        dataType: "json",
+                                        data: { InvoiceReceiptDate: Invoicereceiptdate, ECFDate: ECFdate },
+                                        success: function (data) {
+                                            if (data == "Deviation") {
+                                                if (reasonfordelay == "" || reasonfordelay == null) {
+                                                    validationmsg = validationmsg + "Please Select the Reason for delay - Invoice No - " + invoiceno;
+
+                                                }
+                                                else {
+                                                    if (functionalheadapproval == "" || functionalheadapproval == null) {
+                                                        validationmsg = validationmsg + "Please Select the Functional Head Approval - Invoice No - " + invoiceno;
+
+                                                    }
+                                                }
+
+
+                                            }
+                                        },
+                                        error: function (result) {
+                                            validationmsg = validationmsg + " " + result + " - Invoice No - " + invoiceno;
+                                        }
+                                    });
+                                    var invoicegid = invgid;
+
+                                    $.ajax({
+                                        url: "../SupplierInvoiceNew/FHAattachmenttype",
+                                        type: "POST",
+                                        dataType: "json",
+                                        data: { InvID: invoicegid },
+
+                                        success: function (response) {
+                                            debugger;
+
+                                            var data2 = "";
+                                            if (response != null && response != "" && JSON.parse(response) != null)
+                                                data2 = JSON.parse(response);
+                                            if (data2[0].Msg == "Not Exists") {
+                                                validationmsg = validationmsg + " Kindly Attach the Functional head approval - invoice no - " + invoiceno;
+
+                                            }
+                                        }
+                                    });
+
+                                }
+                            }
+                            if (validationmsg != "") {
+                                jAlert(validationmsg, "Message");
+                                return false;
+
+                            }
+                        }
+                    }
+                },
+
+            });
+        }
+        // prema changes end
+        var status = $('#comfirm').is(':checked');
+        if (status == false) {
+            $('#btnSubmitfinal').attr('disabled', false);
+            jAlert("Please Check Declaration Note.", "Message");
+            return false;
+        }
+        else {
+            $.ajax({
+                url: '@Url.Action("CheckWithCBF", "SupplierInvoiceNew")?' + new Date().getTime(),
+                dataType: "json",
+                cache: false,
+                async: false,
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data == "0") {
+                        jAlert("Error While Validate Total Amount With CBF Amount", "Error", function () {
+                            return false;
+                        });
+                        return false;
+                    }
+                    else if (data == "404") {
+                        jAlert("Error While Validating Invoice Amount With CBF Amount", "Error", function () {
+                            return false;
+                        });
+                        return false;
+                    }
+                    else if (data != "VALID") {
+                        if (doctypeNameid == "5") // Direct WO - ramya added on 21 sep 22
+                        {
+                            jAlert(data, "Error");
+                            return false;
+                        }
+                        else {
+                            jConfirm(data, "Warning", function (u) {
+                                if (u == true) {
+                                    jConfirm("Do you want to Submit This ECF...? ", "Message", function (u) {
+                                        if (u == true) {
+                                            showProgress();
+
+                                            var empRemarks = $("#txtempRemarks").val();
+                                            //var txtecfamont = $("#txtecfamont").val();
+                                            var txtecfamont = $("#txtecfamont").val().replace(/,/g, "");
+                                            var txtecfdates = $("#txtecfdates").val();
+                                            var doctypeNames = $("#doctypeNames").val();
+                                            var currencyNames = $("#currencyNames").val();
+                                            var txtecfcurramount = $("#txtecfcurramount").val();
+                                            // var CurrencyNamevalid = $("#CurrencyNamevalid").val();
+                                            var CurrencyExrate = $("#txtexrate").val();
+                                            var CurrencyNamevalid = $("#currencyNames option:selected").text();
+                                            var NewAttmodel = {
+
+                                                "Raiser_Code": txtraisercodes,
+                                                "Raiser_Mode": raisermodeNames,
+                                                "Raiser_Name": txtraisernames,
+                                                "Grade": txtgrades,
+                                                "Suppliercode": txtSuppliercode,
+                                                "Suppliername": txtSuppliername,
+                                                "ecfdescription": ecfDescriptionid,
+                                                "amort": rblAmort,
+                                                "from": txtAmortfron,
+                                                "to": txtAmortto,
+                                                "amortdec": txtAmortDescriptionid,
+                                                "ecfremark": empRemarks,
+                                                "CurrencyId": currencyNames,
+                                                "CurrencyName": CurrencyNamevalid,
+                                                "DocId": doctypeNames,
+                                                "DocName": doctypeNamesneww,
+                                                "Exrate": CurrencyExrate,
+                                                "ECF_Date": txtecfdates,
+                                                "Currencyamount": txtecfcurramount,
+                                                "ECF_Amount": txtecfamont.toString().trim()
+                                            };
+                                            $.post('../SupplierInvoiceNew/_SupplierECFCTCreate', NewAttmodel,
+                                            function (data) {
+                                                if (data == "ECF") {
+                                                    hideProgress();
+                                                    $('#btnSubmitfinal').attr('disabled', false);
+                                                    jAlert("Please Check Invoice Total Amount Or ECF Amount : The Invoice Total Amount Should Be Equal To ECF Amount", "Message");
+                                                    return false;
+                                                }
+                                                else if (data == "SupBank") {
+                                                    hideProgress();
+                                                    $('#btnSubmitfinal').attr('disabled', false);
+                                                    jAlert('Please Check Bank Details - Bank Details are not Updated Properly', "Message");
+                                                    return false;
+                                                }
+                                                if (data == "DebitLine") {
+                                                    hideProgress();
+                                                    $('#btnSubmitfinal').attr('disabled', false);
+                                                    jAlert("Please Check DebitLine Details : The DebitLine Total Amount Should Be Equal To Invoice Amount", "Message");
+                                                    return false;
+                                                }
+                                                else if (data == "Payment") {
+                                                    hideProgress();
+                                                    $('#btnSubmitfinal').attr('disabled', false);
+                                                    jAlert("Please Check Payment Details or Tax Details : The Payment Should Be Equal To Invoice Amount", "Message");
+                                                    return false;
+                                                }
+                                                else if (data == "pomap") {
+                                                    hideProgress();
+                                                    $('#btnSubmitfinal').attr('disabled', false);
+                                                    jAlert("Please Check PO Mapped Details or Tax Details : The  PO Mapped Total Should Be Equal To Invoice Amount", "Message");
+                                                    return false;
+                                                }
+                                                else if (data == "Error") {
+                                                    hideProgress();
+                                                    $('#btnSubmitfinal').attr('disabled', false);
+                                                    jAlert('Error..........', "Message");
+                                                    return false;
+                                                }
+                                                else {
+                                                    hideProgress();
+                                                    jAlert(data, "Message", function (u) {
+                                                        if (u == true) {
+                                                            window.location.href = '@Url.Action("CentralMakerIndex", "CentralMaker")?' + new Date().getTime();
+                                                        }
+                                                    });
+                                                }
+                                            }, 'json');
+                                        }
+                                        else {
+                                            hideProgress();
+                                            $('#btnSubmitfinal').attr('disabled', false);
+                                        }
+                                    });
+                                }
+                            });
+                        } // ramya added
+                    }// ramya added
+                    else if (data == "VALID") {
+                        jConfirm("Do you want to Submit This ECF...? ", "Message", function (u) {
+                            if (u == true) {
+                                showProgress();
+                                var empRemarks = $("#txtempRemarks").val();
+                                if (empRemarks == '' || empRemarks == null) {
+                                    empRemarks = ' ';
+                                }
+                                var empRemarks = $("#txtempRemarks").val();
+                                //var txtecfamont = $("#txtecfamont").val();
+                                var txtecfamont = $("#txtecfamont").val().replace(/,/g, "");
+                                var txtecfdates = $("#txtecfdates").val();
+                                var doctypeNames = $("#doctypeNames").val();
+                                var currencyNames = $("#currencyNames").val();
+                                var txtecfcurramount = $("#txtecfcurramount").val();
+                                // var CurrencyNamevalid = $("#CurrencyNamevalid").val();
+                                var CurrencyExrate = $("#txtexrate").val();
+                                var CurrencyNamevalid = $("#currencyNames option:selected").text();
+                                var NewAttmodel = {
+
+                                    "Raiser_Code": txtraisercodes,
+                                    "Raiser_Mode": raisermodeNames,
+                                    "Raiser_Name": txtraisernames,
+                                    "Grade": txtgrades,
+                                    "Suppliercode": txtSuppliercode,
+                                    "Suppliername": txtSuppliername,
+                                    "ecfdescription": ecfDescriptionid,
+                                    "amort": rblAmort,
+                                    "from": txtAmortfron,
+                                    "to": txtAmortto,
+                                    "amortdec": txtAmortDescriptionid,
+
+                                    "ecfremark": empRemarks,
+                                    "CurrencyId": currencyNames,
+                                    "CurrencyName": CurrencyNamevalid,
+                                    "DocId": doctypeNames,
+                                    "DocName": doctypeNamesneww,
+                                    "Exrate": CurrencyExrate,
+                                    "ECF_Date": txtecfdates,
+                                    "Currencyamount": txtecfcurramount,
+                                    "ECF_Amount": txtecfamont.toString().trim()
+                                };
+                                $.post('../SupplierInvoiceNew/_SupplierECFCTCreate', NewAttmodel, // ramya added on 08 aug 22 1
+                                function (data) {
+                                    if (data == "ECF") {
+                                        hideProgress();
+                                        $('#btnSubmitfinal').attr('disabled', false);
+                                        jAlert('Please Check Invoice Total Amount Or ECF Amount : The Invoice Total Amount Should Be Equal To ECF Amount', "Message");
+                                        return false;
+                                    }
+                                    else if (data == "BankAcc") {
+                                        hideProgress();
+                                        $('#btnSubmitfinal').attr('disabled', false);
+                                        jAlert('Please Check Bank Details - Bank Details are not Updated Properly', "Message");
+                                        return false;
+                                    }
+                                    else if (data == "DebitLine") {
+                                        hideProgress();
+                                        jAlert("Please Check DebitLine Details : The DebitLine Total Amount Should Be Equal To ECF Amount", "Message");
+                                        return false;
+                                    }
+                                    else if (data == "Pomapped") {
+                                        hideProgress();
+                                        jAlert("Please Check PO Mapped Details : The Total PO Mapped Amount Should Be Equal To ECF Amount", "Message");
+                                        return false;
+                                    }
+                                    else if (data == "Reason") {
+                                        hideProgress();
+                                        jAlert("Please Select the Reason for delay!", "Message");
+                                        return false;
+                                    }
+                                    else if (data == "FHA") {
+                                        hideProgress();
+                                        jAlert("Please Select the Functional Head Approval!", "Message");
+                                        return false;
+                                    }
+                                    else if (data == "FHANotExists") {
+                                        hideProgress();
+                                        jAlert("Kindly Attach the Functional head approval!", "Message");
+                                        return false;
+                                    }
+                                    else if (data == "Error") {
+                                        hideProgress();
+                                        $('#btnSubmitfinal').attr('disabled', false);
+                                        jAlert('Error..........', "Message");
+                                        return false;
+                                    }
+                                    else if (data == "Delmat") {
+                                        hideProgress();
+                                        $('#btnSubmitfinal').attr('disabled', false);
+                                        jAlert("Delmat has not been created.Contact functional IEM SPOC", "Message");
+                                        return false;
+                                    }
+                                    else {
+                                        hideProgress();
+                                        jAlert(data, "Message", function (u) {
+                                            if (u == true) {
+                                                @*window.location.href = '@Url.Action("index", "DashBoard")?' + new Date().getTime();*@
+                                                window.localStorage.previousurlflag = "-1";
+                                                location = '@Url.Action("Index", "Dashboard", new { area = "Dashboard" })';
+
+                                            }
+                                        });
+                                    }
+                                }, 'json');
+                            }
+                            else {
+                                hideProgress();
+                                $('#btnSubmitfinal').attr('disabled', false);
+                            }
+                        });
+                    }
+                    else {
+                        jAlert("Error While Validating Invoice Amount With CBF Amount", "Error", function () {
+                            return false;
+                        });
+                        return false;
+                    }
+                },
+                error: function (data) {
+                    jAlert("Error While Delete PO", "Error", function () {
+                        return false;
+                    });
+                },
+                failure: function (data) {
+                    jAlert("Error While Delete PO", "Error", function () {
+                        return false;
+                    });
+                }// ramya added
+            });// ramya added
+        }
+    }
+</script>

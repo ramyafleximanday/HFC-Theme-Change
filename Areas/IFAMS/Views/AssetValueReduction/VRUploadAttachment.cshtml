@@ -1,0 +1,107 @@
+﻿@model IEM.Areas.IFAMS.Models.AssetVRModel
+@using IEM.Areas.IFAMS.Models
+@using IEM.Common
+
+@if (Convert.ToString(Session["Status"]) == "DRAFT")
+{
+    <div id="UploadAttachment">
+        <div class="well" style="background-color:white">
+            <div>
+
+                <table class="myTableStyleTabNew" align="center">
+                    <tr>
+                        <td>
+                            <span>Select file</span><br />
+                            <form id="theuploadformtrfma">
+                                @*@Html.HiddenFor(m => m.AVRGid)*@
+                                @*@Html.TextBoxFor(m => m.AVRGid, new { @class = "form-control" })*@
+                                <input type="hidden" value="@Session["AVRGid"]" id="AVRGid" />
+                                @Html.AntiForgeryToken()
+                                <input class="textboxStyleSearch" id="fileUploadAvrMaker" name="fileUploadAvrMaker" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                            </form>
+                        </td>
+                        <td>
+                            <span>&nbsp;</span><br />
+                            <button id="btnfrstsubmit" class="btn btn-primary" value="Upload" onclick="AttachmentUpload()"><span style="color:white;" class="glyphicon glyphicon-upload"></span> Upload</button>&nbsp;
+
+                            &nbsp;<button id="btncanpayclear" onclick="txtClear()" class="btn btn-primary" value="cancel"><span style="color:white;" class="glyphicon glyphicon-remove-circle"></span> Clear</button>
+
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="AttachmentGrid">
+        @Html.Partial("VRAttachment")
+    </div>
+}
+
+
+<script>
+
+
+
+
+    function txtClear() {
+        var fileUpload = $("[id*=fileUploadAvrMaker]");
+        var id = fileUpload.attr("id");
+        var name = fileUpload.attr("name");
+        //Create a new FileUpload element.
+        var newFileUpload = $("<input type = 'file' id='fileUploadAvrMaker' name='fileUploadAvrMaker' class='textboxStyleSearch' onchange='checkfile(this)' accept='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel' />");
+        fileUpload.after(newFileUpload);
+        fileUpload.remove();
+    }
+
+
+    function AttachmentUpload() {
+
+
+        var iframe = $('<iframe name="postiframe" id="postiframe" style="display: none"></iframe>');
+        $("body").append(iframe);
+        var form = $('#theuploadformtrfma');
+        form.attr("action", "../AssetValueReduction/UploadFilesnewAttach");
+        form.attr("method", "post");
+        form.attr("encoding", "multipart/form-data");
+        form.attr("enctype", "multipart/form-data");
+        form.attr("target", "postiframe");
+        form.attr("file", $('#fileUploadAvrMaker').val());
+        form.submit();
+        var AvrId = $('#AVRGid').val();
+        setTimeout(function () {
+            debugger;
+            var objData =
+             {
+                 "AttachDesc": "", "AVRGid": AvrId
+             };
+            $.ajax({
+                url: "@Url.Action("UploadAttachments", "AssetValueReduction")?" + +new Date().getTime(),
+                type: 'POST',
+                cache: false,
+                data: objData,
+                success: function (data) {
+                    if (data == "Success") {
+                        jAlert("File Uploaded Succesfully..!", "Message");
+                        //var Url =
+                        $('#AttachmentGrid').load("@Url.Action("VRAttachment", "AssetValueReduction")?" + new Date().getTime());
+                        txtClear();
+                        return false;
+                    }
+                    else {
+                        jAlert("File Upload Fail..!", "Message");
+                        txtClear();
+                        return false;
+                    }
+                },
+                error: function () {
+                    jAlert("Error", "Message");
+                    txtClear();
+                    return false;
+                }
+            });
+        }, 1000);
+
+
+    }
+
+</script>

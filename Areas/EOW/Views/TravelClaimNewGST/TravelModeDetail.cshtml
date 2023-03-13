@@ -1,0 +1,426 @@
+﻿@using IEM.Areas.EOW.Models;
+@using IEM.Common
+@*@model IEM.Areas.EOW.Models.EOW_TravelMode*@
+@model IEnumerable<IEM.Areas.EOW.Models.EOW_TravelClaim>
+@{
+    decimal remamount = 0;
+    EOW_DataModel objd = new EOW_DataModel();
+    List<EOW_TravelClaim> lst = new List<EOW_TravelClaim>();
+    lst = (List<EOW_TravelClaim>)TempData["SearchItems"];
+
+
+    if (lst == null)
+    {
+        if (Session["EcfGid"] == null)
+        {
+            Session["EcfGid"] = -1;
+            Session["Ecfamountvalmain"] = 0;
+        }
+        ViewBag.IsSearched = "no";
+        if (Session["invoiceGid"] != null)
+        {
+            lst = objd.GetTravelModedataGST(Session["EcfGid"].ToString(), Session["invoiceGid"].ToString(), "T").ToList();
+        }
+        else
+        {
+            lst = objd.GetTravelModedataGST(Session["EcfGid"].ToString(), "", "T").ToList();
+
+        }
+        for (int tr = 0; lst.Count > tr; tr++)
+        {
+            if (remamount == 0)
+            {
+                remamount = Convert.ToDecimal(lst[tr].Amount.ToString());
+            }
+            else
+            {
+                remamount = remamount + Convert.ToDecimal(lst[tr].Amount.ToString());
+            }
+        }
+        ViewBag.NoRecordse = "total";
+        Session["Ecfrowtolamt"] = remamount.ToString();
+        if (Session["Ecfamountvalmain"] != null)
+        {
+            remamount = Convert.ToDecimal(Session["Ecfamountvalmain"].ToString()) - remamount;
+        }
+        else
+        {
+            remamount = 0;
+        }
+        Session["Ecfamountvaltm"] = remamount.ToString();
+    }
+    if (lst.Count == 0)
+    {
+        ViewBag.NoRecordse = "no";
+        ViewBag.NoRecords = "NoRecords";
+        ViewBag.NoRecordsFound = "No Records Found";
+    }
+
+}
+
+@{
+    CmnFunctions objCmnFunctions = new CmnFunctions();
+    var gridTravelmode = new WebGrid(lst, canSort: true, canPage: false, rowsPerPage: 5, ajaxUpdateContainerId: "wgTravelmodett", ajaxUpdateCallback: "DummyFunction()");
+    //int rowValExpense = 0;
+}
+
+
+<script type="text/javascript">
+    var UrlHelper = "@Url.Action("GetAutoCompleteCourier", "EOWHelper")"
+    UrlHelper = UrlHelper.replace("GetAutoCompleteCourier", "");
+    var Mainurl = "@Url.Action("GetInvoicedetails", "TravelClaimNew")";
+    Mainurl = Mainurl.replace("GetInvoicedetails", "");
+    var url = "@Url.Action("GetInvoicedetails", "TravelClaimNewGST")";
+    url = url.replace("GetInvoicedetails", "");
+    var _CurrentTab = 0;
+    $(function () {
+        $("#Invoicetabs").tabs({
+            select: function (e, i) {
+                _CurrentTab = i.index;
+
+            }
+        });
+    });
+</script>
+
+
+<style>
+    .tableSmall thead td {
+        font-size: 12px;
+    }
+
+    .tableSmall tbody td {
+        font-size: 12px;
+        padding: 0px;
+    }
+
+    .c {
+        width: 15% !important;
+        padding-left: 5px !important;
+        min-width: 120px;
+        word-wrap: break-word;
+    }
+
+    .a {
+        width: 15% !important;
+        padding-left: 5px !important;
+        min-width: 170px;
+        word-wrap: break-word;
+    }
+
+    .d {
+        width: 15% !important;
+        padding-left: 5px !important;
+        min-width: 250px;
+        word-wrap: break-word;
+    }
+
+    .des {
+        width: 15% !important;
+        padding-left: 5px !important;
+        min-width: 500px;
+        word-wrap: break-word;
+    }
+</style>
+
+
+<div style="height:320px; overflow-y:auto;">
+    <table class="myTableStyleTabNew" style="width:100%;">
+        <tr>
+            <td style="padding:5px 10px 5px 3px; width:20%;"></td>
+            <td style=" padding:5px 10px; width:20%;"></td>
+            <td style=" padding:5px 10px; width:20%;"></td>
+            <td style=" padding:5px 10px; width:30%;"></td>
+            <td style=" padding:5px 10px; width:10%; vertical-align:bottom;">
+                @*selva*@
+                <button type="button" id="addtravelmodedetails" style="color:white; margin-bottom:1px;" class="btn btn-primary divForNonPO1" onclick="AddInvoiceDetailsGST()">
+                    <span style=" color:white; font-size:12px;" class="glyphicon glyphicon-floppy-save">
+                    </span>
+                    Raise Invoices
+                </button>
+            </td>
+        </tr>
+    </table>
+
+    <div id="wgTravelmodett">
+        <div class="table-responsive">
+            @gridTravelmode.GetHtml(
+        htmlAttributes: new { id = "wgridTravelmodett" },
+                 tableStyle: "tableSmall table-bordered",
+        mode: WebGridPagerModes.All,
+        columns:
+        gridTravelmode.Columns(
+                    //gridTravelmode.Column("#", canSort: false, format: item => rowValExpense = rowValExpense + 1),
+
+                             gridTravelmode.Column("TravelMode_GID", "TravelMode_GID"),
+                gridTravelmode.Column("NatureofExpensesName", objCmnFunctions.Sorter("NatureofExpensesNames", "Nature of Expenses", gridTravelmode), canSort: false, style: "a"),
+                gridTravelmode.Column("ExpenseCategoryName", objCmnFunctions.Sorter("ExpenseCategoryName", "Expense Category", gridTravelmode), canSort: false, style: "d"),
+                gridTravelmode.Column("SubCategoryName", objCmnFunctions.Sorter("SubCategoryName", "Sub Category", gridTravelmode), canSort: false, style: "d"),
+                    gridTravelmode.Column(header: "Amount",
+                        format: @<text>
+                        @Html.Raw(String.Format("{0:#,##}",
+                                                 objCmnFunctions.GetINRAmount(Convert.ToString(@item.Amount)
+                        ))) </text>, style: "colamountlarge"),
+               gridTravelmode.Column("ClaimPeriodFrom", objCmnFunctions.Sorter("ClaimPeriodFrom", " Period From", gridTravelmode), canSort: false, style: "c"),
+               gridTravelmode.Column("ClaimPeriodTo", objCmnFunctions.Sorter("ClaimPeriodTo", " Period To", gridTravelmode), canSort: false, style: "c"),
+               gridTravelmode.Column("PlaceFrom", objCmnFunctions.Sorter("PlaceFrom", "Place From", gridTravelmode), canSort: false, style: "a"),
+               gridTravelmode.Column("PlaceTo", objCmnFunctions.Sorter("PlaceTo", "Place To", gridTravelmode), canSort: false, style: "a"),
+                gridTravelmode.Column("TravelHsnCode", objCmnFunctions.Sorter("TravelHsnCode", "HSN Code", gridTravelmode), canSort: false, style: "d"),
+                gridTravelmode.Column("TravelHsnDesc", objCmnFunctions.Sorter("TravelHsnDesc", "HSN Description", gridTravelmode), canSort: false, style: "des"),
+
+
+                    //gridTravelmode.Column("ClaimMonth", objCmnFunctions.Sorter("ClaimMonth", "GL No", gridTravelmode), canSort: false),
+                gridTravelmode.Column(header: "GL No", canSort: false, style: "c",
+                                            format: @<text>
+
+                    <label style="font-weight:normal;" id="RefException">@item.ClaimMonth</label>
+                    @Html.Raw("<a title='view' onclick='EmpExpenseglno(" + item.TravelMode_GID + ")' > <span class='glyphicon glyphicon-eye-open'> </span> </a>")
+
+                                            </text>),
+                gridTravelmode.Column("TravelModeName", objCmnFunctions.Sorter("TravelModeName", "Travel Mode", gridTravelmode), canSort: false, style: "c"),
+                gridTravelmode.Column("TravelClassName", objCmnFunctions.Sorter("TravelClassName", "Travel Class", gridTravelmode), canSort: false, style: "c"),
+                //gridTravelmode.Column("Rate", objCmnFunctions.Sorter("Rate", "Rate", gridTravelmode), canSort: false),
+                //gridTravelmode.Column("Distance", objCmnFunctions.Sorter("Distance", "Distance", gridTravelmode), canSort: false),
+                gridTravelmode.Column("FC", objCmnFunctions.Sorter("FC", "Business Segment(BU)", gridTravelmode), canSort: false, style: "a"),
+                gridTravelmode.Column("CC", objCmnFunctions.Sorter("CC", "Cost Center(CC)", gridTravelmode), canSort: false, style: "d"),
+                //gridTravelmode.Column("ProductCode", objCmnFunctions.Sorter("ProductCode", "ProductCode", gridTravelmode), canSort: false),
+                //gridTravelmode.Column("OUCode", objCmnFunctions.Sorter("OUCode", "OUCode", gridTravelmode), canSort: false),
+
+                 gridTravelmode.Column( format: @<text> <input type="checkbox" value="@item.TravelMode_GID" name="childChkbox" />  </text>,
+                                            header: "{checkall}"
+                                        ),
+
+
+                                                 gridTravelmode.Column(header: "Action", canSort: false, style: "action",  format: @<text>
+                                            @Html.Raw("<a title='view' onclick='EmpTravelModeViewForGST(" + item.TravelMode_GID + ")' > <span id='id' class='glyphicon glyphicon-eye-open'> </span> </a>")
+                                            @Html.Raw("<a title='Edit' onclick='EmpTravelModeEdit(" + item.TravelMode_GID + ")' > <span id='id' class='glyphicon glyphicon-edit'> </span> </a>")
+                                            @Html.Raw("<a title='Delete' onclick='EmpTravelModeDelete(" + item.TravelMode_GID + ")' > <span id='id' class='glyphicon glyphicon-trash'> </span> </a>")
+
+                                                </text>)))
+            @if (@ViewBag.NoRecords == "NoRecords")
+            {
+                <div class="borderStyle" style="font-weight:bold">
+                    <center>
+                        @ViewBag.NoRecordsFound
+                    </center>
+                </div>
+            }
+        </div>
+        @if (@ViewBag.NoRecordse == "total")
+        {
+            <div>
+                <table style="width:100%">
+                    <tr>
+                        <td align="left">
+                            @*&nbsp;&nbsp; Total Records : <label id="lblDirectorCount">@gridTravelmode.TotalRowCount</label>*@
+                        </td>
+                        <td align="right">
+                            <label style="font-weight:normal;display:none" id="Ecfamountvalmain">@Session["Ecfamountvalmain"]</label>
+                            <span> Total Travel Mode Amount : <b> <label id="Ecfrowtolamtdisplay"> @objCmnFunctions.GetINRAmount(Session["Ecfrowtolamt"].ToString())</label>  <label style="font-weight:normal;display:none" id="Ecfrowtolamt">@Session["Ecfrowtolamt"]</label>  </b></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#wgridTravelmodett td:nth-child(1),#wgridTravelmodett th:nth-child(1)").hide();
+    });
+
+
+    function GetExpDet() {
+
+        debugger;
+        var array = new Array();
+        var travelid = "";
+        var hsncode1 = "";
+        $('#wgridTravelmodett').find('tbody > tr').each(function (index) {
+
+            var row = $(this).closest('tr');
+            first = row.find("td").eq(0).html()
+            var select = row.find("td").eq(16).find("input:checkbox").is(":checked")
+            var hsncode = row.find("td").eq(9).html();
+            if (select == true) {
+                travelid = travelid + first + ',';
+                hsncode1 = hsncode1 + hsncode + ',';
+            }
+
+
+        });
+        debugger;
+        $("#hdnExpids").val(travelid);
+        $("#hdntravelhsncode").val(hsncode1);
+        //var result = $("#hdntravelhsncode").val();
+        //alert(result);
+    }
+
+    function AddInvoiceDetailsGST() {
+        debugger;
+        // alert('RaiseInvoice')
+        //selva
+        $('#txtVendorName').attr("disabled", true);
+        $('#txtInvoiceNo').attr("disabled", "disabled");
+        $('#txtInvoiceDate').attr("disabled", "disabled");
+        $('#txtServiceMonth').attr("disabled", "disabled");
+        $('#txtInvoiceAmount').attr("disabled", "disabled");
+        $('#txtWithoutTaxAmount').attr("disabled", "disabled");
+        $('#ddlgstProviderLoc').attr("disabled", "disabled");
+        $('#ddlgstReceiverLoc').attr("disabled", "disabled");
+        $('#ddlgstReceiverLoc').attr("disabled", "disabled");
+        $('#txtGSTINVendor').attr("disabled", "disabled");
+        $('#txtGSTINFICCL').attr("disabled", "disabled");
+        $('input[name=rdoVerify]').attr("disabled", true);
+
+
+        GetExpDet();
+        if ($("#hdnExpids").val() == "") {
+            jAlert("Please Select the Travel Details", "Message");
+            return false;
+        }
+        debugger;
+        var Ecfid = $("#TxtEcfId").val();
+        var EcfAmt = $("#txtecfamountt").val();
+        var EcfDate = $("#txtecfdatet").val();
+        var EcfSerMonth = $("#txtclaimmontht").val();
+
+        if ($("#txtecfamountt").val() == "" || $("#txtecfdatet").val() == "" || $("#txtclaimmontht").val() == "") {
+            jAlert("Please Ensure ECF Details", "Message");
+            return false;
+        }
+
+
+        //var Ecfid = $("#TxtEcfId").val();
+        //var EcfAmt = $("#txtecfamountt").val();
+        //var EcfDate = $("#txtPeriodFromdate").val();
+        //var EcfSerMonth = $("#txtClaimMontht").val();
+        //alert($("#txtPeriodFromdate").val());
+        $("#ddlgstReceiverLoc,#ddlgstProviderLoc,#hdfSVendorId,#hdfSVendorName").val("0");
+        $("#txtInvoiceDate,#txtInvoiceNo,#txtServiceMonth,#txtInvoiceAmount,#txtWithoutTaxAmount,#txtInvoiceDescription,#txtVendorName,#txtVendorCode,#txtGSTINVendor,#txtGSTINFICCL").val("");
+
+        $("#txtGSTINVendor,#txtInvoiceDate,#txtInvoiceNo,#txtServiceMonth,#txtInvoiceAmount,#txtWithoutTaxAmount,#txtInvoiceDescription,#txtVendorName,#txtVendorCode,#ddlgstReceiverLoc,#ddlgstProviderLoc").removeClass("valid").removeClass("required").addClass("required");
+        // $("input[name=rdogstChargedFlag][value=N]").prop("checked", true);
+        // $("input[name=rdoVerify][value=1]").prop("checked", true);
+        var servicemonth = $("#txtclaimmontht").val();
+        var Invdate = $("#txtecfdatet").val();
+
+        //    $("#txtInvoiceDate").val((EcfDate.replace('-', '/')).replace('-', '/')); //selva cmmmad
+
+
+        $("#txtServiceMonth").val(EcfSerMonth.replace('-', ' '));
+
+        $("#txtInvoiceDate").addClass("valid");
+        $("#txtServiceMonth").addClass("valid");
+        $("#btnSaveInv").text("Save");
+        //alert(1);
+        // $("#tabGST").hide();
+        $('#Invoicetabs').attr("style", "display:none;"); //Added by Ramya
+        //  $('.divForNonPO1').attr("style", "display:none;");
+
+        // $('.divForNonPO1').attr("style", "display:block;"); //Added by selva
+
+        //$(".divGSTChargedShow").hide();//Ramya Commentted - GST Y/N
+        $(".divGSTChargedShow").show();// Ramya Added
+        $('#InvoicetabsNew').tabs('select', 1);
+        $("#hfInvId").val("0");
+        // $("#txtVendorName").attr("disabled", false);
+        $("#txtVendorName").attr("disabled", true);
+        $(".viewForIvoice").css("display", "");
+
+        $.ajax({
+            type: "post",
+            url: "../TravelClaimNew/DestroySession",
+            contentType: "application/json;",
+            success: function (response) {
+                var Data1 = "";
+                if (response.Data1 != null && response.Data1 != "" && JSON.parse(response.Data1) != null) {
+                    Data1 = JSON.parse(response.Data1);
+                    if (Data1 == 'Success') {
+                        $('#divInvoice').attr("style", "display:block;");
+                        objDialogyInvoice.dialog({ title: 'Add Travel Invoice Details', width: '1100', height: '600' });
+                        objDialogyInvoice.dialog("open");
+
+                        @*var url = '@Url.Action("_TravelModeDetails", "TravelClaimNew")?' + new Date().getTime();
+                                        $("#wgTravelmodett").load(url);
+                                        var url1 = '@Url.Action("_EmpPaymentDetails", "TravelClaimNew")?' + new Date().getTime();
+                                        $("#wgempPaymentt").load(url1);
+                                        var url2 = '@Url.Action("_LoadGstDetails", "TravelClaimNew")?' + new Date().getTime();
+                                        $("#Grdgstdetls").load(url2);
+                                        var url3 = '@Url.Action("_LoadRCMDetails", "TravelClaimNew")?' + new Date().getTime();
+                                        $("#GrdRCMdetls").load(url3);*@
+                    }
+
+                }
+
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                //alert(errorThrown);
+            }
+        });
+    }
+    function CloseDetails(flg) {
+        if (flg == 0) {
+            objDialogyInvoice.dialog("close");
+        }
+        if (flg == 1) {
+            objDialogyAdd.dialog("close");
+        }
+        window.parent.jQuery('#ShowDialog').dialog('close');
+    }
+
+
+    $("#wgridTravelmodett th").each(function () {
+
+        var checked = $("#wgridTravelmodett td :checkbox:checked").length;
+        if ($.trim($(this).text().toString().toLowerCase()) === "{checkall}") {
+            $(this).text('');
+            $("<input/>", { type: "checkbox", id: "cbSelectAll", value: "" }).appendTo($(this));
+            $(this).append("<span>Select All</span>");
+        }
+
+    });
+
+    $("#cbSelectAll").live("click", function () {
+
+        var ischecked = this.checked;
+        $('#wgridTravelmodett').find("input:checkbox").each(function () {
+            this.checked = ischecked;
+        });
+        var checked = $("#wgridTravelmodett td :checkbox:checked").length;
+    });
+
+
+
+
+    $("input[name='childChkbox']").click(function () {
+        // CheckFields();
+
+        // alert();
+        var totalRows = $("#wgridTravelmodett td :checkbox").length;
+        var checked = $("#wgridTravelmodett td :checkbox:checked").length;
+
+
+        if (checked == totalRows) {
+            $("#wgridTravelmodett").find("input:checkbox").each(function () {
+                this.checked = true;
+            });
+        }
+        else {
+            $("#cbSelectAll").removeAttr("checked");
+        }
+        //CheckFields();
+    });
+
+    //bharathi
+
+
+
+
+</script>

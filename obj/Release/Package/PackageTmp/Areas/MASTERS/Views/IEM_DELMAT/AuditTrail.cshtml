@@ -1,0 +1,88 @@
+﻿@using IEM.Common
+@using IEM.Areas.MASTERS.Models
+
+@{
+    var dis = ViewBag.viewfor;
+}
+<link href="@Url.Content("~/Content/Rmax_Site.css")" rel="stylesheet" type="text/css" />
+@{
+    IEM_MST_DELMAT dm = new IEM_MST_DELMAT();
+    List<AuditFile> lst = new List<AuditFile>();
+    AuditFile lst1 = new AuditFile();
+    string IsChecker = "";
+    if (lst == null || lst.Count == 0 || dis != "disabled")
+    {
+        lst = dm.GetDelmatAudit((Session["delmatgid"]).ToString()).ToList();
+    }
+    else if (dis == "disabled" || dis == " ")
+    {
+        lst = dm.GetDelmatAudit((Session["Update_delmat_gid"]).ToString()).ToList();
+    }
+
+
+
+}
+<style type="text/css">
+    .hide {
+        display: none;
+    }
+</style>
+
+<div id="ForEmployeeDetails" class="well">
+    @{
+        CmnFunctions objCmnFunction = new CmnFunctions();
+        var gridAudit = new WebGrid(lst, canSort: true, canPage: true, rowsPerPage: 10, ajaxUpdateContainerId: "ForEmployeeDetails", ajaxUpdateCallback: "DummyFunction9()");
+
+
+        int rowVal = 0;
+    }
+    <div class="table-responsive" style="margin-top:10px; width:100%">
+        @if (dis != "disabled")
+        {
+            @gridAudit.GetHtml(
+        htmlAttributes: new { id = "wgridEmployeeDetails" },
+                    tableStyle: "tableSmall table-bordered table-hover",
+        mode: WebGridPagerModes.All,
+        columns:
+                          gridAudit.Columns(
+                          gridAudit.Column("S.No", style: "slno", format: item => rowVal = rowVal + 1, canSort: false),
+                                                gridAudit.Column("EmpName", objCmnFunction.Sorter("EmpName", "Employee Name", gridAudit), canSort: false, style: "dattach"),
+                                                gridAudit.Column("Designation", objCmnFunction.Sorter("Designation", "Designation", gridAudit), canSort: false, style: "aattach"),
+                         gridAudit.Column("ActionDate", objCmnFunction.Sorter("ActionDate", "Action Date", gridAudit), canSort: false, style: "aattach"),
+                                  gridAudit.Column("ActionType", objCmnFunction.Sorter("ActionType", "Status", gridAudit), canSort: false, style: "dattach"),
+                                   gridAudit.Column("Remarks", objCmnFunction.Sorter("Remarks", "Remarks", gridAudit), canSort: false, style: "dattach")
+                                 ))
+        }
+        else
+        {
+
+            @gridAudit.GetHtml(
+        htmlAttributes: new { id = "wgridEmployeeDetails" },
+                    tableStyle: "tableSmall table-bordered table-hover",
+        mode: WebGridPagerModes.All,
+        columns:
+                          gridAudit.Columns(
+                          gridAudit.Column("S.No", style: "slno", format: item => rowVal = rowVal + 1, canSort: false),
+                                                gridAudit.Column("EmpName", objCmnFunction.Sorter("EmpName", "Employee Name", gridAudit), canSort: false, style: "dattach"),
+                                                gridAudit.Column("Designation", objCmnFunction.Sorter("Designation", "Designation", gridAudit), canSort: false, style: "aattach"),
+                         gridAudit.Column("ActionDate", objCmnFunction.Sorter("ActionDate", "Action Date", gridAudit), canSort: false, style: "aattach"),
+                                  gridAudit.Column("ActionType", objCmnFunction.Sorter("ActionType", "Status", gridAudit), canSort: false, style: "dattach"),
+                                   gridAudit.Column("Remarks", objCmnFunction.Sorter("Remarks", "Remarks", gridAudit), canSort: false, style: "dattach")
+                                 ))
+        }
+
+    </div>
+
+    @if (@ViewBag.NoRecordsFound != null && @ViewBag.NoRecordsFound != "")
+    {
+        <div class="gridMessage">
+            @ViewBag.NoRecordsFound
+        </div>
+    }
+    else
+    {
+        <div class="gridCount" style="text-align:left;">Page <b>@(gridAudit.PageIndex + 1)</b> of <b>@gridAudit.PageCount</b> - Total No Of Records: <b>@gridAudit.TotalRowCount</b></div>
+    }
+
+
+</div>

@@ -1,0 +1,158 @@
+﻿ @{
+    ViewBag.Title = "AdvanceReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="@Url.Content("~/Content/themes/base/jquery-ui.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/Rmax_Site.css")" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/Scripts/jquery-ui-1.8.24.min.js")" type="text/javascript"></script>
+<style>
+    table, th, td {
+        white-space: nowrap;
+    }
+</style>
+
+<div class="pageHeadingLayout">
+    <span class="pageHeading">Recovery Liquidation Report</span>
+</div>
+<div class="well">
+    <table class="myTableStyleTabNew" style="width:100%;">
+        <tr>
+            <td style="width:20%; padding:0px 10px 0px 3px;">
+                <span>Recovery Date From</span>
+                <br />
+                <input type="text"
+                       id="txtDate"
+                       @*disabled ="disabled"*@
+                       @*value="@DateTime.Now.ToString("dd'/'MM'/'yyyy")"*@
+                       onkeypress="return isEvent(event)"
+                       class="fstextbox" />
+            </td>
+            <td style="width:20%; padding:0px 10px 0px 3px;">
+                <span>Recovery Date To</span>
+                <br />
+                <input type="text"
+                       id="txtDateto"
+                       @*disabled ="disabled"*@
+                       @*value="@DateTime.Now.ToString("dd'/'MM'/'yyyy")"*@
+                       onkeypress="return isEvent(event)"
+                       class="fstextbox" />
+            </td>
+            
+            <td style="width:20%; padding:0px 10px;">
+                <span>Recovery No</span>
+                <br />
+                <input type="text"
+                       id="txtECFNo"
+                       name="txtECFNo"
+                       class="fstextbox" />
+            </td>
+            <td style="width:25%; padding:0px; vertical-align:bottom;">
+                <button class="btn btn-primary" id="btnsearch" data-bind="click: $root.search" style="color:white; margin-bottom:3px;">
+                    <span style="color:white; font-size:12px;" class="glyphicon glyphicon-search"></span>
+                    Search
+                </button>
+                <button class="btn btn-primary" data-bind="click: $root.clearFilter" style="color:white; margin-bottom:3px;">
+                    <span style="color:white; font-size:12px;" class="glyphicon glyphicon-refresh"></span>
+                    Clear
+                </button>
+                <button class="btn btn-success" id="btnExporExcel" data-bind="click: $root.Download" style="color:white; margin-bottom:3px;">
+                    <span style="color:white; font-size:12px;" class="glyphicon glyphicon-export"></span>
+                    Export to Excel
+                </button>
+            </td>
+        </tr>
+        @*<tr>
+             <td style="width:25%; padding:0px; vertical-align:bottom;">
+                <button class="btn btn-primary" id="btnsearch" data-bind="click: $root.search" style="color:white; margin-bottom:3px;">
+                    <span style="color:white; font-size:12px;" class="glyphicon glyphicon-search"></span>
+                    Search
+                </button>
+                <button class="btn btn-primary" data-bind="click: $root.clearFilter" style="color:white; margin-bottom:3px;">
+                    <span style="color:white; font-size:12px;" class="glyphicon glyphicon-refresh"></span>
+                    Clear
+                </button>
+                <button class="btn btn-success" id="btnExporExcel" data-bind="click: $root.Download" style="color:white; margin-bottom:3px;">
+                    <span style="color:white; font-size:12px;" class="glyphicon glyphicon-export"></span>
+                    Export to Excel
+                </button>
+            </td>
+        </tr>*@
+    </table>
+    <div style="width:100%; overflow:auto; height:100%; margin-top: 15px;">
+        <table class="tableSmall table-bordered table-hover table-responsive" id="gvReport" data-bind="visible: ResultArray().length > 0">
+            <thead>
+                <tr>
+                    <th align="center" style="padding-right:20px;">
+                        Sl No
+                    </th>
+                    <th style="padding-right:20px;">
+                        Recovery  No
+                    </th>
+                    <th style="padding-right:20px;">
+                        ECF No/Receipt No
+                    </th>
+                    <th style="padding-right:20px;">
+                        Invoice No
+                    </th>
+                    <th style="padding-right:20px;">
+                        Vendor Code
+                    </th>
+                    <th style="padding-right:20px;">
+                        Vendor Name
+                    </th>
+                    <th style="padding-right:20px;">
+                        Amount
+                    </th>
+                    @*<th style="padding-right:20px;">
+                Module
+            </th>*@
+                    @*<th style="padding-right:20px;">
+                        ARF No
+                    </th>*@
+                    @*<th style="padding-right:20px;">
+                Status
+            </th>*@
+                    <th style="padding-right:20px;">
+                Liqudation Date
+            </th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach:{ data: ResultArray, afterRender: DatatableCall }, visible: ResultArray().length > 0">
+                <tr>
+                    <td align="center">
+                        <span data-bind="text:$index()+1"></span>
+                    </td>
+                    <td>
+                        <span data-bind="text: RECNo"></span>
+                    </td>
+                    <td>
+                        <span data-bind="text: ECFNo"></span>
+                    </td>
+                    <td>
+                        <span data-bind="text: InvoiceNo"></span>
+                    </td>
+                    <td>
+                        <span data-bind="text: Vendorcode"></span>
+                    </td>
+                    <td>
+                        <span data-bind="text: Vendorname"></span>
+                    </td>
+                    <td align="right">
+                        <span data-bind="text: $root.formatNumber(Amount)"></span>
+                    </td>
+ 
+                      <td>
+                          <span data-bind="text: LiqudationDate"></span>
+                    </td>
+                    
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    var UrlDet = "@Url.Action("RecoveryPPXReport", "FAReport")"
+    var UrlHelper = "@Url.Action("GetAutoCompleteCourier", "Helper")"
+</script>
+<script src="@Url.Content("~/Areas/FLEXISPEND/FS_UserScript/jsFARecoveryPPXReport .js")" type="text/javascript"></script>

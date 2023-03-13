@@ -1,0 +1,565 @@
+﻿@using IEM.Areas.EOW.Models;
+@using IEM.Common
+@model IEnumerable<IEM.Areas.EOW.Models.EOW_EmployeeeExpense>
+@{
+    decimal remamount = 0;
+    EOW_DataModel objd = new EOW_DataModel();
+    List<EOW_EmployeeeExpense> lst = new List<EOW_EmployeeeExpense>();
+    lst = (List<EOW_EmployeeeExpense>)TempData["SearchItems"];
+
+
+    if (lst == null)
+    {
+        if (Session["EcfGid"] == null)
+        {
+            Session["EcfGid"] = -1;
+            Session["Ecfamountvalmain"] = 0;
+        }
+        ViewBag.IsSearched = "no";
+        if (Session["invoiceGid"] != null)
+        {
+            lst = objd.GetEmployeeeExpensenew(Session["EcfGid"].ToString(), Session["invoiceGid"].ToString()).ToList();
+        }
+        else
+        {
+            lst = objd.GetEmployeeeExpensenew(Session["EcfGid"].ToString(), "").ToList();
+        }
+        for (int tr = 0; lst.Count > tr; tr++)
+        {
+            if (remamount == 0)
+            {
+                remamount = Convert.ToDecimal(lst[tr].Exp_Amount.ToString());
+            }
+            else
+            {
+                remamount = remamount + Convert.ToDecimal(lst[tr].Exp_Amount.ToString());
+            }
+        }
+        ViewBag.NoRecordse = "total";
+        Session["Ecfrowtolamt"] = remamount.ToString();
+        remamount = Convert.ToDecimal(Session["Ecfamountvalmain"].ToString()) - remamount;
+        Session["Ecfamountvaltm"] = remamount.ToString();
+    }
+    if (lst.Count == 0)
+    {
+        ViewBag.NoRecordse = "no";
+        ViewBag.NoRecords = "NoRecords";
+        ViewBag.NoRecordsFound = "No Records Found";
+    }
+
+}
+
+@{
+    CmnFunctions objCmnFunctions = new CmnFunctions();
+    var gridTravelmode = new WebGrid(lst, canSort: true, canPage: false, rowsPerPage: 5, ajaxUpdateContainerId: "wgTravelmodett", ajaxUpdateCallback: "DummyFunction()");
+
+}
+
+@*@model IEnumerable<IEM.Areas.EOW.Models.EOW_EmployeeeExpense>
+    @{
+        CmnFunctions objCmnFunctions = new CmnFunctions();
+        decimal remamount = 0;
+        EOW_DataModel objd = new EOW_DataModel();
+        List<EOW_EmployeeeExpense> lst = new List<EOW_EmployeeeExpense>();
+
+        if (Session["invoiceGid"] != null)
+        {
+            lst = (List<EOW_EmployeeeExpense>)TempData["SearchItems"];
+            if (lst == null)
+            {
+                ViewBag.IsSearched = "no";
+                lst = objd.GetEmployeeeExpensenew(Session["EcfGid"].ToString(), Session["invoiceGid"].ToString()).ToList();
+                for (int tr = 0; lst.Count > tr; tr++)
+                {
+                    if (remamount == 0)
+                    {
+                        remamount = Convert.ToDecimal(lst[tr].Exp_Amount.ToString());
+                    }
+                    else
+                    {
+                        remamount = remamount + Convert.ToDecimal(lst[tr].Exp_Amount.ToString());
+                    }
+                }
+                ViewBag.NoRecordse = "total";
+                Session["Ecfrowtolamt"] = remamount.ToString();
+
+                Session["Ecfrowtolamtdisp"] = remamount.ToString();
+
+                remamount = Convert.ToDecimal(Session["Ecfamountvalmain"].ToString()) - remamount;
+                Session["Ecfamountval"] = remamount.ToString();
+
+            }
+
+
+        if (lst.Count == 0)
+        {
+            ViewBag.NoRecordse = "No";
+            ViewBag.NoRecords = "NoRecords";
+            ViewBag.NoRecordsFound = "No Records Found";
+        }
+
+    }
+
+    @{
+
+        var gridTravelmode = new WebGrid(lst, canSort: true, canPage: false, rowsPerPage: 5, ajaxUpdateContainerId: "wgTravelmodett", ajaxUpdateCallback: "DummyFunction()");
+
+    }*@
+
+
+<script type="text/javascript">
+    var UrlHelper = "@Url.Action("GetAutoCompleteCourier", "EOWHelper")"
+    UrlHelper = UrlHelper.replace("GetAutoCompleteCourier", "");
+    var Mainurl = "@Url.Action("GetInvoicedetails", "PettyCashGST")";
+    Mainurl = Mainurl.replace("GetInvoicedetails", "");
+    var url = "@Url.Action("GetInvoicedetails", "PettyCashGST")";
+    url = url.replace("GetInvoicedetails", "");
+    var _CurrentTab = 0;
+    $(function () {
+        $("#Invoicetabs").tabs({
+            select: function (e, i) {
+                _CurrentTab = i.index;
+
+            }
+        });
+    });
+</script>
+
+
+<style>
+    .tableSmall thead td {
+        font-size: 12px;
+    }
+
+    .tableSmall tbody td {
+        font-size: 12px;
+        padding: 0px;
+    }
+
+    .c {
+        width: 15% !important;
+        padding-left: 5px !important;
+        min-width: 120px;
+        word-wrap: break-word;
+    }
+
+    .a {
+        width: 15% !important;
+        padding-left: 5px !important;
+        min-width: 170px;
+        word-wrap: break-word;
+    }
+
+    .d {
+        width: 15% !important;
+        padding-left: 5px !important;
+        min-width: 250px;
+        word-wrap: break-word;
+    }
+
+    .des {
+        width: 15% !important;
+        padding-left: 5px !important;
+        min-width: 500px;
+        word-wrap: break-word;
+    }
+
+    .ui-dialog-content ui-widget-content {
+        height: 334.067px;
+    }
+</style>
+
+
+<div style="height:320px; overflow-y:auto;">
+    <table class="myTableStyleTabNew" style="width:100%;">
+        <tr>
+            <td style="padding:5px 10px 5px 3px; width:20%;"></td>
+            <td style=" padding:5px 10px; width:20%;"></td>
+            <td style=" padding:5px 10px; width:20%;"></td>
+            <td style=" padding:5px 10px; width:30%;"></td>
+            <td style=" padding:5px 10px; width:10%; vertical-align:bottom;">
+                @*selva*@
+                <button type="button" style="color:white; margin-bottom:1px;" class="btn btn-primary divForNonPO1" onclick="PettyCashAddInvoiceDetailsGST()">
+                    <span style=" color:white; font-size:12px;" class="glyphicon glyphicon-floppy-save">
+                    </span>
+                    Raise Invoices
+                </button>
+            </td>
+        </tr>
+    </table>
+
+    <div id="wgTravelmodett">
+        <div class="table-responsive">
+            @gridTravelmode.GetHtml(
+                          htmlAttributes: new { id = "wgridNonTravelmodett" },
+                 tableStyle: "tableSmall table-bordered",
+        mode: WebGridPagerModes.All,
+        columns:
+        gridTravelmode.Columns(
+
+                 gridTravelmode.Column("Exp_GID", "Exp_GID"),
+                gridTravelmode.Column("NatureofExpensesName", objCmnFunctions.Sorter("NatureofExpensesNames", "Nature of Expenses", gridTravelmode), canSort: false, style: "a"),
+                gridTravelmode.Column("ExpenseCategoryName", objCmnFunctions.Sorter("ExpenseCategoryName", "Expense Category", gridTravelmode), canSort: false, style: "d"),
+                gridTravelmode.Column("SubCategoryName", objCmnFunctions.Sorter("SubCategoryName", "Sub Category", gridTravelmode), canSort: false, style: "d"),
+                             gridTravelmode.Column(header: "Amount",
+                        format: @<text>
+                                @Html.Raw(String.Format("{0:#,##}",
+                                                          objCmnFunctions.GetINRAmount(Convert.ToString(@item.Exp_Amount)
+                        ))) </text>, style: "colamountlarge"),
+
+            gridTravelmode.Column("Exp_ClaimPeriodFrom", objCmnFunctions.Sorter("Exp_ClaimPeriodFrom", " Period From", gridTravelmode), canSort: false, style: "c"),
+             gridTravelmode.Column("Exp_ClaimPeriodTo", objCmnFunctions.Sorter("Exp_ClaimPeriodTo", " Period To", gridTravelmode), canSort: false, style: "c"),
+
+                gridTravelmode.Column(header: "GL No", canSort: false, style: "c",
+                                            format: @<text>
+                     
+                                <label style="font-weight:normal;" id="RefException">@item.Exp_ClaimMonth</label>
+                                @Html.Raw("<a title='view' onclick='EmpExpenseglno(" + item.Exp_GID + ")' > <span class='glyphicon glyphicon-eye-open'> </span> </a>")
+                                                                 </text>),
+
+                                                                          gridTravelmode.Column("Exp_FC", objCmnFunctions.Sorter("Exp_FC", "Business Segment(BU)", gridTravelmode), canSort: false, style: "a"),
+                                                                          gridTravelmode.Column("Exp_CC", objCmnFunctions.Sorter("Exp_CC", "Cost Center(CC)", gridTravelmode), canSort: false, style: "d"),
+                                                                           gridTravelmode.Column("Exp_ProductCode", objCmnFunctions.Sorter("Exp_ProductCode", "Product Code", gridTravelmode), canSort: false, style: "a"),
+                                                                    gridTravelmode.Column("Exp_OUCode", objCmnFunctions.Sorter("Exp_OUCode", "Location Code(OUCode)", gridTravelmode), canSort: false, style: "f"),
+
+                 gridTravelmode.Column( format: @<text> <input type="checkbox" value="@item.Exp_GID" name="childChkbox" />  </text>,
+                                            header: "{checkall}"
+                                        ),
+
+
+
+                                                gridTravelmode.Column(header: "Action", canSort: false, style: "action",  format: @<text>
+                                            @Html.Raw("<a title='view' onclick='EmpNonTravelModeViewForGST(" + item.Exp_GID + ")' > <span id='id' class='glyphicon glyphicon-eye-open'> </span> </a>")
+                                            @Html.Raw("<a title='Edit' onclick='EmpNonTravelModeEdit(" + item.Exp_GID + ")' > <span id='id' class='glyphicon glyphicon-edit'> </span> </a>")
+                                            @Html.Raw("<a title='Delete' onclick='EmpExpenseDelete(" + item.Exp_GID + ")' > <span id='id' class='glyphicon glyphicon-trash'> </span> </a>")
+
+                                                </text>)))
+            @if (@ViewBag.NoRecords == "NoRecords")
+            {
+                <div class="borderStyle" style="font-weight:bold">
+                    <center>
+                        @ViewBag.NoRecordsFound
+                    </center>
+                </div>
+            }
+        </div>
+        @if (@ViewBag.NoRecordse == "total")
+        {
+            <div>
+                <table style="width:100%">
+                    <tr>
+                        <td align="left">
+                       
+                        </td>
+                        <td align="right">
+                            <label style="font-weight:normal;display:none" id="Ecfamountvalmain">@Session["Ecfamountvalmain"]</label>
+                            <span> Total Travel Mode Amount : <b> <label id="Ecfrowtolamtdisplay"> @objCmnFunctions.GetINRAmount(Session["Ecfrowtolamt"].ToString())</label>  <label style="font-weight:normal;display:none" id="Ecfrowtolamt">@Session["Ecfrowtolamt"]</label>  </b></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+    </div>
+</div>
+
+
+
+
+
+<div id="ForPartialViewNonTravelmodenew"></div>
+<div id="ForPartialViewExpenseglno"></div>
+
+
+
+
+<script type="text/javascript">
+  //  var objDialogyInvoicePettyCash;
+
+    var objDialognonTravelmodenew;
+    $(document).ready(function () {
+        $("#wgridNonTravelmodett td:nth-child(1),#wgridNonTravelmodett th:nth-child(1)").hide();
+
+        objDialognonTravelmodenew = $("[id$='ForPartialViewNonTravelmodenew']");
+        objDialognonTravelmodenew.dialog({
+            open: function (event, ui) {
+                $(this).parent().focus();
+            },
+            autoOpen: false,
+            cache: false,
+            modal: true,
+            width: '60%',
+            height: 400,
+            show: 'fade-in',
+            close: 'fade-out'
+        });
+
+        //objDialogyInvoicePettyCash = $("[id$='divInvoice']");
+        //objDialogyInvoicePettyCash.length = 1;
+        //objDialogyInvoicePettyCash.dialog({
+        //    autoOpen: false,
+        //    modal: true,
+        //    width: 1100,
+        //    height: 600,
+        //    duration: 300
+        //});
+
+    });
+
+
+    //Petty cash edit expenses
+    function EmpNonTravelModeEdit(id) {
+        //  showProgress();
+        var dats = id;
+        var objowner = {
+            "empName": dats,
+        };
+
+        //  $.post('../TravelClaimNew/_Emplistaddtm', objowner,
+        $.post('../PettyCashGST/_Emplistaddp', objowner,
+        function (data) {
+            if (data == "Success") {
+                //var url = 'Url.Action("NonTravelModeEdit", "NonTravelClaimNewGST")?id=' + id + '&viewfor=edit&' + new Date().getTime();
+                var url = '@Url.Action("NonTravelModeEdit", "NonTravelClaimNewGST")?id=' + id + '&viewfor=edit&' + new Date().getTime();
+                objDialognonTravelmodenew.length = 1;
+                objDialognonTravelmodenew.load(url);
+                objDialognonTravelmodenew.dialog({ title: 'Edit Expense Details' });
+                objDialognonTravelmodenew.dialog("open");
+                // hideProgress();
+            }
+            else {
+                hideProgress();
+                jAlert(data, "Message");
+                return false;
+            }
+        }, 'json');
+    }
+
+    function EmpNonTravelModeViewForGST(id) {
+        debugger;
+        // showProgress();
+        var dats = id;
+        var objowner = {
+            "empName": dats,
+        };
+
+        $.post('../NonTravelClaimNewGST/_Emplistaddp', objowner,
+        function (data) {
+            if (data == "Success") {
+                var url = '@Url.Action("NonTravelModeEdit", "NonTravelClaimNewGST")?id=' + id + '&viewfor=view&' + new Date().getTime();
+                //$("#TravelClaimGSTHeader").load(url);
+                //hideProgress();
+                objDialognonTravelmodenew.length = 1;
+                objDialognonTravelmodenew.load(url);
+                objDialognonTravelmodenew.dialog({ title: 'View Expense Details' });
+                objDialognonTravelmodenew.dialog("open");
+
+
+            }
+            else {
+                hideProgress();
+                jAlert(data, "Message");
+                return false;
+            }
+        }, 'json');
+    }
+
+    function EmpExpenseDelete(id) {
+        debugger;
+        alert('delete');
+        jConfirm("Do you want to delete Employeee Expense...? ", "Message", function (u) {
+            if (u == true) {
+                var EmpExpensemodel = { "Exp_GID": id }
+                $.post('../PettyCashGST/DeleteEmpExpense', EmpExpensemodel,
+              function (data) {
+                  if (data == 0) {
+                      jAlert("Error.", "Error");
+                      return false;
+                      location = location.href;
+                  } else {
+                      jAlert("Deleted Successfully.", "Message");
+                      var url = '@Url.Action("NonTravelModeDetail", "NonTravelClaimNewGST")?' + new Date().getTime();
+                      $("#tabsmaintravel-1").load(url);
+
+                      window.parent.jQuery('#ForPartialViewExpensenew').dialog('close');
+                  }
+              }, 'json');
+            }
+        });
+    }
+
+
+    function GetNonExpDet() {
+
+        debugger;
+        var array = new Array();
+        var travelid = "";
+        $('#wgridNonTravelmodett').find('tbody > tr').each(function (index) {
+            debugger;
+
+            var row = $(this).closest('tr');
+            //var result = row.find("td").eq(13).html();  find row column value
+            //alert(result);
+            first = row.find("td").eq(0).html()
+            var select = row.find("td").eq(12).find("input:checkbox").is(":checked")
+
+            if (select == true) {
+                travelid = travelid + first + ',';
+            }
+
+        });
+        $("#hdnExpids").val(travelid);
+    }
+
+    function PettyCashAddInvoiceDetailsGST() {
+        debugger;
+
+        $('#txtVendorName').attr("disabled", true);
+        $('#txtInvoiceNo').attr("disabled", "disabled");
+        $('#txtInvoiceDate').attr("disabled", "disabled");
+        $('#txtServiceMonth').attr("disabled", "disabled");
+        $('#txtInvoiceAmount').attr("disabled", "disabled");
+        $('#txtWithoutTaxAmount').attr("disabled", "disabled");
+      //  $('#ddlgstProviderLoc').attr("disabled", "disabled");
+        //$('#ddlgstReceiverLoc').attr("disabled", "disabled");
+       // $('#ddlgstReceiverLoc').attr("disabled", "disabled");
+        $('#txtGSTINVendor').attr("disabled", "disabled");
+        $('#txtGSTINFICCL').attr("disabled", "disabled");
+        $('input[name=rdoVerify]').attr("disabled", true);
+
+        GetNonExpDet();
+
+
+        if ($("#hdnExpids").val() === "") {
+            jAlert("Please Select the Expense Details", "Message");
+            return false;
+        }
+
+        debugger;
+        var Ecfid = $("#TxtEcfId").val();
+        var EcfAmt = $("#txtecfamountt").val();
+        var EcfDate = $("#txtecfdatet").val();
+        var EcfSerMonth = $("#txtclaimmontht").val();
+
+        if ($("#txtecfamountt").val() == "" || $("#txtecfdatet").val() == "" || $("#txtclaimmontht").val() == "") {
+            jAlert("Please Ensure ECF Details", "Message");
+            return false;
+        }
+
+
+        //var Ecfid = $("#TxtEcfId").val();
+        //var EcfAmt = $("#txtecfamountt").val();
+        //var EcfDate = $("#txtPeriodFromdate").val();
+        //var EcfSerMonth = $("#txtClaimMontht").val();
+        //alert($("#txtPeriodFromdate").val());
+        $("#ddlgstReceiverLoc,#ddlgstProviderLoc,#hdfSVendorId,#hdfSVendorName").val("0");
+        $("#txtInvoiceDate,#txtInvoiceNo,#txtServiceMonth,#txtInvoiceAmount,#txtWithoutTaxAmount,#txtInvoiceDescription,#txtVendorName,#txtVendorCode,#txtGSTINVendor,#txtGSTINFICCL").val("");
+
+        $("#txtGSTINVendor,#txtInvoiceDate,#txtInvoiceNo,#txtServiceMonth,#txtInvoiceAmount,#txtWithoutTaxAmount,#txtInvoiceDescription,#txtVendorName,#txtVendorCode,#ddlgstReceiverLoc,#ddlgstProviderLoc").removeClass("valid").removeClass("required").addClass("required");
+        // $("input[name=rdogstChargedFlag][value=N]").prop("checked", true);
+        // $("input[name=rdoVerify][value=1]").prop("checked", true);
+        var servicemonth = $("#txtclaimmontht").val();
+        var Invdate = $("#txtecfdatet").val();
+
+        //    $("#txtInvoiceDate").val((EcfDate.replace('-', '/')).replace('-', '/')); //selva cmmmad
+
+
+        $("#txtServiceMonth").val(EcfSerMonth.replace('-', ' '));
+
+        $("#txtInvoiceDate").addClass("valid");
+        $("#txtServiceMonth").addClass("valid");
+        $("#btnSaveInv").text("Save");
+     
+        $('#Invoicetabs').attr("style", "display:none;"); //Added by Ramya
+        
+        $(".divGSTChargedShow").show();// Ramya Added
+        $('#InvoicetabsNew').tabs('select', 1);
+        $("#hfInvId").val("0");
+        // $("#txtVendorName").attr("disabled", false);
+        $("#txtVendorName").attr("disabled", true);
+        $(".viewForIvoice").css("display", "");
+
+        $.ajax({
+            type: "post",
+            url: "../PettyCashGST/DestroySession",
+            contentType: "application/json;",
+            success: function (response) {
+                var Data1 = "";
+                if (response.Data1 != null && response.Data1 != "" && JSON.parse(response.Data1) != null) {
+                    Data1 = JSON.parse(response.Data1);
+                    if (Data1 == 'Success') {
+                        //$('#divInvoice').attr("style", "display:block;");
+                        //objDialogyInvoicePettyCash.dialog({ title: 'Add Invoice Details', width: '1100', height: '600' });
+                        //objDialogyInvoicePettyCash.dialog("open");
+
+                        $('#divInvoice').attr("style", "display:block;");
+                        objDialogyInvoice.dialog({ title: 'Add Petty Cash Invoice Details', width: '1100', height: '600' });
+                        objDialogyInvoice.dialog("open");
+                        
+                    }
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                //alert(errorThrown);
+            }
+        });
+    }
+    function CloseDetails(flg) {
+        if (flg == 0) {
+            objDialogyInvoice.dialog("close");
+        }
+        if (flg == 1) {
+            objDialogyAdd.dialog("close");
+        }
+        window.parent.jQuery('#ShowDialog').dialog('close');
+    }
+
+
+    $("#wgridNonTravelmodett th").each(function () {
+
+        var checked = $("#wgridNonTravelmodett td :checkbox:checked").length;
+        if ($.trim($(this).text().toString().toLowerCase()) === "{checkall}") {
+            $(this).text('');
+            $("<input/>", { type: "checkbox", id: "cbSelectAll", value: "" }).appendTo($(this));
+            $(this).append("<span>Select All</span>");
+        }
+
+    });
+
+    $("#cbSelectAll").live("click", function () {
+
+        var ischecked = this.checked;
+        $('#wgridNonTravelmodett').find("input:checkbox").each(function () {
+            this.checked = ischecked;
+        });
+        var checked = $("#wgridNonTravelmodett td :checkbox:checked").length;
+    });
+
+
+
+
+    $("input[name='childChkbox']").click(function () {
+        // CheckFields();
+
+        // alert();
+        var totalRows = $("#wgridNonTravelmodett td :checkbox").length;
+        var checked = $("#wgridNonTravelmodett td :checkbox:checked").length;
+
+
+        if (checked == totalRows) {
+            $("#wgridNonTravelmodett").find("input:checkbox").each(function () {
+                this.checked = true;
+            });
+        }
+        else {
+            $("#cbSelectAll").removeAttr("checked");
+        }
+        //CheckFields();
+    });
+
+    //bharathi
+
+
+
+
+</script>

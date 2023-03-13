@@ -1,0 +1,152 @@
+﻿@model  IEnumerable<IEM.Areas.EOW.Models.CygnetSearchModel>
+@using IEM.Areas.EOW.Models
+@{
+    ViewBag.Title = "Invoice Search";
+    CygnetDataModel objd = new CygnetDataModel();
+    CygnetSearchModel objcyg = new CygnetSearchModel();
+    List<CygnetSearchModel> lstTempInvoice = new List<CygnetSearchModel>();
+    lstTempInvoice = (List<CygnetSearchModel>)TempData["SearchItems"];
+
+    if (lstTempInvoice == null)
+    {
+        ViewBag.IsSearched = "no";
+        if (Session["invoiceGid"] != null)
+        {
+            lstTempInvoice = objd.SelectInvoiceSearch(objcyg).ToList();
+        }
+        else
+        {
+            lstTempInvoice = objd.SelectInvoiceSearch(objcyg).ToList();
+        }
+    }
+    if (lstTempInvoice.Count == 0)
+    {
+        ViewBag.NoRecordsPayment = "NoRecords";
+        ViewBag.NoRecordsFoundPayment = "No Records Found";
+    }
+}
+
+
+@{
+    var gridTempInvoice = new WebGrid(lstTempInvoice, canSort: true, canPage: false, rowsPerPage: 3, ajaxUpdateContainerId: "wgempPayment", ajaxUpdateCallback: "DummyFunction()");
+    int rowVal = 0;
+}
+
+
+<style>
+    /*.dataTables_filter {
+        margin-right: 1415px;
+        position:relative;
+    }*/
+
+    .table.dataTable tbody th, table.dataTable tbody td {      
+        white-space: normal!important
+    }
+</style>
+
+
+
+<div id="divInvoiceGrid">
+    <div class="table-responsive" style="max-height: 350px;">
+        @functions {
+            public static string Sorter(string columnName, string columnHeader, WebGrid grid)
+            {
+                return string.Format("{0} {1}", columnHeader, grid.SortColumn == columnName ?
+                grid.SortDirection == SortDirection.Ascending ? "▲" :
+                "▼" : string.Empty);
+            }
+        }
+        @gridTempInvoice.GetHtml(
+             htmlAttributes: new { id = "wgTempInvoice" },
+                tableStyle: "tableSmall table-bordered",
+                mode: WebGridPagerModes.All,
+                columns:
+                            gridTempInvoice.Columns
+                    (
+                                 gridTempInvoice.Columns(
+                                         gridTempInvoice.Column(format: @<text> <input type="checkbox" value="@item.Cygnet_gid" name="childChkbox" />  </text> ,
+                                                          header: "{checkall}"                                                    
+                                        ),
+                                  
+gridTempInvoice.Column("Sl.No", style: "slno", format: item => rowVal = rowVal + 1),
+                        gridTempInvoice.Column("Cygnet_Supplier", Sorter("Cygnet_Supplier", "Supplier Code/Name", gridTempInvoice), style: "colmediumCenter"),
+gridTempInvoice.Column("Cygnet_InvoiceNo", Sorter("Cygnet_InvoiceNo", "Invoice No.", gridTempInvoice), style: "colmediumCenter"),
+        gridTempInvoice.Column("Cygnet_InvoiceDate", Sorter("Cygnet_InvoiceDate", "Invoice Date", gridTempInvoice), style: "colmediumBreak"),
+        gridTempInvoice.Column("Cygnet_InvoiceAmt", Sorter("Cygnet_InvoiceAmt", "Invoice Amount", gridTempInvoice), style: "colmediumCenter"),
+        gridTempInvoice.Column("Cygnet_TaxableAmt", Sorter("Cygnet_TaxableAmt", "Taxable Amount", gridTempInvoice), style: "colmediumCenter"),
+        gridTempInvoice.Column("Cygnet_CGSTAmt", Sorter("Cygnet_CGSTAmt", "CGST Amount", gridTempInvoice), style: "colmediumCenter"),
+        gridTempInvoice.Column("Cygnet_SGSTAmt", Sorter("Cygnet_SGSTAmt", "SGST Amount", gridTempInvoice), style: "colmediumCenter"),
+        gridTempInvoice.Column("Cygnet_IGSTAmt", Sorter("Cygnet_IGSTAmt", "IGST Amount", gridTempInvoice), style: "colmediumBreak"),
+        gridTempInvoice.Column("Cygnet_Provider", Sorter("Cygnet_Provider", "Provider Location", gridTempInvoice), style: "colmediumBreak"),
+        gridTempInvoice.Column("Cygnet_Provider_GSTN", Sorter("Cygnet_Provider_GSTN", "Provider GSTN", gridTempInvoice), style: "colmediumCenter"),
+        gridTempInvoice.Column("Cygnet_Receiver", Sorter("Cygnet_Receiver", "Receiver Location", gridTempInvoice), style: "colmediumCenter"),
+        gridTempInvoice.Column("Cygnet_Receiver_GSTN", Sorter("Cygnet_Receiver_GSTN", "Receiver GSTN", gridTempInvoice), style: "colmediumCenter")
+
+    )))
+
+    @if (ViewBag.Message != null)
+    {
+        <div class="gridMessage" style="width:100%">
+            @ViewBag.Message
+        </div>
+    }
+    @*@if (ViewBag.Message == null)
+    {
+        <div class="gridCount" style="text-align:left;">Page <b>@(gridTempInvoice.PageIndex + 1)</b> of <b>@gridTempInvoice.PageCount</b> - Total No Of Records: <b>@gridTempInvoice.TotalRowCount</b></div>
+    }*@
+</div>
+
+</div>
+
+<script type="text/javascript">
+
+    //selva created 24-03-2021 for SupplierInvoice  inside cygnet grid-search
+
+    $('#wgTempInvoice').dataTable({
+        //"iDisplayLength": 5,
+        "paging": false,
+        "bLengthChange": false,
+        "aoColumnDefs": [{
+            "aTargets": ["nosort"],
+            "bSortable": false
+        }]
+    }).css("width", "99%");
+
+
+
+
+    $("#wgTempInvoice th").each(function () {
+        var checked = $("#wgTempInvoice td :checkbox:checked").length;
+        if ($.trim($(this).text().toString().toLowerCase()) === "{checkall}") {
+            $(this).text('');
+            $("<input />", { type: "checkbox", id: "cbSelectAll", value: "" }).appendTo($(this));
+            $(this).append("<span style='color:white;'>Select All</span>");
+        }
+
+    });
+
+    $("#cbSelectAll").live("click", function () {
+
+        var ischecked = this.checked;
+        $('#wgTempInvoice').find("input:checkbox").each(function () {
+            this.checked = ischecked;
+        });
+        var checked = $("#wgTempInvoice td :checkbox:checked").length;
+    });
+
+    $("input[name='childChkbox']").click(function () { 
+        var totalRows = $("#wgTempInvoice td :checkbox").length;
+        var checked = $("#wgTempInvoice td :checkbox:checked").length;
+
+
+        if (checked == totalRows) {
+            $("#wgTempInvoice").find("input:checkbox").each(function () {
+                this.checked = true;
+            });
+        }
+        else {
+            $("#cbSelectAll").removeAttr("checked");
+        }
+        //CheckFields();
+    });
+</script>

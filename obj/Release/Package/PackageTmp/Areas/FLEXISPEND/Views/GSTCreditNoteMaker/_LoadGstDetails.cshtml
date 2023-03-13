@@ -1,0 +1,76 @@
+﻿@using IEM.Areas.FLEXISPEND.Models;
+@using IEM.Common;
+@model IEM.Areas.FLEXISPEND.Models.GSTCreditNote_Model
+@{
+
+    //ViewBag.Title = "Invoice Search";
+    FlexispendDataModel objd = new FlexispendDataModel();
+    GSTCreditNote_Model objcyg = new GSTCreditNote_Model();
+    List<GSTCreditNote_Model> lstTempInvoice = new List<GSTCreditNote_Model>();
+    lstTempInvoice = (List<GSTCreditNote_Model>)TempData["SearchItems"];
+    if (Session["CreditnoteGid"] != "" && Session["CreditnoteGid"] != null)
+    {
+
+        if (lstTempInvoice == null)
+        {
+
+            lstTempInvoice = objd.SelectCreditnoeteSearch(Session["CreditnoteGid"].ToString()).ToList();
+
+        }
+        if (lstTempInvoice.Count == 0)
+        {
+            ViewBag.NoRecordsPayment = "NoRecords";
+            ViewBag.NoRecordsFoundPayment = "No Records Found";
+        }
+
+    }
+
+}
+
+@{
+    var GridGstDtl = new WebGrid(lstTempInvoice, canSort: true, canPage: false, rowsPerPage: 3, ajaxUpdateContainerId: "divpopulateGridDisplay", ajaxUpdateCallback: "DummyFunction()");
+    int rowVal = 0;
+}
+
+<div id="divpopulateGridDisplay" style="width:100%; overflow:auto;">
+    <div class="table-responsive" style="max-height: 350px;">
+        @functions {
+            public static string Sorter(string columnName, string columnHeader, WebGrid grid)
+            {
+                return string.Format("{0} {1}", columnHeader, grid.SortColumn == columnName ?
+                grid.SortDirection == SortDirection.Ascending ? "▲" :
+                "▼" : string.Empty);
+            }
+        }
+
+        @if (Session["CreditnoteGid"] != "" && Session["CreditnoteGid"] != null)
+        {
+
+
+            @GridGstDtl.GetHtml(
+                 htmlAttributes: new { id = "divpopulateGridasdf" },
+                tableStyle: "tableSmall table-bordered",
+                mode: WebGridPagerModes.All,
+                columns:
+                 GridGstDtl.Columns
+                    (
+                        GridGstDtl.Columns(
+                        GridGstDtl.Column("S.No", style: "de", format: item => rowVal = rowVal + 1),
+                           GridGstDtl.Column("Subtax", Sorter("Subtax", "Sub Tax", GridGstDtl), style: "de"),
+                            GridGstDtl.Column("TaxableAmt", Sorter("TaxableAmt", "Taxable Amount", GridGstDtl), style: "de"),
+                          GridGstDtl.Column("GstRate", Sorter("GstRate", "Rate(%)", GridGstDtl), style: "de"),
+                                    GridGstDtl.Column("TaxAmt", Sorter("TaxAmt", "Tax Amount", GridGstDtl), style: "de")
+
+   )))
+        }
+
+        @if (ViewBag.Message != null)
+        {
+            <div class="gridMessage" style="width:100%">
+                @ViewBag.Message
+            </div>
+        }
+
+    </div>
+
+</div>

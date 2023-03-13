@@ -1,0 +1,282 @@
+﻿@{
+    ViewBag.Title = "TDSSpecialRateUpload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="pageHeadingLayout">
+    <span class="pageHeading" style="margin-left:40%;margin-top:30%;">TDS Specail Rate Upload</span>
+</div>
+
+<div class="well" style=" padding-top: 1%;margin-top:1%;width:100%;">
+    <div class=" ">
+        <table style="width:100%;" class=" ">
+
+
+            <tr id="exceluploadsupplier">
+                <td style="width:25%;">
+                    <span>Select file</span><br />
+                    <form id="theuploadformempsup">
+                        <input type="file" style="padding-top: 5px;" name="UploadFile" id="fileupsupplier" class="fileupsupplier" />
+                    </form>
+                </td>
+                <td>
+                    <span>Select Sheet</span>
+                    <br />
+                    <select id="ddlSelectsheet" style="width:150px;" name="ddlSelectsheet" class="textboxStyle">
+                        <option value="0">--Select--</option>
+                    </select>
+                </td>
+                <td>
+                    <span>&nbsp;</span><br />
+                    <input type="button" id="btnfrstsubmit" class="btn btn-primary" value="Upload" onclick="Newexcelsunew()" />&nbsp;&nbsp;&nbsp;
+                    <input type="button" id="btnfrstClear" class="btn btn-warning" value="Clear" />
+                </td>
+                <td>
+                    <span>&nbsp;</span><br />
+                    <a data-modal="" href="~/Download/TDSSpecialRateUpload.xlsx" id="DownloadTemplate">
+                        <button id="DownloadTemplate" class="btn btn-primary" type="submit"><span style="color:white !important;font-size:12px;" class="glyphicon glyphicon-download"></span> Download Template</button>
+                    </a>
+                    @*<a>
+                             <a data-modal="" href="~/Download/DebitLineTemplate.xls" id="DownloadTemplate">
+                            <button id="DownloadTemplate" class="btn btn-primary" type="submit"><span style="color:white !important;font-size:12px;" class="glyphicon glyphicon-download"></span> Download Template</button>
+                        </a>*@
+                </td>
+                <td>
+                    @*<button class="btn btn-success" type="button" id="_ExportGSTRuploadQExcel" onclick="ExportGstruploadQ()" style="margin-top:20px;">
+                            <span style=" color:white;font-size:12px" class="glyphicon glyphicon-export">
+                            </span> Export Excel
+                        </button>*@
+                </td>
+                <td style="width:35%;"></td>
+            </tr>
+
+        </table>
+
+    </div>
+</div>
+
+
+@*TDS Details Partial view*@
+<div>
+    @Html.Partial("_GetTDSFileList")
+</div>
+
+<div id="ForPartialViewOtherTravelExpensenew"></div>
+
+<script type="text/javascript">
+
+    function ExportGstruploadQ() {
+        location = '@Url.Action("ExportGSTRUpload", "GSTRUpload")';
+    }
+    $(document).ready(function () {
+        window.parent.jQuery('#ForPartialViewOtherTravelExpensenew').dialog('close');
+        objDialogOtherTravelmodenew = $("[id$='ForPartialViewOtherTravelExpensenew']");
+        objDialogOtherTravelmodenew.dialog({
+            autoOpen: false,
+            cache: false,
+            modal: true,
+            show: 'fade-in',
+            close: 'fade-out',
+            width: 800,
+            height: 380
+        });
+
+    });
+
+    $(document).ready(function () {
+        debugger;
+        $fileInput = $('#fileupsupplier');
+        $fileInput.replaceWith($fileInput = $fileInput.clone(true));
+        $("#fileupsupplier").val('');
+        $("#ddlSelectsheet").empty();
+        $("#ddlSelectsheet").append("<option value='0' >--Select--</option>");
+    });
+
+    function DownloadTemplate() {
+        debugger;
+        var UploadMethodName = $("#UploadMethod").val().trim();
+        var url = '@Url.Action("DownloadTemplate", "GSTRUpload", new { Area = "", TemplateName = "REPLACEME" })';
+        window.location.href = url.replace('REPLACEME', UploadMethodName);
+    }
+
+    $('#btnfrstClear').click(function () {
+
+        $fileInput = $('#fileupsupplier');
+        $fileInput.replaceWith($fileInput = $fileInput.clone(true));
+        $("#fileupsupplier").val('');
+        $("#ddlSelectsheet").empty();
+        $("#ddlSelectsheet").append("<option value='0' >--Select--</option>");
+        window.parent.jQuery('#wgriGSTRUploadDetails').empty();
+        return false;
+
+    });
+
+
+
+    //1st
+    $(".fileupsupplier").on('change', function (e) {
+        debugger;
+        $("#ddlSelectsheet").empty();
+        $("#ddlSelectsheet").append("<option value='0' >--Select--</option>");
+        var iframe = $('<iframe name="postiframe" id="postiframe" style="display: none"></iframe>');
+        $("body").append(iframe);
+        var url = '@Url.Action("UploadFilesnew", "TDSSpecialRateUpload", new { Area = "" })';
+        var form = $('#theuploadformempsup');
+        form.attr("action", url);
+        form.attr("method", "post");
+        form.attr("encoding", "multipart/form-data");
+        form.attr("enctype", "multipart/form-data");
+        form.attr("target", "postiframe");
+        form.attr("file", $('#fileupsupplier').val());
+        form.submit();
+        setTimeout(function () {
+            getsheets();
+        }, 100);
+
+    });
+
+    //2nd sheet
+    function getsheets() {
+        debugger;
+        var data = "fff";
+        $.ajax({
+            type: "POST",
+
+            url: '@Url.Action("UploadFiles", "TDSSpecialRateUpload", new { Area = "" })',
+            contentType: false,
+            processData: false,
+            data: data,
+            success: function (result) {
+                debugger;
+                $("#ddlSelectsheet").empty();
+                $("#ddlSelectsheet").append("<option value='0' >--Select--</option>");
+                if (result == "") {
+                    debugger;
+
+                    $fileInput = $('#fileupsupplier');
+                    $fileInput.replaceWith($fileInput = $fileInput.clone(true));
+                    $("#fileupsupplier").val('');
+                    jAlert("Please Check The File Format and Upload", "Message");
+
+                    return false;
+                }
+                else {
+                    var err = result[0].SheetName;
+                    if (err == "Error") {
+
+                        return false;
+                    }
+                    else {
+                        debugger;
+                        if (result.length > 0) {
+                            setTimeout(function () {
+                                for (var i = 0; i < result.length; i++) {
+                                    var stylesSelect = $('#ddlSelectsheet');
+                                    stylesSelect.attr('disabled', false);
+                                    $("#ddlSelectsheet").append("<option value=" + result[i].SheetId + " >" + result[i].SheetName + "</option>");
+                                }
+                            }, 1500);
+                        }
+                        if (result.length == 0) {
+                            var stylesSelect = $('#ddlSelectsheet');
+                            stylesSelect.attr('disabled', true);
+                        }
+                    }
+                }
+            },
+            error: function (xhr, status, p3, p4) {
+                var err = "Error " + " " + status + " " + p3 + " " + p4;
+                if (xhr.responseText && xhr.responseText[0] == "{")
+                    err = JSON.parse(xhr.responseText).Message;
+                console.log(err);
+            }
+        });
+    }
+
+    function Newexcelsunew() {
+        debugger;
+        var sheet = $("#ddlSelectsheet option:selected").text();
+        if (sheet == null || sheet == "0" || sheet == "--Select--") {
+            jAlert("Please Select valid File");
+            $("#ddlSelectsheet").focus();
+            return false;
+        }
+        var objcbf =
+             {
+                 "Branch": sheet
+             };
+        $.ajax({
+            url: "../TDSSpecialRateUpload/Localconveyancestatuserrs/",
+            type: 'POST',
+            cache: false,
+            data: objcbf,
+            success: function (data) {
+                //sk
+                // alert(data);
+                if (data == "Success") {
+                    debugger
+                    //  alert(data);
+                    var urlVU = '@Url.Action("_Supplierexcelstatus", "TDSSpecialRateUpload")?' + new Date().getTime();
+                    objDialogOtherTravelmodenew.load(urlVU);
+                    objDialogOtherTravelmodenew.dialog({ title: 'Upload Summary' });
+                    objDialogOtherTravelmodenew.dialog("open");
+
+                    $fileInput = $('#fileupsupplier');
+                    $fileInput.replaceWith($fileInput = $fileInput.clone(true));
+                    $("#fileupsupplier").val('');
+
+                    //call summary GSTR Details
+                }
+                else if (data == "Duplicate Record Found") {
+                    $fileInput = $('#fileupsupplier');
+                    $fileInput.replaceWith($fileInput = $fileInput.clone(true));
+                    $("#fileupsupplier").val('');
+                    jAlert(data, "Message");
+                    return false;
+                }
+
+                else {
+                    $fileInput = $('#fileupsupplier');
+                    $fileInput.replaceWith($fileInput = $fileInput.clone(true));
+                    $("#fileupsupplier").val('');
+                    jAlert("Invalid Template", "Message");
+                    return false;
+                }
+            },
+            error: function () {
+                $fileInput = $('#fileupsupplier');
+                $fileInput.replaceWith($fileInput = $fileInput.clone(true));
+                $("#fileupsupplier").val('');
+                jAlert("something seems wrong", "Message");
+                return false;
+            }
+        });
+    }
+
+
+    function DownloadtoaAttachments(filename) {
+        debugger;
+        $.ajax({
+            url: '@Url.Action("CheckFileExists", "TDSSpecialRateUpload")?id=' + filename + '&' + new Date().getTime(),
+            type: 'POST',
+            async: false,
+            cache: false,
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                debugger;
+                if (data == "0") {
+                    jAlert("File Not Found", "Error", function () {
+                        return false;
+                    });
+                }
+                else {
+                    location = "../TDSSpecialRateUpload/DownloadDocument?id=" + filename + "&" + new Date().getTime();
+                }
+            },
+            error: function (result) {
+                jAlert("Something went wrong", "Error");
+            }
+        });
+    }
+
+</script>

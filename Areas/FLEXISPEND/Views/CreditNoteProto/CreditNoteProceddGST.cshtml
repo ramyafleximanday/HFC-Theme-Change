@@ -1,0 +1,80 @@
+﻿
+<div id="proceedforgstid" style="display:none">
+    <table id="gvChecker" class="tableSmall table-bordered table-hover table-responsive" data-bind="visible: GSTHoldqRunArray().length > 0">
+        <thead>
+            <tr>
+                <th>
+                    SLNo
+                </th>
+
+                <th>
+                    GSNApplicable
+                </th>
+
+                <th>
+                  HSN Code
+                </th>
+
+                <th>
+                 HSN Description
+                </th>
+                <th>
+                   Sub Tax
+                </th>
+                <th>
+                  Taxable Amount
+                </th>
+
+                <th>
+                  Rate(%)
+                </th>
+
+                <th>
+                   Tax Amount
+                </th>
+              
+
+            </tr>
+        </thead>
+        <tbody id="ContentPaymentRun" data-bind="foreach:{ data: GSTHoldqRunArray, afterRender: DatatableCall }, visible: GSTHoldqRunArray().length > 0">
+            <tr>
+
+                <td>
+                    <span> 1 </span>
+                </td>
+
+                <td>
+                    Yes
+                </td>
+                <td>
+                    996403
+                </td>
+                <td>
+                    Air Economy Class
+                </td>
+                <td>
+                    SGST-State Goods and Service Tax
+                </td>
+
+                <td>
+                    542.86
+                </td>
+                <td>
+                  5.00
+                </td>
+
+                <td>
+                   271.46
+                </td>
+                
+              
+            </tr>
+
+           
+        </tbody>
+    </table>
+</div>
+
+
+
+
