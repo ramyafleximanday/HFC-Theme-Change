@@ -44,7 +44,8 @@ namespace IEM.Models
                     objModel = new MenuModel();
                     objModel.Id = Convert.ToInt32(dt.Rows[i]["menu_gid"].ToString());
                     objModel.Name = dt.Rows[i]["menu_name"].ToString();
-                    objModel.url = dt.Rows[i]["menu_link"].ToString();
+                    objModel.url = dt.Rows[i]["menu_link"].ToString().Replace(Convert.ToString(ConfigurationManager.AppSettings["oldInstance"]),
+                        Convert.ToString(ConfigurationManager.AppSettings["newInstance"]));
                     objModel.ParentId = Convert.ToInt32(dt.Rows[i]["menu_parent_gid"].ToString());
                     objModel.SortOrder = Convert.ToInt32(dt.Rows[i]["menu_displayorder"].ToString());
                     mmList.Add(objModel);
