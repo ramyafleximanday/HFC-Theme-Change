@@ -187,18 +187,18 @@
     }
     <div style="position: absolute;top: 4px;right: 0%;">
         <a style="margin-bottom: 15px;" href="/Loginpage/empLoginPage?pagefor=logoff" onclick="reverturlflag();" class="HeaderImgRight">
-            <span style="color:#fff;" title="Logout" class="glyphicon glyphicon-off"></span>
+            <span style="color: #356855;" title="Logout" class="glyphicon glyphicon-off"></span>
         </a>
         <a class="GenderIconLink" onclick="ShowMyProfile()" title="My Profile"> <img src="@Url.Content(ViewBag.linkimg)" alt="Image" /></a>&nbsp;
         @*<img src="@ViewBag.linkimg" width="150" height="60" style="margin-top:-4px" />*@
-        <label style="color:#fff;font-family:Verdana;font-size:small;" class="HeaderImgRight">@Session["employee_name"]</label>
+        <label style="color: #356855; font-family: Verdana; font-size: small;" class="HeaderImgRight">@Session["employee_name"]</label>
         @if (@Session["login-mode"].ToString() == "Proxy")
         {
             <div><label style="margin: -16px 0px 0px 40px;font-family:initial;color: #1c6c92;font-size:small;">@Session["Pto"]-<span>@Session["Proassuser"]</span></label></div>
         }
         
         <a style="margin-bottom: 12px;" href="~/Dashboard/Dashboard/Index" onclick="RedirectToDashboard();" class="HeaderImgLeft">
-            <span style="color:#fff;" title="Dashboard" class="glyphicon glyphicon-th"></span>
+            <span style="color: #356855;" title="Dashboard" class="glyphicon glyphicon-th"></span>
         </a>
 
 

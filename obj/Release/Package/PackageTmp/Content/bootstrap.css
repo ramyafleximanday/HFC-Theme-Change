@@ -898,7 +898,7 @@ html {
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
-  line-height: 1.42857143;
+  line-height: 1.42857143; 
   color: #333;
   background-color: #fff;
 }
@@ -4510,7 +4510,8 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
   font-size: 75%;
   font-weight: bold;
   line-height: 1;
-  color: #fff;
+  /*color: #fff;*/
+  color:#004831;
   text-align: center;
   white-space: nowrap;
   vertical-align: baseline;
@@ -4537,7 +4538,8 @@ a.label:focus {
   background-color: #5e5e5e;
 }
 .label-primary {
-  background-color: #337ab7;
+  /*background-color: #337ab7;*/
+  background-color:#e3e9a9;
 }
 .label-primary[href]:hover,
 .label-primary[href]:focus {

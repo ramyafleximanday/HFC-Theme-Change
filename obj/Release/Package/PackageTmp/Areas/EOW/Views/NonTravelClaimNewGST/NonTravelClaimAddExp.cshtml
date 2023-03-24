@@ -1320,14 +1320,15 @@
         //else {
         //    Hsnid = "0";
         //}
-        if (PlaceFrom == null || PlaceFrom == "--Select--") {
+        // ramya commentted since its a Non Travel on 20 Feb 23
+        /*if (PlaceFrom == null || PlaceFrom == "--Select--") {
             jAlert("Please Select 'PLACE FROM' field", "Message");
             return false;
         }
         if (PlaceTo == null || PlaceTo == "--Select--") {
             jAlert("Please Select 'PLACE TO' field", "Message");
             return false;
-        }
+        }*/
         if (ClaimPeriodFrom == null || ClaimPeriodFrom == "") {
             jAlert("Enter 'CLAIM PERIOD FROM' date", "Message");
             return false;
@@ -1344,7 +1345,10 @@
         //    jAlert("Month mismatch between 'SERVICE MONTH' & 'CLAIM PERIOD TO' fields", "Message");
         //    return false;
         //}
-        if (istravelss == "T") {
+        TravelMode = "0";
+        TravelClass = "0";
+        // ramya commentted since its a Non Travel on 20 Feb 23
+       /* if (istravelss == "T") {
             if (TravelMode == null || TravelMode == "0") {
                 jAlert(" Please select the Travel Mode", "Message");
                 return false;
@@ -1357,7 +1361,7 @@
         else {
             TravelMode = "0";
             TravelClass = "0";
-        }
+        }*/
 
         if (FC == null || FC == "") {
             jAlert("Please Enter FC.", "Message");
@@ -1383,10 +1387,10 @@
         //    jAlert("Please Enter Distance.", "Message");
         //    return false;
         //}
-        if (PlaceFrom == PlaceTo) {
+        /*if (PlaceFrom == PlaceTo) {
             jAlert("PlaceFrom and PlaceTo cann't be the same.", "Message");
             return false;
-        }
+        }*/
         if (Amount == null || Amount == "") {
             jAlert("Please enter the Amount", "Message");
             return false;
@@ -1578,6 +1582,7 @@
 
 
     function getmonth(date) {
+        debugger;
         if (date.length == 10) {
             var ddd = isgetmonthyear(date);
             if (ddd == "Error") {
@@ -1595,7 +1600,7 @@
         var retnval;
         var str = evt;
         var array = str.split('-');
-
+        debugger;
         if (array[1] == "01") {
             retnval = "January-" + array[2];
             return retnval;

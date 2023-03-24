@@ -71,11 +71,13 @@
     color:white;
 }
 .input-validation-error, .required {
-    border-left: 5px solid #7C6A55 !important;
+   /* border-left: 5px solid #7C6A55 !important; ramya commentted and modified on 10 mar 23*/
+    border-left: 5px solid #356855 !important;
 }
 
 .valid {
-    border-left: 5px solid #E36F1E !important;
+   /* border-left: 5px solid #E36F1E !important; ramya commentted and modified on 10 mar 23*/
+        border-left: 5px solid #c2d30f !important;
 }
 
 
@@ -637,7 +639,7 @@ div.dhtmlx_window_active, div.dhx_modal_cover_dv {
     }
 
     .tableSmall thead th {
-        background-color: #DF9357;
+        background-color: #c3d600;
         padding: 3px;
         color: #FFFFFF;
         font-size: 13px;
@@ -652,8 +654,8 @@ div.dhtmlx_window_active, div.dhx_modal_cover_dv {
 
     .tableSmall thead th:first-child {
         /*border: none;*/
-        background-color: #DF9357
-
+        /*background-color: #DF9357 ramya commentted on 13 mar 23 for theme change*/
+        background-color: #c3d600;
 
     }
     .rightAlign {

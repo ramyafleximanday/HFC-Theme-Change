@@ -136,7 +136,7 @@
                             <table style="width:100%; display:none;" data-bind="visible: VendorArray().length > 0">
                                 <tr>
                                     <td style="width:70%;"><span>Vendor Management</span></td>
-                                    <td style="width:30%; text-align:right; height:30px;"><a href="@Url.Action("ASMS","History")" style="text-decoration:none;"><span class="label label-primary" style="padding:6px; cursor:pointer;"><span style="color: white; font-size: 1.1em;" class="glyphicon glyphicon-time"></span>    HISTORY</span></a></td>
+                                    <td style="width:30%; text-align:right; height:30px;"><a href="@Url.Action("ASMS","History")" style="text-decoration:none;"><span class="label label-primary" style="padding:6px; cursor:pointer;"><span style="color: #004831; font-size: 1.1em;" class="glyphicon glyphicon-time"></span>    HISTORY</span></a></td>
                                 </tr>
                             </table>
                         </legend>
@@ -158,7 +158,7 @@
                                                         <span>Draft</span>
                                                     </div>
                                                     <div class="col-xs-4">
-                                                        <a style="text-decoration:none;" data-bind="style: { cursor: draft != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickASMS(supplierheaderrequesttype,'draft', data);}"><span data-bind="text: draft" style="font-weight:bold; float:right; color:#e57118;"></span></a>
+                                                        <a style="text-decoration:none;" data-bind="style: { cursor: draft != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickASMS(supplierheaderrequesttype,'draft', data);}"><span data-bind="text: draft" style="font-weight:bold; float:right; color:#004831;"></span></a>
                                                     </div>
                                                 </div>
                                                 <div style="border-bottom:1px #ccc solid; " class="row">
@@ -166,7 +166,7 @@
                                                         <span>Inprocess</span>
                                                     </div>
                                                     <div class="col-xs-4">
-                                                        <a style="text-decoration:none;" data-bind="style: { cursor: inprocess != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickASMS(supplierheaderrequesttype,'inprocess',data);}"><span style="font-weight:bold; float:right; color:#e57118;" data-bind="text: inprocess"></span></a>
+                                                        <a style="text-decoration:none;" data-bind="style: { cursor: inprocess != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickASMS(supplierheaderrequesttype,'inprocess',data);}"><span style="font-weight:bold; float:right; color:#004831;" data-bind="text: inprocess"></span></a>
                                                     </div>
                                                 </div>
                                                 <div style="border-bottom:1px #ccc solid; " class="row">
@@ -174,7 +174,7 @@
                                                         <span>Rejected</span>
                                                     </div>
                                                     <div class="col-xs-4">
-                                                        <a style="text-decoration:none;" data-bind="style: { cursor: rejected != '0' ? 'pointer' : 'default' },click: function(data){ $root.clickASMS(supplierheaderrequesttype,'rejected',data);}"><span style="font-weight:bold; float:right; color:#e57118;" data-bind="text: rejected"></span></a>
+                                                        <a style="text-decoration:none;" data-bind="style: { cursor: rejected != '0' ? 'pointer' : 'default' },click: function(data){ $root.clickASMS(supplierheaderrequesttype,'rejected',data);}"><span style="font-weight:bold; float:right; color:#004831;" data-bind="text: rejected"></span></a>
                                                     </div>
                                                 </div>
                                                 <div style="" class="row">
@@ -182,7 +182,7 @@
                                                         <span>For Approval</span>
                                                     </div>
                                                     <div class="col-xs-4">
-                                                        <a style="text-decoration:none;" data-bind="style: { cursor: waitingforapproval != '0' ? 'pointer' : 'default' },click: function(data){ $root.clickASMS(supplierheaderrequesttype,'waitingforapproval',data);}"><span style="font-weight:bold; float:right; color:#e57118;" data-bind="text: waitingforapproval"></span></a>
+                                                        <a style="text-decoration:none;" data-bind="style: { cursor: waitingforapproval != '0' ? 'pointer' : 'default' },click: function(data){ $root.clickASMS(supplierheaderrequesttype,'waitingforapproval',data);}"><span style="font-weight:bold; float:right; color:#004831;" data-bind="text: waitingforapproval"></span></a>
                                                     </div>
                                                 </div>
 
@@ -222,7 +222,7 @@
                                                             <span>Draft</span>
                                                         </div>
                                                         <div class="col-xs-4">
-                                                            <a style="text-decoration:none;" data-bind="style: { cursor: DRAFT != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickECLAIMS(CLAIM,'GetMydocDraft', 'DRAFT', data);}"><span style="font-weight:bold; float:right; color:#e57118;" data-bind="text: DRAFT"></span></a>
+                                                            <a style="text-decoration:none;" data-bind="style: { cursor: DRAFT != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickECLAIMS(CLAIM,'GetMydocDraft', 'DRAFT', data);}"><span style="font-weight:bold; float:right; color:#004831;" data-bind="text: DRAFT"></span></a>
                                                         </div>
                                                     </div>
                                                     <div style="border-bottom:1px #ccc solid; " class="row">
@@ -230,7 +230,7 @@
                                                             <span>Inprocess</span>
                                                         </div>
                                                         <div class="col-xs-4">
-                                                            <a style="text-decoration:none;" data-bind="style: { cursor: INPROCESS != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickECLAIMS(CLAIM,'GetMydocAppoalc','INPROCESS', data);}"><span style="font-weight:bold; float:right; color:#e57118;" data-bind="text: INPROCESS"></span></a>
+                                                            <a style="text-decoration:none;" data-bind="style: { cursor: INPROCESS != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickECLAIMS(CLAIM,'GetMydocAppoalc','INPROCESS', data);}"><span style="font-weight:bold; float:right; color:#004831;" data-bind="text: INPROCESS"></span></a>
                                                         </div>
                                                     </div>
                                                     <div style="border-bottom:1px #ccc solid; " class="row">
@@ -238,7 +238,7 @@
                                                             <span>Rejected</span>
                                                         </div>
                                                         <div class="col-xs-4">
-                                                            <a style="text-decoration:none;" data-bind="style: { cursor: REJECTED != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickECLAIMS(CLAIM,'GetMydocReject', 'REJECTED', data);}"><span style="font-weight:bold; float:right; color:#e57118;" data-bind="text: REJECTED"></span></a>
+                                                            <a style="text-decoration:none;" data-bind="style: { cursor: REJECTED != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickECLAIMS(CLAIM,'GetMydocReject', 'REJECTED', data);}"><span style="font-weight:bold; float:right; color:#004831;" data-bind="text: REJECTED"></span></a>
                                                         </div>
                                                     </div>
                                                     <div style="" class="row">
@@ -246,7 +246,7 @@
                                                             <span>For My Approval</span>
                                                         </div>
                                                         <div class="col-xs-4">
-                                                            <a style="text-decoration:none;" data-bind="style: { cursor: ForMyApproval != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickECLAIMS(CLAIM,'queueformyapprvolcount', 'ForMyApproval', data);}"><span style="font-weight:bold; float:right; color:#e57118;" data-bind="text: ForMyApproval"></span></a>
+                                                            <a style="text-decoration:none;" data-bind="style: { cursor: ForMyApproval != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickECLAIMS(CLAIM,'queueformyapprvolcount', 'ForMyApproval', data);}"><span style="font-weight:bold; float:right; color:#004831;" data-bind="text: ForMyApproval"></span></a>
                                                         </div>
                                                     </div>
 
@@ -282,10 +282,10 @@
                         <div class="col-md-12" style="padding-bottom: 10px; padding-top: 10px; display: none;" data-bind="visible: EProcureArray().length > 0|| EOWArray().length > 0">
                             <table>
                                 <tr>
-                                    <td colspan="4"><span style="color:#333; font-size:small; font-weight: bold;">E-Procure</span></td>
-                                    <td align="right" style="padding-right:8px;"><a href="@Url.Action("EProcure", "History")" style="text-decoration:none;"><span class="label label-primary" style="padding:6px; cursor:pointer;"><span style="color: white; font-size: 1.1em;" class="glyphicon glyphicon-time"></span>    HISTORY</span></a></td>
-                                    <td colspan="2"><span style="color:#333; font-size:small; font-weight: bold;">E-Claims</span></td>
-                                    <td align="right" style="padding-right:8px;"><a href="@Url.Action("EClaim", "History")" style="text-decoration:none;"><span class="label label-primary" style="padding:6px; cursor:pointer;"><span style="color: white; font-size: 1.1em;" class="glyphicon glyphicon-time"></span>    HISTORY</span></a></td>
+                                    <td colspan="4"><span style="color: #004831; font-size: small; font-weight: bold;">E-Procure</span></td>
+                                    <td align="right" style="padding-right:8px;"><a href="@Url.Action("EProcure", "History")" style="text-decoration:none;"><span class="label label-primary" style="padding:6px; cursor:pointer;"><span style="color: #004831; font-size: 1.1em;" class="glyphicon glyphicon-time"></span>    HISTORY</span></a></td>
+                                    <td colspan="2"><span style="color: #004831; font-size: small; font-weight: bold;">E-Claims</span></td>
+                                    <td align="right" style="padding-right:8px;"><a href="@Url.Action("EClaim", "History")" style="text-decoration:none;"><span class="label label-primary" style="padding:6px; cursor:pointer;"><span style="color: #004831; font-size: 1.1em;" class="glyphicon glyphicon-time"></span>    HISTORY</span></a></td>
                                 </tr>
                                 <tr>
                                     <td colspan="8" style="height:6px; border-bottom:1px #aaa solid;"></td>
@@ -308,7 +308,7 @@
                                                                 <span>Draft</span>
                                                             </div>
                                                             <div class="col-xs-4">
-                                                                <a style="text-decoration:none;" data-bind="style: { cursor: DRAFT != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickEPROCURE(CATEGORY,'DRAFT', data);}"><span data-bind="text: DRAFT" style="font-weight:bold; float:right; color:#e57118;"></span></a>
+                                                                <a style="text-decoration:none;" data-bind="style: { cursor: DRAFT != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickEPROCURE(CATEGORY,'DRAFT', data);}"><span data-bind="text: DRAFT" style="font-weight:bold; float:right; color:#004831;"></span></a>
                                                             </div>
                                                         </div>
                                                         <div style="border-bottom:1px #ccc solid; " class="row">
@@ -316,7 +316,7 @@
                                                                 <span>Inprocess</span>
                                                             </div>
                                                             <div class="col-xs-4">
-                                                                <a style="text-decoration:none;" data-bind="style: { cursor: INPROCESS != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickEPROCURE(CATEGORY,'INPROCESS', data);}"><span style="font-weight:bold; float:right; color:#e57118;" data-bind="text: INPROCESS"></span></a>
+                                                                <a style="text-decoration:none;" data-bind="style: { cursor: INPROCESS != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickEPROCURE(CATEGORY,'INPROCESS', data);}"><span style="font-weight:bold; float:right; color:#004831;" data-bind="text: INPROCESS"></span></a>
                                                             </div>
                                                         </div>
                                                         <div style="border-bottom:1px #ccc solid; " class="row">
@@ -324,7 +324,7 @@
                                                                 <span>Rejected</span>
                                                             </div>
                                                             <div class="col-xs-4">
-                                                                <a style="text-decoration:none;" data-bind="style: { cursor: REJECTED != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickEPROCURE(CATEGORY,'REJECTED', data);}"><span style="font-weight:bold; float:right; color:#e57118;" data-bind="text: REJECTED"></span></a>
+                                                                <a style="text-decoration:none;" data-bind="style: { cursor: REJECTED != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickEPROCURE(CATEGORY,'REJECTED', data);}"><span style="font-weight:bold; float:right; color:#004831;" data-bind="text: REJECTED"></span></a>
                                                             </div>
                                                         </div>
                                                         <div style="" class="row">
@@ -332,7 +332,7 @@
                                                                 <span>For Approval</span>
                                                             </div>
                                                             <div class="col-xs-4">
-                                                                <a style="text-decoration:none;" data-bind="style: { cursor: WAITINGFORAPPROVAL != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickEPROCURE(CATEGORY,'WAITINGFORAPPROVAL', data);}"><span style="font-weight:bold; float:right; color:#e57118;" data-bind="text: WAITINGFORAPPROVAL"></span></a>
+                                                                <a style="text-decoration:none;" data-bind="style: { cursor: WAITINGFORAPPROVAL != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickEPROCURE(CATEGORY,'WAITINGFORAPPROVAL', data);}"><span style="font-weight:bold; float:right; color:#004831;" data-bind="text: WAITINGFORAPPROVAL"></span></a>
                                                             </div>
                                                         </div>
 
@@ -359,7 +359,7 @@
                                                                 <span>Draft</span>
                                                             </div>
                                                             <div class="col-xs-4">
-                                                                <a style="text-decoration:none;" data-bind="style: { cursor: DRAFT != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickECLAIMS(CLAIM,'GetMydocDraft', 'DRAFT', data);}"><span style="font-weight:bold; float:right; color:#e57118;" data-bind="text: DRAFT"></span></a>
+                                                                <a style="text-decoration:none;" data-bind="style: { cursor: DRAFT != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickECLAIMS(CLAIM,'GetMydocDraft', 'DRAFT', data);}"><span style="font-weight:bold; float:right; color:#004831;" data-bind="text: DRAFT"></span></a>
                                                             </div>
                                                         </div>
                                                         <div style="border-bottom:1px #ccc solid; " class="row">
@@ -367,7 +367,7 @@
                                                                 <span>Inprocess</span>
                                                             </div>
                                                             <div class="col-xs-4">
-                                                                <a style="text-decoration:none;" data-bind="style: { cursor: INPROCESS != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickECLAIMS(CLAIM,'GetMydocAppoalc','INPROCESS', data);}"><span style="font-weight:bold; float:right; color:#e57118;" data-bind="text: INPROCESS"></span></a>
+                                                                <a style="text-decoration:none;" data-bind="style: { cursor: INPROCESS != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickECLAIMS(CLAIM,'GetMydocAppoalc','INPROCESS', data);}"><span style="font-weight:bold; float:right; color:#004831;" data-bind="text: INPROCESS"></span></a>
                                                             </div>
                                                         </div>
                                                         <div style="border-bottom:1px #ccc solid; " class="row">
@@ -375,7 +375,7 @@
                                                                 <span>Rejected</span>
                                                             </div>
                                                             <div class="col-xs-4">
-                                                                <a style="text-decoration:none;" data-bind="style: { cursor: REJECTED != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickECLAIMS(CLAIM,'GetMydocReject', 'REJECTED', data);}"><span style="font-weight:bold; float:right; color:#e57118;" data-bind="text: REJECTED"></span></a>
+                                                                <a style="text-decoration:none;" data-bind="style: { cursor: REJECTED != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickECLAIMS(CLAIM,'GetMydocReject', 'REJECTED', data);}"><span style="font-weight:bold; float:right; color:#004831;" data-bind="text: REJECTED"></span></a>
                                                             </div>
                                                         </div>
                                                         <div style="" class="row">
@@ -383,7 +383,7 @@
                                                                 <span>For Approval</span>
                                                             </div>
                                                             <div class="col-xs-4">
-                                                                <a style="text-decoration:none;" data-bind="style: { cursor: ForMyApproval != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickECLAIMS(CLAIM,'queueformyapprvolcount', 'ForMyApproval', data);}"><span style="font-weight:bold; float:right; color:#e57118;" data-bind="text: ForMyApproval"></span></a>
+                                                                <a style="text-decoration:none;" data-bind="style: { cursor: ForMyApproval != '0' ? 'pointer' : 'default' }, click: function(data){ $root.clickECLAIMS(CLAIM,'queueformyapprvolcount', 'ForMyApproval', data);}"><span style="font-weight:bold; float:right; color:#004831;" data-bind="text: ForMyApproval"></span></a>
                                                             </div>
                                                         </div>
 
